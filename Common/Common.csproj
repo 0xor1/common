@@ -4,15 +4,16 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <PackageId>0xor1.Common</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Daniel Robinson</Authors>
+        <Company>Personal</Company>
+        <Product>Personal</Product>
     </PropertyGroup>
     
     <ItemGroup>
         <PackageReference Include="Humanizer.Core" Version="2.14.1" />
         <PackageReference Include="Ulid" Version="1.2.6" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="obj" />
     </ItemGroup>
 
 </Project>

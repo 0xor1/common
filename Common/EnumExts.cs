@@ -5,6 +5,6 @@ namespace Dnsk.Common;
 
 public static class EnumExts
 {
-    public static string CssClass(this Enum input)
-        => input.Humanize(LetterCasing.LowerCase).Replace(" ", "");
+    public static Key ToKey(this Enum input)
+        => Key.Force(input.Humanize(LetterCasing.Title));
 }

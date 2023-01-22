@@ -1,8 +1,0 @@
-﻿@page "/verify_email"
-@using Dnsk.Client.Lib
-<PageTitle>Sign In</PageTitle>
-<VerifyEmail
-    Email="@(_nav.QueryValue<string>("email"))"
-    Code="@(_nav.QueryValue<string>("code"))"/>
-
-@inject NavigationManager _nav;

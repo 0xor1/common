@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Dnsk.Common;
+namespace Common;
 
 public static class Do
 {

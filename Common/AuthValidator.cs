@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Dnsk.Common;
+namespace Common;
 
 public class ValidationResult
 {

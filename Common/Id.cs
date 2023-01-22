@@ -1,4 +1,4 @@
-﻿namespace Dnsk.Common;
+﻿namespace Common;
 
 public static class Id
 {

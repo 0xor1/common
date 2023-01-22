@@ -1,9 +1,0 @@
-﻿@page "/reset_pwd"
-@using Dnsk.Client.Lib
-<PageTitle>Reset Password</PageTitle>
-
-<ResetPwd
-    Email="@(_nav.QueryValue<string>("email"))"
-    Code="@(_nav.QueryValue<string>("code"))"/>
-
-@inject NavigationManager _nav;

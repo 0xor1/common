@@ -1,14 +1,4 @@
-Dnsk - dotnet starter kit
-=========================
+Common
+======
 
-This project is the basic starting point for my dotnet based projects, 
-revolving around the primary technologies:
-
-* Client - Blazor WASM
-* Server - Aspnet core Grpc
-* DB - Ef core
-
-```bash
-./bin/pre
-```
-to start docker containers
+Common classes I use in all of my projects

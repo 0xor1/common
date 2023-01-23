@@ -10,7 +10,6 @@
         <Company>Personal</Company>
         <Product>Personal</Product>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>Common classes I use in all of my projects</Description>
         <RepositoryUrl>https://github.com/0xor1/Common</RepositoryUrl>
     </PropertyGroup>

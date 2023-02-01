@@ -5,18 +5,30 @@ namespace Common;
 public class ValidationResult
 {
     public bool Valid { get; set; } = true;
-    public string Message { get; set; } = "Invalid";
+    public string Message { get; set; } = AuthValidator.Strings.Invalid;
     public List<string> SubMessages { get; set; } = new();
 }
-public static class AuthValidator
+public static partial class AuthValidator
 {
+    public static class Strings
+    {
+        public const string Invalid = "invalid";
+        public const string InvalidEmail = "invalid_email";
+        public const string InvalidPwd = "invalid_pwd";
+        public const string LessThan8Chars = "less_than_8_chars";
+        public const string NoLowerCaseChar = "no_lower_case_char";
+        public const string NoUpperCaseChar = "no_upper_case_char";
+        public const string NoDigit = "no_digit";
+        public const string NoSpecialChar = "no_special_char";
+    }
+    
     public static ValidationResult Email(string str)
     {
         var res = new ValidationResult()
         {
-            Message = "Invalid email"
+            Message = Strings.InvalidEmail
         };
-        if (!Regex.IsMatch(str, @"^[^@]+@[^@]+\.[^@]+$"))
+        if (!EmailRegex().IsMatch(str))
         {
             res.Valid = false;
         }
@@ -27,33 +39,46 @@ public static class AuthValidator
     {
         var res = new ValidationResult()
         {
-            Message = "Invalid Password"
+            Message = Strings.InvalidPwd
         };
-        if (!Regex.IsMatch(str, ".{8,}"))
+        if (!EightOrMoreCharsRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add("less than 8 characters");
+            res.SubMessages.Add(Strings.LessThan8Chars);
         }
-        if (!Regex.IsMatch(str, "[a-z]"))
+        if (!LowerCaseRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add("no lowercase character");
+            res.SubMessages.Add(Strings.NoLowerCaseChar);
         }
-        if (!Regex.IsMatch(str, "[A-Z]"))
+        if (!UpperCaseRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add("no uppercase character");
+            res.SubMessages.Add(Strings.NoUpperCaseChar);
         }
-        if (!Regex.IsMatch(str, "[0-9]"))
+        if (!DigitRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add("no digit");
+            res.SubMessages.Add(Strings.NoDigit);
         }
-        if (!Regex.IsMatch(str, "[^a-zA-Z0-9 ]"))
+        if (!SpecialCharRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add("no special character");
+            res.SubMessages.Add(Strings.NoSpecialChar);
         }
         return res;
     }
+
+    [GeneratedRegex("^[^@]+@[^@]+\\.[^@]+$")]
+    private static partial Regex EmailRegex();
+    [GeneratedRegex(".{8,}")]
+    private static partial Regex EightOrMoreCharsRegex();
+    [GeneratedRegex("[a-z]")]
+    private static partial Regex LowerCaseRegex();
+    [GeneratedRegex("[A-Z]")]
+    private static partial Regex UpperCaseRegex();
+    [GeneratedRegex("[0-9]")]
+    private static partial Regex DigitRegex();
+    [GeneratedRegex("[^a-zA-Z0-9 ]")]
+    private static partial Regex SpecialCharRegex();
 }

@@ -5,7 +5,7 @@ namespace Common;
 public record ValidationResult
 {
     public bool Valid { get; set; } = true;
-    public Message Message { get; set; } = new (){ Key = AuthValidator.Strings.Invalid };
+    public Message Message { get; set; } = new (AuthValidator.Strings.Invalid);
     public List<Message> SubMessages { get; } = new();
 }
 
@@ -13,6 +13,12 @@ public class Message
 {
     public string Key { get; set; }
     public object? Model { get; set; }
+
+    public Message(string key, object? model = null)
+    {
+        Key = key;
+        Model = model;
+    }
 } 
 public static partial class AuthValidator
 {
@@ -32,7 +38,7 @@ public static partial class AuthValidator
     {
         var res = new ValidationResult()
         {
-            Message = new(){ Key = Strings.InvalidEmail }
+            Message = new(Strings.InvalidEmail)
         };
         if (!EmailRegex().IsMatch(str))
         {
@@ -45,32 +51,32 @@ public static partial class AuthValidator
     {
         var res = new ValidationResult()
         {
-            Message = new(){ Key = Strings.InvalidPwd }
+            Message = new(Strings.InvalidPwd)
         };
         if (!EightOrMoreCharsRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(){ Key = Strings.LessThan8Chars });
+            res.SubMessages.Add(new(Strings.LessThan8Chars));
         }
         if (!LowerCaseRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(){ Key = Strings.NoLowerCaseChar });
+            res.SubMessages.Add(new(Strings.NoLowerCaseChar));
         }
         if (!UpperCaseRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(){ Key = Strings.NoUpperCaseChar });
+            res.SubMessages.Add(new(Strings.NoUpperCaseChar));
         }
         if (!DigitRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(){ Key = Strings.NoDigit });
+            res.SubMessages.Add(new(Strings.NoDigit));
         }
         if (!SpecialCharRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(){ Key = Strings.NoSpecialChar });
+            res.SubMessages.Add(new(Strings.NoSpecialChar));
         }
         return res;
     }

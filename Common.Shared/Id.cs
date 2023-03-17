@@ -1,4 +1,5 @@
-﻿namespace Common;
+﻿
+namespace Common.Shared;
 
 public static class Id
 {

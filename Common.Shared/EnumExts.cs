@@ -1,7 +1,7 @@
 ﻿
 using Humanizer;
 
-namespace Common;
+namespace Common.Shared;
 
 public static class EnumExts
 {

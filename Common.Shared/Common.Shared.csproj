@@ -4,14 +4,14 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <PackageId>0xor1.Common</PackageId>
-        <Version>1.0.5</Version>
+        <PackageId>0xor1.Common.Shared</PackageId>
+        <Version>1.0.0</Version>
         <Authors>Daniel Robinson</Authors>
         <Company>Personal</Company>
         <Product>Personal</Product>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Description>Common classes I use in all of my projects</Description>
-        <RepositoryUrl>https://github.com/0xor1/Common</RepositoryUrl>
+        <Description>Common classes I use in all of my projects for both client and server side use</Description>
+        <RepositoryUrl>https://github.com/0xor1/Common.Shared</RepositoryUrl>
     </PropertyGroup>
     
     <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace Common;
+namespace Common.Shared;
 
 public static class Base64
 {

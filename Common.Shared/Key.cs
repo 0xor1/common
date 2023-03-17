@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace Common;
+namespace Common.Shared;
 
 public interface IKeyed
 {

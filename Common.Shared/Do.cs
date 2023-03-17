@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Common;
+namespace Common.Shared;
 
 public static class Do
 {

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace Common;
+namespace Common.Shared;
 
 public static class StringExts
 {

@@ -1,6 +1,6 @@
 using Fluid;
 
-namespace Common.I18n;
+namespace Common.Shared.I18n;
 
 public record TemplatableString(string Raw)
 {

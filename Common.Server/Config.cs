@@ -1,15 +1,21 @@
-﻿using Amazon;
+﻿using System.Runtime.Serialization;
+using Amazon;
 using Common.Shared;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Common.Server;
 
+[JsonConverter(typeof(StringEnumConverter))]
 public enum Env
 {
+    [EnumMember(Value = "lcl")]
     LCL,
+    [EnumMember(Value = "dev")]
     DEV,
+    [EnumMember(Value = "stg")]
     STG,
+    [EnumMember(Value = "pro")]
     PRO
 }
 
@@ -86,7 +92,6 @@ public static class Config
 
 internal record Raw
 {
-    [JsonConverter(typeof(StringEnumConverter))]
     public Env Env { get; init; } = Env.LCL;
     public ServerConfig Server { get; init; }
     public DbConfig Db { get; init; }

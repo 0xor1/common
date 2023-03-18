@@ -12,6 +12,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Description>Common classes I use in all of my projects for both client and server side use</Description>
         <RepositoryUrl>https://github.com/0xor1/Common</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
     
     <ItemGroup>
@@ -20,4 +21,7 @@
         <PackageReference Include="Ulid" Version="1.2.6" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 </Project>

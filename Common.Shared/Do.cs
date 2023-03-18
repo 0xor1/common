@@ -11,7 +11,7 @@ public static class Do
             fn();
         }
     }
-    
+
     public static async Task IfAsync(bool condition, Func<Task> fn)
     {
         if (condition)
@@ -23,18 +23,22 @@ public static class Do
 
 public static class Throw
 {
-    public static void If<T>(bool condition, Func<T> ex) where T : Exception
+    public static void If<T>(bool condition, Func<T> ex)
+        where T : Exception
     {
         Do.If(condition, () => throw ex());
     }
+
     public static void DataIf(bool condition, string msg)
     {
         If(condition, () => new InvalidDataException(msg));
     }
+
     public static void OpIf(bool condition, string msg)
     {
         If(condition, () => new InvalidOperationException(msg));
     }
+
     public static void SetupIf(bool condition, string msg)
     {
         If(condition, () => new InvalidSetupException(msg));
@@ -43,5 +47,6 @@ public static class Throw
 
 public class InvalidSetupException : Exception
 {
-    public InvalidSetupException(string msg) : base(msg) { }
+    public InvalidSetupException(string msg)
+        : base(msg) { }
 }

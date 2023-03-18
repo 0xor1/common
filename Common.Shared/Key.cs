@@ -60,7 +60,9 @@ public partial record Key
         }
         if (!ValidChars().IsMatch(str))
         {
-            throw new InvalidDataException($"{str} must only container lower case letters, digits and underscore");
+            throw new InvalidDataException(
+                $"{str} must only container lower case letters, digits and underscore"
+            );
         }
     }
 
@@ -120,7 +122,11 @@ public class KeyConverter : TypeConverter
     }
 
     // Overrides the ConvertFrom method of TypeConverter.
-    public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
+    public override object? ConvertFrom(
+        ITypeDescriptorContext? context,
+        CultureInfo? culture,
+        object value
+    )
     {
         if (value is string s)
         {
@@ -130,7 +136,12 @@ public class KeyConverter : TypeConverter
     }
 
     // Overrides the ConvertTo method of TypeConverter.
-    public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
+    public override object? ConvertTo(
+        ITypeDescriptorContext? context,
+        CultureInfo? culture,
+        object? value,
+        Type destinationType
+    )
     {
         if (destinationType == typeof(string) && value is not null)
         {

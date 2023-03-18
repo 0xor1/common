@@ -5,7 +5,7 @@ namespace Common.Shared;
 public record ValidationResult
 {
     public bool Valid { get; set; } = true;
-    public Message Message { get; set; } = new (AuthValidator.Strings.Invalid);
+    public Message Message { get; set; } = new(AuthValidator.Strings.Invalid);
     public List<Message> SubMessages { get; } = new();
 }
 
@@ -19,7 +19,8 @@ public class Message
         Key = key;
         Model = model;
     }
-} 
+}
+
 public static partial class AuthValidator
 {
     public static class Strings
@@ -33,13 +34,10 @@ public static partial class AuthValidator
         public const string NoDigit = "no_digit";
         public const string NoSpecialChar = "no_special_char";
     }
-    
+
     public static ValidationResult Email(string str)
     {
-        var res = new ValidationResult()
-        {
-            Message = new(Strings.InvalidEmail)
-        };
+        var res = new ValidationResult() { Message = new(Strings.InvalidEmail) };
         if (!EmailRegex().IsMatch(str))
         {
             res.Valid = false;
@@ -49,10 +47,7 @@ public static partial class AuthValidator
 
     public static ValidationResult Pwd(string str)
     {
-        var res = new ValidationResult()
-        {
-            Message = new(Strings.InvalidPwd)
-        };
+        var res = new ValidationResult() { Message = new(Strings.InvalidPwd) };
         if (!EightOrMoreCharsRegex().IsMatch(str))
         {
             res.Valid = false;
@@ -83,14 +78,19 @@ public static partial class AuthValidator
 
     [GeneratedRegex("^[^@]+@[^@]+\\.[^@]+$")]
     private static partial Regex EmailRegex();
+
     [GeneratedRegex(".{8,}")]
     private static partial Regex EightOrMoreCharsRegex();
+
     [GeneratedRegex("[a-z]")]
     private static partial Regex LowerCaseRegex();
+
     [GeneratedRegex("[A-Z]")]
     private static partial Regex UpperCaseRegex();
+
     [GeneratedRegex("[0-9]")]
     private static partial Regex DigitRegex();
+
     [GeneratedRegex("[^a-zA-Z0-9 ]")]
     private static partial Regex SpecialCharRegex();
 }

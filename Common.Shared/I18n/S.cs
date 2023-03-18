@@ -6,6 +6,7 @@ public record TemplatableString(string Raw)
 {
     internal IFluidTemplate? Template { get; set; }
 }
+
 public record Lang(string Code, string NativeName)
 {
     public override string ToString() => NativeName;
@@ -13,22 +14,43 @@ public record Lang(string Code, string NativeName)
 
 public record DateTimeFmt(string Value)
 {
-    private static readonly DateTime dt = new (DateTime.UtcNow.Year, 1, 21, 16, 1, 1);
+    private static readonly DateTime dt = new(DateTime.UtcNow.Year, 1, 21, 16, 1, 1);
+
     public override string ToString() => dt.ToString(Value);
 }
+
 public class S
 {
     private static S? _inst;
-    public static readonly FluidParser Parser = new ();
-    private static readonly SemaphoreSlim _semaphoreSlim = new (1, 1);
-    
-    public static S Init(string defaultLang, string defaultDateFmt, string defaultTimeFmt, IReadOnlyList<Lang> supportedLangs, IReadOnlyList<DateTimeFmt> supportedDateFmts, IReadOnlyList<DateTimeFmt> supportedTimeFmts, IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> library)
+    public static readonly FluidParser Parser = new();
+    private static readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
+
+    public static S Init(
+        string defaultLang,
+        string defaultDateFmt,
+        string defaultTimeFmt,
+        IReadOnlyList<Lang> supportedLangs,
+        IReadOnlyList<DateTimeFmt> supportedDateFmts,
+        IReadOnlyList<DateTimeFmt> supportedTimeFmts,
+        IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> library
+    )
     {
         _semaphoreSlim.Wait();
         try
         {
-            Throw.OpIf(_inst != null, "Singleton I18n.S has already been initialised, you should initialise I18n.S only once in your startup code.");
-            _inst = new S(defaultLang, defaultDateFmt, defaultTimeFmt, supportedLangs, supportedDateFmts, supportedTimeFmts, library);
+            Throw.OpIf(
+                _inst != null,
+                "Singleton I18n.S has already been initialised, you should initialise I18n.S only once in your startup code."
+            );
+            _inst = new S(
+                defaultLang,
+                defaultDateFmt,
+                defaultTimeFmt,
+                supportedLangs,
+                supportedDateFmts,
+                supportedTimeFmts,
+                library
+            );
         }
         finally
         {
@@ -37,16 +59,27 @@ public class S
 
         return _inst;
     }
-    
+
     public readonly string DefaultLang;
     public readonly string DefaultDateFmt;
     public readonly string DefaultTimeFmt;
     public readonly IReadOnlyList<Lang> SupportedLangs;
     public readonly IReadOnlyList<DateTimeFmt> SupportedDateFmts;
     public readonly IReadOnlyList<DateTimeFmt> SupportedTimeFmts;
-    private readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> Library;
-    
-    private S(string defaultLang, string defaultDateFmt, string defaultTimeFmt, IReadOnlyList<Lang> supportedLangs, IReadOnlyList<DateTimeFmt> supportedDateFmts, IReadOnlyList<DateTimeFmt> supportedTimeFmts, IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> library)
+    private readonly IReadOnlyDictionary<
+        string,
+        IReadOnlyDictionary<string, TemplatableString>
+    > Library;
+
+    private S(
+        string defaultLang,
+        string defaultDateFmt,
+        string defaultTimeFmt,
+        IReadOnlyList<Lang> supportedLangs,
+        IReadOnlyList<DateTimeFmt> supportedDateFmts,
+        IReadOnlyList<DateTimeFmt> supportedTimeFmts,
+        IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> library
+    )
     {
         DefaultLang = defaultLang;
         DefaultDateFmt = defaultDateFmt;
@@ -56,11 +89,14 @@ public class S
         SupportedTimeFmts = supportedTimeFmts;
         Library = library;
     }
-    
+
     public string Get(string lang, string key, object? model = null)
     {
         Throw.DataIf(!Library.ContainsKey(lang), $"I18n.S doesnt contain lang {lang}");
-        Throw.DataIf(!Library[lang].ContainsKey(key), $"I18n.S doesnt contain key: {key} for lang: {lang}");
+        Throw.DataIf(
+            !Library[lang].ContainsKey(key),
+            $"I18n.S doesnt contain key: {key} for lang: {lang}"
+        );
         return RenderWithModel(Library[lang][key], model);
     }
 
@@ -85,7 +121,7 @@ public class S
         }
         return tplStr.Template.Render(new TemplateContext(model));
     }
-    
+
     public bool TryGet(string lang, string key, out string res, object? model = null)
     {
         res = "";
@@ -101,7 +137,7 @@ public class S
         res = RenderWithModel(Library[lang][key], model);
         return true;
     }
-    
+
     public string GetOr(string lang, string key, string def, object? model = null)
     {
         if (!Library.ContainsKey(lang))
@@ -116,7 +152,7 @@ public class S
 
         return RenderWithModel(Library[lang][key], model);
     }
-    
+
     public string GetOrAddress(string lang, string key, object? model = null)
     {
         if (!Library.ContainsKey(lang) || !Library[lang].ContainsKey(key))

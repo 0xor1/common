@@ -1,10 +1,9 @@
-﻿
-namespace Common.Shared;
+﻿namespace Common.Shared;
 
 public static class Id
 {
     public static string New()
     {
-         return Base64.UrlEncode(Ulid.NewUlid().ToByteArray());
+        return Base64.UrlEncode(Ulid.NewUlid().ToByteArray());
     }
 }

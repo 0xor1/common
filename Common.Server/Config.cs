@@ -11,10 +11,13 @@ public enum Env
 {
     [EnumMember(Value = "lcl")]
     LCL,
+
     [EnumMember(Value = "dev")]
     DEV,
+
     [EnumMember(Value = "stg")]
     STG,
+
     [EnumMember(Value = "pro")]
     PRO
 }

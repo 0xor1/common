@@ -11,7 +11,7 @@
         <Product>Personal</Product>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Description>Common classes I use in all of my projects for server side usage.</Description>
-        <RepositoryUrl>https://github.com/0xor1/Common.Server</RepositoryUrl>
+        <RepositoryUrl>https://github.com/0xor1/Common</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>

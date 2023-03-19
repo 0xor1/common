@@ -1,3 +1,4 @@
+using Common.Shared.I18n;
 using Grpc.Core;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -11,13 +12,15 @@ namespace Common.Client;
 
 public static class Client
 {
-    public static async Task Run<TApp, TApi, TAuthService>(string[] args, Func<CallInvoker, TApi> api) where TApp : IComponent where TApi : class where TAuthService : class, IAuthService
+    public static async Task Run<TApp, TApi, TAuthService>(string[] args, S s, Func<CallInvoker, TApi> api) where TApp : IComponent where TApi : class where TAuthService : class, IAuthService
     {
 
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
         builder.RootComponents.Add<TApp>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
+        builder.Services.AddSingleton(s);
+        builder.Services.AddSingleton(L.Init(s));
         builder.Services.AddSingleton<IAuthService, TAuthService>();
         builder.Services.AddSingleton<Radzen.NotificationService>();
         builder.Services.AddSingleton<ErrorInterceptor>();

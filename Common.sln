@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Shared", "Common.Sha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Server", "Common.Server\Common.Server.csproj", "{4E739BB0-EAD9-4A11-90D9-5846FB5602F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Client", "Common.Client\Common.Client.csproj", "{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,18 @@ Global
 		{4E739BB0-EAD9-4A11-90D9-5846FB5602F4}.Release|x64.Build.0 = Release|Any CPU
 		{4E739BB0-EAD9-4A11-90D9-5846FB5602F4}.Release|x86.ActiveCfg = Release|Any CPU
 		{4E739BB0-EAD9-4A11-90D9-5846FB5602F4}.Release|x86.Build.0 = Release|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Debug|x64.Build.0 = Debug|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Debug|x86.Build.0 = Debug|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Release|x64.ActiveCfg = Release|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Release|x64.Build.0 = Release|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Release|x86.ActiveCfg = Release|Any CPU
+		{F8ED20F1-8687-4DCD-88F9-31C366CAE0C5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

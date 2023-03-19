@@ -25,6 +25,7 @@ public class S
     public static readonly FluidParser Parser = new();
     private static readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
+    
     // common string keys used in shared code.
     public const string Invalid = "invalid";
     public const string InvalidEmail = "invalid_email";
@@ -36,6 +37,7 @@ public class S
     public const string NoSpecialChar = "no_special_char";
     public const string UnexpectedError = "unexpected_error";
 
+    public static S Get() => _inst ?? throw new InvalidSetupException("S has not be initialized yet");
     public static S Init(
         string defaultLang,
         string defaultDateFmt,

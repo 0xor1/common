@@ -10,9 +10,7 @@ namespace Common.Server;
 
 public static class ServiceExts
 {
-    public static void AddApiServices<TDbCtx>(
-        this IServiceCollection services
-    )
+    public static void AddApiServices<TDbCtx>(this IServiceCollection services)
         where TDbCtx : DbContext
     {
         services.AddGrpc(opts =>

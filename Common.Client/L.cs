@@ -7,7 +7,7 @@ namespace Common.Client;
 public class L
 {
     private static readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-    private static L _inst;
+    private static L? _inst;
     private string _lang;
     private string _dateFmt;
     private string _timeFmt;

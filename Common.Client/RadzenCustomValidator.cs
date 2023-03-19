@@ -9,12 +9,9 @@ namespace Common.Client;
 
 public class RadzenCustomValidator : ValidatorBase
 {
-    private readonly L L;
-    
-    public RadzenCustomValidator(L l)
-    {
-        L = l;
-    }
+
+    [Inject] 
+    private L L { get; set; }
     public override string Text { get; set; } = S.Invalid;
     public Message Message { get; set; } = new(S.Invalid);
 
@@ -23,7 +20,7 @@ public class RadzenCustomValidator : ValidatorBase
     [Parameter]
     [EditorRequired]
     public Func<IRadzenFormComponent, ValidationResult> Validator { get; set; }
-
+    
     protected override bool Validate(IRadzenFormComponent component)
     {
         var res = Validator(component);

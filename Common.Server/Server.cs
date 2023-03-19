@@ -6,12 +6,12 @@ namespace Common.Server;
 
 public static class Server
 {
-    public static void Run<TDbCtx, TApiService>(string[] args, string unexpectedError)
+    public static void Run<TDbCtx, TApiService>(string[] args)
         where TDbCtx : DbContext
         where TApiService : class
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddApiServices<TDbCtx>(unexpectedError);
+        builder.Services.AddApiServices<TDbCtx>();
 
         var app = builder.Build();
         if (app.Environment.IsDevelopment())

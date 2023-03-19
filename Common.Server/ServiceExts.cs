@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.SimpleEmail;
+using Common.Shared.I18n;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
@@ -10,14 +11,13 @@ namespace Common.Server;
 public static class ServiceExts
 {
     public static void AddApiServices<TDbCtx>(
-        this IServiceCollection services,
-        string unexpectedErrorKey
+        this IServiceCollection services
     )
         where TDbCtx : DbContext
     {
         services.AddGrpc(opts =>
         {
-            opts.Interceptors.Add<ErrorInterceptor>(unexpectedErrorKey);
+            opts.Interceptors.Add<ErrorInterceptor>();
         });
         if (Config.Env == Env.LCL)
         {

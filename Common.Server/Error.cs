@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using Common.Shared.I18n;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.Extensions.Logging;
@@ -19,12 +20,10 @@ public class ApiException : Exception
 public class ErrorInterceptor : Interceptor
 {
     private readonly ILogger<ErrorInterceptor> _log;
-    private readonly string _unexpectedErrorKey;
 
-    public ErrorInterceptor(ILogger<ErrorInterceptor> log, string unexpectedErrorKey)
+    public ErrorInterceptor(ILogger<ErrorInterceptor> log)
     {
         _log = log;
-        _unexpectedErrorKey = unexpectedErrorKey;
     }
 
     public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
@@ -112,7 +111,7 @@ public class ErrorInterceptor : Interceptor
     {
         var log = true;
         var code = StatusCode.Internal;
-        var msg = _unexpectedErrorKey;
+        var msg = S.UnexpectedError;
 
         if (ex.GetType() == typeof(ApiException))
         {

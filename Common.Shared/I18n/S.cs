@@ -25,6 +25,17 @@ public class S
     public static readonly FluidParser Parser = new();
     private static readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
+    // common string keys used in shared code.
+    public const string Invalid = "invalid";
+    public const string InvalidEmail = "invalid_email";
+    public const string InvalidPwd = "invalid_pwd";
+    public const string LessThan8Chars = "less_than_8_chars";
+    public const string NoLowerCaseChar = "no_lower_case_char";
+    public const string NoUpperCaseChar = "no_upper_case_char";
+    public const string NoDigit = "no_digit";
+    public const string NoSpecialChar = "no_special_char";
+    public const string UnexpectedError = "unexpected_error";
+
     public static S Init(
         string defaultLang,
         string defaultDateFmt,

@@ -1,11 +1,12 @@
 ﻿using System.Text.RegularExpressions;
+using Common.Shared.I18n;
 
 namespace Common.Shared;
 
 public record ValidationResult
 {
     public bool Valid { get; set; } = true;
-    public Message Message { get; set; } = new(AuthValidator.Strings.Invalid);
+    public Message Message { get; set; } = new(S.Invalid);
     public List<Message> SubMessages { get; } = new();
 }
 
@@ -23,21 +24,9 @@ public class Message
 
 public static partial class AuthValidator
 {
-    public static class Strings
-    {
-        public const string Invalid = "invalid";
-        public const string InvalidEmail = "invalid_email";
-        public const string InvalidPwd = "invalid_pwd";
-        public const string LessThan8Chars = "less_than_8_chars";
-        public const string NoLowerCaseChar = "no_lower_case_char";
-        public const string NoUpperCaseChar = "no_upper_case_char";
-        public const string NoDigit = "no_digit";
-        public const string NoSpecialChar = "no_special_char";
-    }
-
     public static ValidationResult Email(string str)
     {
-        var res = new ValidationResult() { Message = new(Strings.InvalidEmail) };
+        var res = new ValidationResult() { Message = new(S.InvalidEmail) };
         if (!EmailRegex().IsMatch(str))
         {
             res.Valid = false;
@@ -47,31 +36,31 @@ public static partial class AuthValidator
 
     public static ValidationResult Pwd(string str)
     {
-        var res = new ValidationResult() { Message = new(Strings.InvalidPwd) };
+        var res = new ValidationResult() { Message = new(S.InvalidPwd) };
         if (!EightOrMoreCharsRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(Strings.LessThan8Chars));
+            res.SubMessages.Add(new(S.LessThan8Chars));
         }
         if (!LowerCaseRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(Strings.NoLowerCaseChar));
+            res.SubMessages.Add(new(S.NoLowerCaseChar));
         }
         if (!UpperCaseRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(Strings.NoUpperCaseChar));
+            res.SubMessages.Add(new(S.NoUpperCaseChar));
         }
         if (!DigitRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(Strings.NoDigit));
+            res.SubMessages.Add(new(S.NoDigit));
         }
         if (!SpecialCharRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(Strings.NoSpecialChar));
+            res.SubMessages.Add(new(S.NoSpecialChar));
         }
         return res;
     }

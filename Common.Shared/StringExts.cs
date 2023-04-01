@@ -10,4 +10,7 @@ public static class StringExts
 
     public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string? str) =>
         string.IsNullOrWhiteSpace(str);
+
+    public static IEnumerable<string> GetDuplicates(this IEnumerable<string> strs) =>
+        strs.GroupBy(x => x).Where(x => x.Count() > 1).Select(x => x.Key);
 }

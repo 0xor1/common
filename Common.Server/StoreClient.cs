@@ -32,7 +32,7 @@ public class S3StoreClient : IStoreClient
 
     public async Task Move(string srcBucket, string dstBucket, string key)
     {
-        await _awsS3.CopyObjectAsync(
+        var res = await _awsS3.CopyObjectAsync(
             new CopyObjectRequest()
             {
                 SourceBucket = srcBucket,
@@ -41,6 +41,7 @@ public class S3StoreClient : IStoreClient
                 DestinationKey = key
             }
         );
+        // TODO does this need to check if the object has been copied over successfully before calling delete?
         await _awsS3.DeleteObjectAsync(
             new DeleteObjectRequest() { BucketName = srcBucket, Key = key }
         );

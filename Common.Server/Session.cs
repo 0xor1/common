@@ -44,7 +44,6 @@ public interface ISessionManager
         string timeFmt
     );
 
-
     internal Session Clear(HttpContext ctx);
 
     private static ISessionManager? _inst;
@@ -54,7 +53,7 @@ public interface ISessionManager
     }
 }
 
-internal record SessionManager: ISessionManager
+internal record SessionManager : ISessionManager
 {
     private const string SessionKey = "s";
     private readonly byte[][] SignatureKeys;
@@ -76,7 +75,7 @@ internal record SessionManager: ISessionManager
             );
         }
     }
-    
+
     public Session Get(HttpContext ctx)
     {
         Session ses;
@@ -91,6 +90,7 @@ internal record SessionManager: ISessionManager
         }
         return ses;
     }
+
     public Session Create(
         HttpContext ctx,
         string userId,
@@ -126,7 +126,8 @@ internal record SessionManager: ISessionManager
     private Session _Clear(HttpContext ctx)
     {
         var s = ctx.GetRequiredService<S>();
-        return Create(ctx,
+        return Create(
+            ctx,
             Id.New(),
             false,
             false,
@@ -147,7 +148,9 @@ internal record SessionManager: ISessionManager
         }
 
         // there is a session so lets get it from the cookie
-        var signedSes = JsonConvert.DeserializeObject<SignedSession>(Base64.UrlDecode(c).Utf8String()).NotNull();
+        var signedSes = JsonConvert
+            .DeserializeObject<SignedSession>(Base64.UrlDecode(c).Utf8String())
+            .NotNull();
         var i = 0;
         foreach (var signatureKey in SignatureKeys)
         {
@@ -156,7 +159,9 @@ internal record SessionManager: ISessionManager
                 var sesSig = hmac.ComputeHash(signedSes.Session);
                 if (sesSig.SequenceEqual(signedSes.Signature))
                 {
-                    var ses = JsonConvert.DeserializeObject<Session>(signedSes.Session.Utf8String()).NotNull();
+                    var ses = JsonConvert
+                        .DeserializeObject<Session>(signedSes.Session.Utf8String())
+                        .NotNull();
                     if (i > 0)
                     {
                         // if it wasnt signed using the latest key, resign the cookie using the latest key
@@ -203,17 +208,14 @@ internal record SessionManager: ISessionManager
 public static class HttpContextExts
 {
     // these require that ISessionManager was added to service container
-    public static T GetRequiredService<T>(
-        this HttpContext ctx
-    ) where T : notnull => ctx.RequestServices.GetRequiredService<T>();
-    
-    private static ISessionManager GetSessionManager(
-        this HttpContext ctx
-    ) => ctx.GetRequiredService<ISessionManager>();
-    
-    public static Session GetSession(
-        this HttpContext ctx
-    ) => ctx.GetSessionManager().Get(ctx);
+    public static T GetRequiredService<T>(this HttpContext ctx)
+        where T : notnull => ctx.RequestServices.GetRequiredService<T>();
+
+    private static ISessionManager GetSessionManager(this HttpContext ctx) =>
+        ctx.GetRequiredService<ISessionManager>();
+
+    public static Session GetSession(this HttpContext ctx) => ctx.GetSessionManager().Get(ctx);
+
     public static Session CreateSession(
         this HttpContext ctx,
         string userId,
@@ -222,16 +224,10 @@ public static class HttpContextExts
         string lang,
         string dateFmt,
         string timeFmt
-    ) => ctx.GetSessionManager().Create(ctx,userId,
-        isAuthed,
-        rememberMe,
-        lang,
-        dateFmt,
-        timeFmt);
-    public static Session ClearSession(
-        this HttpContext ctx
-    ) => ctx.GetSessionManager().Clear(ctx);
-    
+    ) => ctx.GetSessionManager().Create(ctx, userId, isAuthed, rememberMe, lang, dateFmt, timeFmt);
+
+    public static Session ClearSession(this HttpContext ctx) => ctx.GetSessionManager().Clear(ctx);
+
     public static void ErrorIf(
         this HttpContext ctx,
         bool condition,
@@ -254,6 +250,6 @@ public static class HttpContextExts
                 )
         );
 
-    public static string String(this HttpContext ctx, string key, object? model = null)
-    => ctx.GetRequiredService<S>().GetOrAddress(ctx.GetSession().Lang, key, model);
+    public static string String(this HttpContext ctx, string key, object? model = null) =>
+        ctx.GetRequiredService<S>().GetOrAddress(ctx.GetSession().Lang, key, model);
 }

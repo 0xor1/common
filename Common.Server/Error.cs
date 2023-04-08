@@ -21,22 +21,26 @@ public class ApiException : Exception
 
 public static class ErrorMiddleware
 {
-    public static IApplicationBuilder UseApiErrorHandling(this IApplicationBuilder app)
-        => app.Use(async (ctx, next) =>
-        {
-            try
+    public static IApplicationBuilder UseApiErrorHandling(this IApplicationBuilder app) =>
+        app.Use(
+            async (ctx, next) =>
             {
-                await next(ctx);
-            }
-            catch (Exception ex)
-            {
-                if (ex.GetType() == typeof(ApiException))
+                try
                 {
-                    // TODO write error to response writer
-                    throw;
+                    await next(ctx);
                 }
-                ctx.RequestServices.GetRequiredService<ILogger>().LogError(ex, $"Error thrown by {ctx.Request.Path}");
-                throw new ApiException(S.UnexpectedError);
+                catch (Exception ex)
+                {
+                    if (ex.GetType() == typeof(ApiException))
+                    {
+                        // TODO write error to response writer
+                        throw;
+                    }
+                    ctx.RequestServices
+                        .GetRequiredService<ILogger>()
+                        .LogError(ex, $"Error thrown by {ctx.Request.Path}");
+                    throw new ApiException(S.UnexpectedError);
+                }
             }
-        });
+        );
 }

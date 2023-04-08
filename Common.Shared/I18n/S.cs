@@ -22,11 +22,11 @@ public record DateTimeFmt(string Value)
 public interface S
 {
     public string DefaultLang { get; }
-    public string DefaultDateFmt{ get; }
-    public string DefaultTimeFmt{ get; }
-    public IReadOnlyList<Lang> SupportedLangs{ get; }
-    public IReadOnlyList<DateTimeFmt> SupportedDateFmts{ get; }
-    public IReadOnlyList<DateTimeFmt> SupportedTimeFmts{ get; }
+    public string DefaultDateFmt { get; }
+    public string DefaultTimeFmt { get; }
+    public IReadOnlyList<Lang> SupportedLangs { get; }
+    public IReadOnlyList<DateTimeFmt> SupportedDateFmts { get; }
+    public IReadOnlyList<DateTimeFmt> SupportedTimeFmts { get; }
 
     public IReadOnlyDictionary<
         string,
@@ -38,7 +38,7 @@ public interface S
     string GetOr(string lang, string key, string def, object? model = null);
     string GetOrAddress(string lang, string key, object? model = null);
     string BestLang(string acceptLangsHeader);
-    
+
     // common string keys used in shared code.
     public const string Invalid = "invalid";
     public const string InvalidEmail = "invalid_email";
@@ -50,7 +50,7 @@ public interface S
     public const string NoSpecialChar = "no_special_char";
     public const string UnexpectedError = "unexpected_error";
     public static readonly FluidParser Parser = new();
-    
+
     private static S? _inst;
     public static S Init(
         string defaultLang,
@@ -59,7 +59,8 @@ public interface S
         IReadOnlyList<Lang> supportedLangs,
         IReadOnlyList<DateTimeFmt> supportedDateFmts,
         IReadOnlyList<DateTimeFmt> supportedTimeFmts,
-        IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> library) =>
+        IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> library
+    ) =>
         _inst ??= new SImpl(
             defaultLang,
             defaultDateFmt,
@@ -67,19 +68,20 @@ public interface S
             supportedLangs,
             supportedDateFmts,
             supportedTimeFmts,
-            library);
+            library
+        );
 }
 
-public class SImpl: S
+public class SImpl : S
 {
     private static readonly SemaphoreSlim _ss = new(1, 1);
 
     public string DefaultLang { get; }
-    public string DefaultDateFmt{ get; }
-    public string DefaultTimeFmt{ get; }
-    public IReadOnlyList<Lang> SupportedLangs{ get; }
-    public IReadOnlyList<DateTimeFmt> SupportedDateFmts{ get; }
-    public IReadOnlyList<DateTimeFmt> SupportedTimeFmts{ get; }
+    public string DefaultDateFmt { get; }
+    public string DefaultTimeFmt { get; }
+    public IReadOnlyList<Lang> SupportedLangs { get; }
+    public IReadOnlyList<DateTimeFmt> SupportedDateFmts { get; }
+    public IReadOnlyList<DateTimeFmt> SupportedTimeFmts { get; }
 
     public IReadOnlyDictionary<
         string,

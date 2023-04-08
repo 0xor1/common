@@ -63,7 +63,7 @@ public record StoreConfig
     public RegionEndpoint RegionEndpoint => Region.GetRegionEndpoint();
 }
 
-internal record ConfigImpl: Config
+internal record ConfigImpl : Config
 {
     public Env Env { get; init; } = Env.LCL;
     public ServerConfig Server { get; init; }
@@ -71,10 +71,10 @@ internal record ConfigImpl: Config
     public SessionConfig Session { get; init; }
     public EmailConfig Email { get; init; }
     public StoreConfig Store { get; init; }
-
 }
 
-public static class AwsStringExts{
+public static class AwsStringExts
+{
     public static RegionEndpoint GetRegionEndpoint(this string region)
     {
         var re = RegionEndpoint.GetBySystemName(region);
@@ -88,17 +88,18 @@ public static class AwsStringExts{
     }
 }
 
-public interface Config{
+public interface Config
+{
     public Env Env { get; }
     public ServerConfig Server { get; }
     public DbConfig Db { get; }
     public SessionConfig Session { get; }
     public EmailConfig Email { get; }
     public StoreConfig Store { get; }
-    
+
     private static Config? _inst;
-    public static Config Init()
-        => _inst ??= JsonConvert
+    public static Config Init() =>
+        _inst ??= JsonConvert
             .DeserializeObject<ConfigImpl>(
                 File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
             )

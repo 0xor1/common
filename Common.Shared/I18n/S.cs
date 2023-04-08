@@ -19,12 +19,26 @@ public record DateTimeFmt(string Value)
     public override string ToString() => dt.ToString(Value);
 }
 
-public class S
+public interface S
 {
-    private static S? _inst;
-    public static readonly FluidParser Parser = new();
-    private static readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
+    public string DefaultLang { get; }
+    public string DefaultDateFmt{ get; }
+    public string DefaultTimeFmt{ get; }
+    public IReadOnlyList<Lang> SupportedLangs{ get; }
+    public IReadOnlyList<DateTimeFmt> SupportedDateFmts{ get; }
+    public IReadOnlyList<DateTimeFmt> SupportedTimeFmts{ get; }
 
+    public IReadOnlyDictionary<
+        string,
+        IReadOnlyDictionary<string, TemplatableString>
+    > Library { get; }
+
+    string Get(string lang, string key, object? model = null);
+    bool TryGet(string lang, string key, out string res, object? model = null);
+    string GetOr(string lang, string key, string def, object? model = null);
+    string GetOrAddress(string lang, string key, object? model = null);
+    string BestLang(string acceptLangsHeader);
+    
     // common string keys used in shared code.
     public const string Invalid = "invalid";
     public const string InvalidEmail = "invalid_email";
@@ -35,10 +49,9 @@ public class S
     public const string NoDigit = "no_digit";
     public const string NoSpecialChar = "no_special_char";
     public const string UnexpectedError = "unexpected_error";
-
-    public static S Get() =>
-        _inst ?? throw new InvalidSetupException("S has not be initialized yet");
-
+    public static readonly FluidParser Parser = new();
+    
+    private static S? _inst;
     public static S Init(
         string defaultLang,
         string defaultDateFmt,
@@ -46,46 +59,34 @@ public class S
         IReadOnlyList<Lang> supportedLangs,
         IReadOnlyList<DateTimeFmt> supportedDateFmts,
         IReadOnlyList<DateTimeFmt> supportedTimeFmts,
-        IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> library
-    )
-    {
-        _semaphoreSlim.Wait();
-        try
-        {
-            Throw.OpIf(
-                _inst != null,
-                "Singleton I18n.S has already been initialised, you should initialise I18n.S only once in your startup code."
-            );
-            _inst = new S(
-                defaultLang,
-                defaultDateFmt,
-                defaultTimeFmt,
-                supportedLangs,
-                supportedDateFmts,
-                supportedTimeFmts,
-                library
-            );
-        }
-        finally
-        {
-            _semaphoreSlim.Release();
-        }
+        IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> library) =>
+        _inst ??= new SImpl(
+            defaultLang,
+            defaultDateFmt,
+            defaultTimeFmt,
+            supportedLangs,
+            supportedDateFmts,
+            supportedTimeFmts,
+            library);
+}
 
-        return _inst;
-    }
+public class SImpl: S
+{
+    private static readonly SemaphoreSlim _ss = new(1, 1);
 
-    public readonly string DefaultLang;
-    public readonly string DefaultDateFmt;
-    public readonly string DefaultTimeFmt;
-    public readonly IReadOnlyList<Lang> SupportedLangs;
-    public readonly IReadOnlyList<DateTimeFmt> SupportedDateFmts;
-    public readonly IReadOnlyList<DateTimeFmt> SupportedTimeFmts;
-    private readonly IReadOnlyDictionary<
+    public string DefaultLang { get; }
+    public string DefaultDateFmt{ get; }
+    public string DefaultTimeFmt{ get; }
+    public IReadOnlyList<Lang> SupportedLangs{ get; }
+    public IReadOnlyList<DateTimeFmt> SupportedDateFmts{ get; }
+    public IReadOnlyList<DateTimeFmt> SupportedTimeFmts{ get; }
+
+    public IReadOnlyDictionary<
         string,
         IReadOnlyDictionary<string, TemplatableString>
-    > Library;
+    > Library { get; }
 
-    private S(
+    internal SImpl(
         string defaultLang,
         string defaultDateFmt,
         string defaultTimeFmt,
@@ -125,12 +126,12 @@ public class S
         {
             try
             {
-                _semaphoreSlim.Wait();
-                tplStr.Template = Parser.Parse(tplStr.Raw);
+                _ss.Wait();
+                tplStr.Template = S.Parser.Parse(tplStr.Raw);
             }
             finally
             {
-                _semaphoreSlim.Release();
+                _ss.Release();
             }
         }
         return tplStr.Template.Render(new TemplateContext(model));

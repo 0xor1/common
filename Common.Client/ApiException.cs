@@ -1,12 +1,13 @@
-﻿using Grpc.Core;
+﻿
+using System.Net;
 
 namespace Common.Client;
 
 public class ApiException : Exception
 {
-    public StatusCode Code { get; }
+    public HttpStatusCode Code { get; }
 
-    public ApiException(StatusCode code, string message)
+    public ApiException(HttpStatusCode code, string message)
         : base(message)
     {
         Code = code;

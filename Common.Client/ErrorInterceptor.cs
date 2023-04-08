@@ -1,11 +1,9 @@
 ﻿using Common.Shared.I18n;
-using Grpc.Core;
-using Grpc.Core.Interceptors;
 using Radzen;
 
 namespace Common.Client;
 
-public class ErrorInterceptor : Interceptor
+public class ErrorInterceptor
 {
     private readonly NotificationService NotificationService;
     private readonly L L;
@@ -14,22 +12,6 @@ public class ErrorInterceptor : Interceptor
     {
         NotificationService = notificationService;
         L = l;
-    }
-
-    public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(
-        TRequest request,
-        ClientInterceptorContext<TRequest, TResponse> context,
-        AsyncUnaryCallContinuation<TRequest, TResponse> continuation
-    )
-    {
-        var call = continuation(request, context);
-        return new AsyncUnaryCall<TResponse>(
-            HandleResponse(call.ResponseAsync),
-            call.ResponseHeadersAsync,
-            call.GetStatus,
-            call.GetTrailers,
-            call.Dispose
-        );
     }
 
     private async Task<TResponse> HandleResponse<TResponse>(Task<TResponse> t)

@@ -1,3 +1,4 @@
+using Common.Shared.I18n;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -6,12 +7,12 @@ namespace Common.Server;
 
 public static class Server
 {
-    public static void Run<TDbCtx, TApiService>(string[] args)
+    public static void Run<TDbCtx>(string[] args, S s)
         where TDbCtx : DbContext
-        where TApiService : class
     {
+        var config = Config.Init();
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddApiServices<TDbCtx>();
+        builder.Services.AddApiServices<TDbCtx>(config, s);
 
         var app = builder.Build();
         if (app.Environment.IsDevelopment())
@@ -25,10 +26,10 @@ public static class Server
         app.UseHttpsRedirection();
         app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
+        app.UseApiErrorHandling();
         app.UseRouting();
-        app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
-        app.MapGrpcService<TApiService>();
+        app.MapControllers();
         app.MapFallbackToFile("index.html");
-        app.Run(Config.Server.Listen);
+        app.Run(config.Server.Listen);
     }
 }

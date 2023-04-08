@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel;
+using System.Runtime.Serialization;
 using Amazon;
 using Common.Shared;
 using Newtonsoft.Json;
@@ -10,15 +11,19 @@ namespace Common.Server;
 public enum Env
 {
     [EnumMember(Value = "lcl")]
+    [Description("lcl")]
     LCL,
 
     [EnumMember(Value = "dev")]
+    [Description("dev")]
     DEV,
 
     [EnumMember(Value = "stg")]
+    [Description("stg")]
     STG,
 
     [EnumMember(Value = "pro")]
+    [Description("pro")]
     PRO
 }
 
@@ -44,60 +49,58 @@ public record EmailConfig
     public string Secret { get; init; }
     public string NoReplyAddress { get; init; }
 
-    public RegionEndpoint GetRegionEndpoint()
-    {
-        var re = RegionEndpoint.GetBySystemName(Region);
-        if (re == null)
-        {
-            throw new InvalidSetupException(
-                $"couldn't find aws region endpoint with system name: {Region}"
-            );
-        }
-        return re;
-    }
+    [JsonIgnore]
+    public RegionEndpoint RegionEndpoint => Region.GetRegionEndpoint();
 }
 
-public static class Config
+public record StoreConfig
 {
-    private static readonly Raw _raw;
+    public string Region { get; init; }
+    public string Key { get; init; }
+    public string Secret { get; init; }
 
-    public static Env Env
-    {
-        get => _raw.Env;
-    }
-
-    public static ServerConfig Server
-    {
-        get => _raw.Server;
-    }
-    public static DbConfig Db
-    {
-        get => _raw.Db;
-    }
-    public static SessionConfig Session
-    {
-        get => _raw.Session;
-    }
-    public static EmailConfig Email
-    {
-        get => _raw.Email;
-    }
-
-    static Config()
-    {
-        _raw = JsonConvert
-            .DeserializeObject<Raw>(
-                File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
-            )
-            .NotNull();
-    }
+    [JsonIgnore]
+    public RegionEndpoint RegionEndpoint => Region.GetRegionEndpoint();
 }
 
-internal record Raw
+internal record ConfigImpl: Config
 {
     public Env Env { get; init; } = Env.LCL;
     public ServerConfig Server { get; init; }
     public DbConfig Db { get; init; }
     public SessionConfig Session { get; init; }
     public EmailConfig Email { get; init; }
+    public StoreConfig Store { get; init; }
+
+}
+
+public static class AwsStringExts{
+    public static RegionEndpoint GetRegionEndpoint(this string region)
+    {
+        var re = RegionEndpoint.GetBySystemName(region);
+        if (re == null)
+        {
+            throw new InvalidSetupException(
+                $"couldn't find aws region endpoint with system name: {region}"
+            );
+        }
+        return re;
+    }
+}
+
+public interface Config{
+    public Env Env { get; }
+    public ServerConfig Server { get; }
+    public DbConfig Db { get; }
+    public SessionConfig Session { get; }
+    public EmailConfig Email { get; }
+    public StoreConfig Store { get; }
+    
+    private static Config? _inst;
+    public static Config Init()
+        => _inst ??= JsonConvert
+            .DeserializeObject<ConfigImpl>(
+                File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
+            )
+            .NotNull();
 }

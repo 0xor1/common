@@ -48,7 +48,7 @@ public static class NavigationManagerExts
             }
         }
 
-        value = default;
+        value = default!;
         return false;
     }
 }

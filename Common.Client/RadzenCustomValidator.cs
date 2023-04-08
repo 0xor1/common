@@ -10,16 +10,13 @@ namespace Common.Client;
 public class RadzenCustomValidator : ValidatorBase
 {
 
-    [Inject] 
-    private L L { get; set; }
+    [Inject] private L L { get; set; } = default!;
     public override string Text { get; set; } = S.Invalid;
     public Message Message { get; set; } = new(S.Invalid);
 
     private List<Message> SubMessages { get; set; } = new();
 
-    [Parameter]
-    [EditorRequired]
-    public Func<IRadzenFormComponent, ValidationResult> Validator { get; set; }
+    [Parameter] [EditorRequired] public Func<IRadzenFormComponent, ValidationResult> Validator { get; set; } = default!;
     
     protected override bool Validate(IRadzenFormComponent component)
     {

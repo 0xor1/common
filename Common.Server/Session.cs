@@ -2,6 +2,7 @@
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
+using MessagePack;
 using Common.Shared;
 using Common.Shared.I18n;
 using Microsoft.AspNetCore.Http;
@@ -10,23 +11,41 @@ using Newtonsoft.Json;
 
 namespace Common.Server;
 
+[MessagePackObject]
 public record Session
 {
+    [Key(0)]
     public string Id { get; init; }
+
+    [Key(1)]
     public DateTime? StartedOn { get; init; }
+
+    [Key(2)]
     public bool IsAuthed { get; init; }
+
+    [Key(3)]
     public bool RememberMe { get; init; }
+
+    [Key(4)]
     public string Lang { get; init; }
+
+    [Key(5)]
     public string DateFmt { get; init; }
+
+    [Key(6)]
     public string TimeFmt { get; init; }
 
-    [JsonIgnore]
+    [IgnoreMember]
     public bool IsAnon => !IsAuthed;
 }
 
+[MessagePackObject]
 public record SignedSession
 {
+    [Key(0)]
     public byte[] Session { get; init; }
+
+    [Key(1)]
     public byte[] Signature { get; init; }
 }
 
@@ -148,9 +167,8 @@ internal record SessionManager : ISessionManager
         }
 
         // there is a session so lets get it from the cookie
-        var signedSes = JsonConvert
-            .DeserializeObject<SignedSession>(Base64.UrlDecode(c).Utf8String())
-            .NotNull();
+
+        var signedSes = MessagePackSerializer.Deserialize<SignedSession>(Base64.UrlDecode(c));
         var i = 0;
         foreach (var signatureKey in SignatureKeys)
         {
@@ -159,9 +177,7 @@ internal record SessionManager : ISessionManager
                 var sesSig = hmac.ComputeHash(signedSes.Session);
                 if (sesSig.SequenceEqual(signedSes.Signature))
                 {
-                    var ses = JsonConvert
-                        .DeserializeObject<Session>(signedSes.Session.Utf8String())
-                        .NotNull();
+                    var ses = MessagePackSerializer.Deserialize<Session>(signedSes.Session);
                     if (i > 0)
                     {
                         // if it wasnt signed using the latest key, resign the cookie using the latest key
@@ -178,7 +194,7 @@ internal record SessionManager : ISessionManager
     private void SetCookie(HttpContext ctx, Session ses)
     {
         // turn session into bytes
-        var sesBytes = JsonConvert.SerializeObject(ses).Utf8Bytes();
+        var sesBytes = MessagePackSerializer.Serialize(ses);
         // sign the session
         byte[] sesSig;
         using (var hmac = new HMACSHA256(SignatureKeys.First()))
@@ -188,7 +204,7 @@ internal record SessionManager : ISessionManager
         // create the cookie value with the session and signature
         var signedSes = new SignedSession() { Session = sesBytes, Signature = sesSig };
         // get final cookie bytes
-        var cookieBytes = JsonConvert.SerializeObject(signedSes).Utf8Bytes();
+        var cookieBytes = MessagePackSerializer.Serialize(signedSes);
         // create cookie
         ctx.Response.Cookies.Append(
             SessionKey,

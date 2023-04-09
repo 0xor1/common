@@ -79,7 +79,7 @@ internal record SessionManager : ISessionManager
 
     internal SessionManager(IReadOnlyList<string> signatureKeys)
     {
-        SignatureKeys = signatureKeys.Select(x => Base64.UrlDecode(x)).ToArray();
+        SignatureKeys = signatureKeys.Select(x => x.FromB64()).ToArray();
         if (SignatureKeys.Count(x => x.Length != 64) > 0)
         {
             throw new InvalidDataException(
@@ -168,7 +168,7 @@ internal record SessionManager : ISessionManager
 
         // there is a session so lets get it from the cookie
 
-        var signedSes = MessagePackSerializer.Deserialize<SignedSession>(Base64.UrlDecode(c));
+        var signedSes = MessagePackSerializer.Deserialize<SignedSession>(c.FromB64());
         var i = 0;
         foreach (var signatureKey in SignatureKeys)
         {
@@ -208,7 +208,7 @@ internal record SessionManager : ISessionManager
         // create cookie
         ctx.Response.Cookies.Append(
             SessionKey,
-            Base64.UrlEncode(cookieBytes),
+            cookieBytes.ToB64(),
             new CookieOptions()
             {
                 Secure = true,

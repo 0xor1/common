@@ -22,7 +22,7 @@ public static class Crypto
         return random;
     }
 
-    public static string String(int n) => Base64.UrlEncode(Bytes(n));
+    public static string String(int n) => Bytes(n).ToB64();
 
     public static Pwd HashPwd(string pwd)
     {

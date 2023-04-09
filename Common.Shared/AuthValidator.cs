@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using Common.Shared.I18n;
+using Common.Shared;
 
 namespace Common.Shared;
 

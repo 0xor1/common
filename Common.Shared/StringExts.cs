@@ -15,7 +15,7 @@ public static class StringAndBytesExts
         str != null ? Encoding.UTF8.GetBytes(str) : Array.Empty<byte>();
 
     public static string FromUtf8Bytes(this byte[] bs) => Encoding.UTF8.GetString(bs);
-    
+
     public static string ToB64(this byte[] arg)
     {
         string s = Convert.ToBase64String(arg); // Regular base64 encoder

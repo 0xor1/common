@@ -1,5 +1,4 @@
 ﻿using Common.Shared;
-using Common.Shared.I18n;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Radzen;

@@ -2,7 +2,7 @@
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.SimpleEmail;
-using Common.Shared.I18n;
+using Common.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;

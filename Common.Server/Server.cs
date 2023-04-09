@@ -1,4 +1,4 @@
-using Common.Shared.I18n;
+using Common.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -26,9 +26,7 @@ public static class Server
         app.UseHttpsRedirection();
         app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
-        app.UseApiErrorHandling();
         app.UseRouting();
-        app.MapControllers();
         app.MapFallbackToFile("index.html");
         app.Run(config.Server.Listen);
     }

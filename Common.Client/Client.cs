@@ -1,4 +1,4 @@
-using Common.Shared.I18n;
+using Common.Shared;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Components;

@@ -1,43 +1,12 @@
 ﻿using System.Net;
 using System.Security;
 using System.Security.Cryptography;
-using System.Text;
 using MessagePack;
 using Common.Shared;
-using Common.Shared.I18n;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace Common.Server;
-
-[MessagePackObject]
-public record Session
-{
-    [Key(0)]
-    public string Id { get; init; }
-
-    [Key(1)]
-    public DateTime? StartedOn { get; init; }
-
-    [Key(2)]
-    public bool IsAuthed { get; init; }
-
-    [Key(3)]
-    public bool RememberMe { get; init; }
-
-    [Key(4)]
-    public string Lang { get; init; }
-
-    [Key(5)]
-    public string DateFmt { get; init; }
-
-    [Key(6)]
-    public string TimeFmt { get; init; }
-
-    [IgnoreMember]
-    public bool IsAnon => !IsAuthed;
-}
 
 [MessagePackObject]
 public record SignedSession
@@ -250,7 +219,7 @@ public static class HttpContextExts
         string key,
         object? model = null,
         HttpStatusCode code = HttpStatusCode.InternalServerError
-    ) => Throw.If(condition, () => new ApiException(ctx.String(key, model), code));
+    ) => Throw.If(condition, () => new RpcException(ctx.String(key, model), code));
 
     public static void ErrorFromValidationResult(
         this HttpContext ctx,
@@ -260,7 +229,7 @@ public static class HttpContextExts
         Throw.If(
             !res.Valid,
             () =>
-                new ApiException(
+                new RpcException(
                     $"{ctx.String(res.Message.Key, res.Message.Model)}{(res.SubMessages.Any() ? $":\n{string.Join("\n", res.SubMessages.Select(x => ctx.String(x.Key, x.Model)))}" : "")}",
                     code
                 )

@@ -63,7 +63,7 @@ public record StoreConfig
     public RegionEndpoint RegionEndpoint => Region.GetRegionEndpoint();
 }
 
-internal record ConfigImpl : IConfig
+internal record Config : IConfig
 {
     public Env Env { get; init; } = Env.LCL;
     public ServerConfig Server { get; init; }
@@ -100,7 +100,7 @@ public interface IConfig
     private static IConfig? _inst;
     public static IConfig Init() =>
         _inst ??= JsonConvert
-            .DeserializeObject<ConfigImpl>(
+            .DeserializeObject<Config>(
                 File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
             )
             .NotNull();

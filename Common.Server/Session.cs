@@ -36,7 +36,7 @@ public record Session
     public bool IsAnon => !this.IsAuthed;
 
     public Common.Shared.Auth.Session ToApiSession() =>
-        new(Id, IsAuthed, StartedOn, RememberMe, Lang, DateFmt, TimeFmt);
+        new (Id, IsAuthed, StartedOn, RememberMe, Lang, DateFmt, TimeFmt);
 }
 
 [MessagePackObject]

@@ -1,47 +1,20 @@
 using Common.Shared;
 using Common.Shared.Auth;
 using Microsoft.EntityFrameworkCore;
+using ApiSession = Common.Shared.Auth.Session;
 
 namespace Common.Server.Auth;
-
-public class AuthDb : DbContext
-{
-    public AuthDb(DbContextOptions<AuthDb> opts)
-        : base(opts) { }
-
-    public DbSet<Auth> Auths { get; set; } = null!;
-}
-
-public class Auth : Pwd
-{
-    public string Id { get; set; }
-    public string Email { get; set; }
-    public DateTime LastSignedInOn { get; set; } = DateTimeExts.Zero();
-    public DateTime LastSignInAttemptOn { get; set; } = DateTimeExts.Zero();
-    public DateTime ActivatedOn { get; set; } = DateTimeExts.Zero();
-    public string? NewEmail { get; set; }
-    public DateTime VerifyEmailCodeCreatedOn { get; set; } = DateTime.UtcNow;
-    public string VerifyEmailCode { get; set; } = "";
-    public DateTime ResetPwdCodeCreatedOn { get; set; } = DateTimeExts.Zero();
-    public string ResetPwdCode { get; set; } = "";
-    public DateTime LoginCodeCreatedOn { get; set; } = DateTimeExts.Zero();
-    public string LoginCode { get; set; } = "";
-    public bool Use2FA { get; set; } = false;
-    public string Lang { get; set; }
-    public string DateFmt { get; set; }
-    public string TimeFmt { get; set; }
-}
 
 public static class AuthEps
 {
     public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
         new List<IRpcEndpoint>()
         {
-            new RpcEndpoint<Nothing, Common.Shared.Auth.Session>(
+            new RpcEndpoint<Nothing, ApiSession>(
                 AuthApi.GetSession,
                 (ctx, req) => ctx.GetSession().ToApiSession().Task()
             ),
-            new RpcEndpoint<RegisterReq, Nothing>(
+            new RpcEndpoint<Register, Nothing>(
                 AuthApi.Register,
                 async (ctx, req) =>
                 {
@@ -49,7 +22,7 @@ public static class AuthEps
                     var ses = ctx.GetSession();
                     ctx.ErrorIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
                     // !!! ToLower all emails in all Auth_ api endpoints
-                    var email = req.Email.ToLower();
+                    req = req with {Email = req.Email.ToLower()};
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
                     ctx.ErrorFromValidationResult(AuthValidator.Pwd(req.Pwd));
                     var db = ctx.GetRequiredService<AuthDb>();
@@ -58,7 +31,7 @@ public static class AuthEps
                     try
                     {
                         var existing = await db.Auths.SingleOrDefaultAsync(
-                            x => x.Email.Equals(req.Email) || x.NewEmail.Equals(req.Email)
+                            x => x.Email.Equals(req.Email) || (x.NewEmail != null && x.NewEmail.Equals(req.Email))
                         );
                         var newCreated = existing == null;
                         if (existing == null)
@@ -124,6 +97,66 @@ public static class AuthEps
 
                     return new Nothing();
                 }
-            )
+            ),
+            new RpcEndpoint<VerifyEmail, Nothing>(AuthApi.VerifyEmail, async (ctx, req) =>
+            {
+                // !!! ToLower all emails in all Auth_ api endpoints
+                req = req with { Email = req.Email.ToLower() };
+                ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
+                var db = ctx.GetRequiredService<AuthDb>();
+                // start db tx
+                await using var tx = await db.Database.BeginTransactionAsync();
+                try
+                {
+                    var auth = await db.Auths.SingleOrDefaultAsync(
+                        x => x.Email.Equals(req.Email) || (x.NewEmail != null && x.NewEmail.Equals(req.Email))
+                    );
+                    ctx.ErrorIf(auth == null, S.NoMatchingRecord);
+                    ctx.ErrorIf(auth.NotNull().VerifyEmailCode != req.Code, S.AuthInvalidEmailCode);
+                    if (!auth.NewEmail.IsNullOrEmpty() && auth.NewEmail == req.Email)
+                    {
+                        // verifying new email
+                        auth.Email = auth.NewEmail;
+                        auth.NewEmail = string.Empty;
+                    }
+                    else
+                    {
+                        // first account activation
+                        auth.ActivatedOn = DateTime.UtcNow;
+                    }
+
+                    auth.VerifyEmailCodeCreatedOn = DateTimeExts.Zero();
+                    auth.VerifyEmailCode = string.Empty;
+                    await db.SaveChangesAsync();
+                    await tx.CommitAsync();
+                }
+                catch
+                {
+                    await tx.RollbackAsync();
+                    throw;
+                }
+
+                return new Nothing();
+            }),
+            new RpcEndpoint<SendResetPwdEmail, Nothing>(AuthApi.SendResetPwdEmail, async (ctx, req) =>
+            {
+                // TODO
+            }),
+            new RpcEndpoint<ResetPwd, Nothing>(AuthApi.ResetPwd, async (ctx, req) =>
+            {
+                // TODO
+            }),
+            new RpcEndpoint<SignIn, ApiSession>(AuthApi.SignIn, async (ctx, req) =>
+            {
+                // TODO
+            }),
+            new RpcEndpoint<Nothing, ApiSession>(AuthApi.SignOut, async (ctx, req) =>
+            {
+                // TODO
+            }),
+            new RpcEndpoint<SetL10n, ApiSession>(AuthApi.SetL10n, async (ctx, req) =>
+            {
+                // TODO
+            })
         };
 }

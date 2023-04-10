@@ -10,7 +10,7 @@ public static class Server
     public static void Run<TDbCtx>(string[] args, S s)
         where TDbCtx : DbContext
     {
-        var config = Config.Init();
+        var config = IConfig.Init();
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddApiServices<TDbCtx>(config, s);
 

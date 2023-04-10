@@ -24,6 +24,7 @@
         <PackageReference Include="Humanizer.Core" Version="2.14.1" />
         <PackageReference Include="MessagePack" Version="2.4.59" />
         <PackageReference Include="MessagePack.Annotations" Version="2.4.59" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="Ulid" Version="1.2.6" />
     </ItemGroup>
 

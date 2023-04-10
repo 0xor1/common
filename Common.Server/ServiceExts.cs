@@ -11,7 +11,7 @@ namespace Common.Server;
 
 public static class ServiceExts
 {
-    public static void AddApiServices<TDbCtx>(this IServiceCollection services, Config config, S s)
+    public static void AddApiServices<TDbCtx>(this IServiceCollection services, IConfig config, S s)
         where TDbCtx : DbContext
     {
         services.AddSingleton(s);

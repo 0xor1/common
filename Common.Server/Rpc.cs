@@ -21,8 +21,10 @@ public interface IRpcEndpoint
     Task Execute(HttpContext ctx);
 }
 
-public record RpcEndpoint<TArg, TRes>(Func<HttpContext, TArg, Task<TRes>> Fn) : IRpcEndpoint
-    where TArg : IRpcReq
+public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<HttpContext, TArg, Task<TRes>> Fn)
+    : IRpcEndpoint
+    where TArg : class
+    where TRes : class
 {
     public async Task Execute(HttpContext ctx)
     {
@@ -59,8 +61,8 @@ public record RpcEndpoint<TArg, TRes>(Func<HttpContext, TArg, Task<TRes>> Fn) : 
 
         if (Rpc.HasStream<TArg>())
         {
-            var sub = (arg as DataStream).NotNull();
-            sub.Data = ctx.Request.Body;
+            var sub = (arg as IStream).NotNull();
+            sub.Stream = ctx.Request.Body;
         }
 
         return arg;
@@ -71,7 +73,7 @@ public record RpcEndpoint<TArg, TRes>(Func<HttpContext, TArg, Task<TRes>> Fn) : 
         if (Rpc.HasStream<TRes>())
         {
             ctx.Response.Headers.Add(Rpc.DataHeader, Rpc.Serialize(res).ToB64());
-            ctx.Response.Body = (res as DataStream).NotNull().Data;
+            ctx.Response.Body = (res as IStream).NotNull().Stream;
         }
         else
         {
@@ -94,7 +96,7 @@ public record RpcEndpoint<TArg, TRes>(Func<HttpContext, TArg, Task<TRes>> Fn) : 
         else
         {
             ctx.GetRequiredService<ILogger<RpcEndpoint<TArg, TRes>>>()
-                .LogError(ex, $"Error thrown by {TArg.Path}");
+                .LogError(ex, $"Error thrown by {Def.Path}");
         }
         ctx.Response.StatusCode = code;
         await ctx.Response.WriteAsync(message);

@@ -41,14 +41,26 @@ public interface S
 
     // common string keys used in shared code.
     public const string Invalid = "invalid";
-    public const string InvalidEmail = "invalid_email";
-    public const string InvalidPwd = "invalid_pwd";
-    public const string LessThan8Chars = "less_than_8_chars";
-    public const string NoLowerCaseChar = "no_lower_case_char";
-    public const string NoUpperCaseChar = "no_upper_case_char";
-    public const string NoDigit = "no_digit";
-    public const string NoSpecialChar = "no_special_char";
     public const string UnexpectedError = "unexpected_error";
+    public const string NoMatchingRecord = "no_matching_record";
+    public const string AuthInvalidEmail = "auth_invalid_email";
+    public const string AuthInvalidPwd = "auth_invalid_pwd";
+    public const string AuthLessThan8Chars = "auth_less_than_8_chars";
+    public const string AuthNoLowerCaseChar = "auth_no_lower_case_char";
+    public const string AuthNoUpperCaseChar = "auth_no_upper_case_char";
+    public const string AuthNoDigit = "auth_no_digit";
+    public const string AuthNoSpecialChar = "auth_no_special_char";
+    public const string AuthInvalidEmailCode = "auth_invalid_email_code";
+    public const string AuthInvalidResetPwdCode = "auth_invalid_reset_pwd_code";
+    public const string AuthAccountNotVerified = "auth_account_not_verified";
+    public const string AuthAlreadyAuthenticated = "auth_already_authenticated";
+    public const string AuthAttemptRateLimit = "auth_attempt_rate_limit";
+    public const string AuthConfirmEmailSubject = "auth_confirm_email_subject";
+    public const string AuthConfirmEmailHtml = "auth_confirm_email_html";
+    public const string AuthConfirmEmailText = "auth_confirm_email_text";
+    public const string AuthResetPwdSubject = "auth_reset_pwd_subject";
+    public const string AuthResetPwdHtml = "auth_reset_pwd_html";
+    public const string AuthResetPwdText = "auth_reset_pwd_text";
     public static readonly FluidParser Parser = new();
 
     private static S? _inst;

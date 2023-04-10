@@ -1,33 +1,35 @@
-using System.Net;
-using MessagePack;
+using Newtonsoft.Json;
 
 namespace Common.Shared;
-
-public interface IRpcReq
-{
-    public static abstract string Path { get; }
-}
 
 public static class Rpc
 {
     public const string QueryParam = "arg";
     public const string DataHeader = "X-Data";
 
-    public static byte[] Serialize<T>(T v) => MessagePackSerializer.Serialize(v);
+    public static byte[] Serialize(object? v) => JsonConvert.SerializeObject(v).ToUtf8Bytes();
 
-    public static T Deserialize<T>(byte[] bs) => MessagePackSerializer.Deserialize<T>(bs);
+    public static T Deserialize<T>(byte[] bs)
+        where T : class => JsonConvert.DeserializeObject<T>(bs.FromUtf8Bytes()).NotNull();
 
-    public static bool HasStream<T>() => typeof(T).IsSubclassOf(typeof(DataStream));
+    public static bool HasStream<T>() => typeof(IStream).IsAssignableFrom(typeof(T));
+}
 
-    public static async Task<TRes> Do<TArg, TRes>(HttpClient client, TArg arg)
-        where TArg : class, IRpcReq, new()
-        where TRes : class, new()
+public record Rpc<TArg, TRes>(string Path)
+    where TArg : class
+    where TRes : class
+{
+    private static HttpClient? _client;
+
+    public void Init(HttpClient client) => _client ??= client;
+
+    public async Task<TRes> Do(TArg arg)
     {
-        var argsBs = Serialize(arg);
-        using var req = new HttpRequestMessage(HttpMethod.Post, TArg.Path);
-        if (HasStream<TArg>())
+        var argsBs = Rpc.Serialize(arg);
+        using var req = new HttpRequestMessage(HttpMethod.Post, Path);
+        if (Rpc.HasStream<TArg>())
         {
-            req.Content = new StreamContent((arg as DataStream).NotNull().Data);
+            req.Content = new StreamContent((arg as IStream).NotNull().Stream);
             req.Headers.Add(Rpc.DataHeader, argsBs.ToB64());
         }
         else
@@ -35,29 +37,24 @@ public static class Rpc
             req.Content = new ByteArrayContent(argsBs);
         }
 
-        using var resp = await client.SendAsync(req);
+        using var resp = await _client.NotNull().SendAsync(req);
 
-        if (!HasStream<TRes>())
+        if (!Rpc.HasStream<TRes>())
         {
-            return Deserialize<TRes>(await resp.Content.ReadAsByteArrayAsync()).NotNull();
+            return Rpc.Deserialize<TRes>(await resp.Content.ReadAsByteArrayAsync()).NotNull();
         }
 
         var resBs = resp.Headers.GetValues(Rpc.DataHeader).First().FromB64();
-        var res = Deserialize<TRes>(resBs).NotNull();
-        var sub = (res as DataStream).NotNull();
-        sub.Data = await resp.Content.ReadAsStreamAsync();
+        var res = Rpc.Deserialize<TRes>(resBs).NotNull();
+        var sub = (res as IStream).NotNull();
+        sub.Stream = await resp.Content.ReadAsStreamAsync();
         return res;
     }
 }
 
-public record DataStream
+public interface IStream
 {
-    [IgnoreMember]
-    public Stream Data { get; set; }
+    public Stream Stream { get; set; }
 }
 
-[MessagePackObject]
 public record Nothing;
-
-[MessagePackObject]
-public record OnlyDataStream : DataStream;

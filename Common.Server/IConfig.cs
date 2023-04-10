@@ -63,7 +63,7 @@ public record StoreConfig
     public RegionEndpoint RegionEndpoint => Region.GetRegionEndpoint();
 }
 
-internal record ConfigImpl : Config
+internal record ConfigImpl : IConfig
 {
     public Env Env { get; init; } = Env.LCL;
     public ServerConfig Server { get; init; }
@@ -88,7 +88,7 @@ public static class AwsStringExts
     }
 }
 
-public interface Config
+public interface IConfig
 {
     public Env Env { get; }
     public ServerConfig Server { get; }
@@ -97,8 +97,8 @@ public interface Config
     public EmailConfig Email { get; }
     public StoreConfig Store { get; }
 
-    private static Config? _inst;
-    public static Config Init() =>
+    private static IConfig? _inst;
+    public static IConfig Init() =>
         _inst ??= JsonConvert
             .DeserializeObject<ConfigImpl>(
                 File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))

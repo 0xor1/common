@@ -26,7 +26,7 @@ public static partial class AuthValidator
 {
     public static ValidationResult Email(string str)
     {
-        var res = new ValidationResult() { Message = new(S.InvalidEmail) };
+        var res = new ValidationResult() { Message = new(S.AuthInvalidEmail) };
         if (!EmailRegex().IsMatch(str))
         {
             res.Valid = false;
@@ -36,31 +36,31 @@ public static partial class AuthValidator
 
     public static ValidationResult Pwd(string str)
     {
-        var res = new ValidationResult() { Message = new(S.InvalidPwd) };
+        var res = new ValidationResult() { Message = new(S.AuthInvalidPwd) };
         if (!EightOrMoreCharsRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(S.LessThan8Chars));
+            res.SubMessages.Add(new(S.AuthLessThan8Chars));
         }
         if (!LowerCaseRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(S.NoLowerCaseChar));
+            res.SubMessages.Add(new(S.AuthNoLowerCaseChar));
         }
         if (!UpperCaseRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(S.NoUpperCaseChar));
+            res.SubMessages.Add(new(S.AuthNoUpperCaseChar));
         }
         if (!DigitRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(S.NoDigit));
+            res.SubMessages.Add(new(S.AuthNoDigit));
         }
         if (!SpecialCharRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(S.NoSpecialChar));
+            res.SubMessages.Add(new(S.AuthNoSpecialChar));
         }
         return res;
     }

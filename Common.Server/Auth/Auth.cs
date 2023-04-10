@@ -1,15 +1,6 @@
 using Common.Shared;
-using Microsoft.EntityFrameworkCore;
 
 namespace Common.Server.Auth;
-
-public class AuthDb : DbContext
-{
-    public AuthDb(DbContextOptions<AuthDb> opts)
-        : base(opts) { }
-
-    public DbSet<Auth> Auths { get; set; } = null!;
-}
 
 public class Auth : Pwd
 {

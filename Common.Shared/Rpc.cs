@@ -24,21 +24,33 @@ public static class Rpc
     }
 }
 
-public record Rpc<TArg, TRes>(string Path)
+public record RpcBase
+{
+    protected static string? _baseHref;
+    protected static HttpClient? _client;
+
+    public static void Init(string baseHref, HttpClient client)
+    {
+        _baseHref ??= baseHref.TrimEnd('/');
+        _client ??= client;
+    }
+}
+
+public record Rpc<TArg, TRes> : RpcBase
     where TArg : class
     where TRes : class
 {
-    private static HttpClient? _client;
-
-    public void Init(HttpClient client)
+    public Rpc(string path)
     {
-        _client ??= client;
+        Path = path.ToLower();
     }
+
+    public string Path { get; }
 
     public async Task<TRes> Do(TArg arg)
     {
         var argsBs = Rpc.Serialize(arg);
-        using var req = new HttpRequestMessage(HttpMethod.Post, Path);
+        using var req = new HttpRequestMessage(HttpMethod.Post, _baseHref + "/api" + Path);
         if (Rpc.HasStream<TArg>())
         {
             req.Content = new StreamContent((arg as IStream).NotNull().Stream);
@@ -52,7 +64,10 @@ public record Rpc<TArg, TRes>(string Path)
         using var resp = await _client.NotNull().SendAsync(req);
 
         if (!Rpc.HasStream<TRes>())
+        {
+            var str = await resp.Content.ReadAsStringAsync();
             return Rpc.Deserialize<TRes>(await resp.Content.ReadAsByteArrayAsync()).NotNull();
+        }
 
         var resBs = resp.Headers.GetValues(Rpc.DataHeader).First().FromB64();
         var res = Rpc.Deserialize<TRes>(resBs).NotNull();

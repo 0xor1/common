@@ -1,3 +1,4 @@
+using Common.Server.Auth;
 using Common.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +8,8 @@ namespace Common.Server;
 
 public static class Server
 {
-    public static void Run<TDbCtx>(string[] args, S s)
-        where TDbCtx : DbContext
+    public static void Run<TDbCtx>(string[] args, S s, IReadOnlyList<IRpcEndpoint> eps)
+        where TDbCtx : DbContext, IAuthDb
     {
         var config = IConfig.Init();
         var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +23,7 @@ public static class Server
         app.UseHttpsRedirection();
         app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
-        app.UseRouting();
+        app.UseRpcEndpoints(eps);
         app.MapFallbackToFile("index.html");
         app.Run(config.Server.Listen);
     }

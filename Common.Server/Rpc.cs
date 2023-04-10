@@ -1,5 +1,6 @@
 using System.Net;
 using Common.Shared;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -18,6 +19,7 @@ public class RpcException : Exception
 
 public interface IRpcEndpoint
 {
+    string Path { get; }
     Task Execute(HttpContext ctx);
 }
 
@@ -26,6 +28,8 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<HttpContext, TAr
     where TArg : class
     where TRes : class
 {
+    public string Path => Def.Path;
+
     public async Task Execute(HttpContext ctx)
     {
         try
@@ -101,5 +105,33 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<HttpContext, TAr
 
         ctx.Response.StatusCode = code;
         await ctx.Response.WriteAsync(message);
+    }
+}
+
+public static class RpcExts
+{
+    public static IApplicationBuilder UseRpcEndpoints(
+        this IApplicationBuilder app,
+        IReadOnlyList<IRpcEndpoint> eps
+    )
+    {
+        // validate all endpoints start /api/ and there are no duplicates
+        var dupedPaths = eps.Select(x => x.Path).GetDuplicates().ToList();
+        Throw.SetupIf(
+            dupedPaths.Any(),
+            $"Some rpc endpoints have duplicate paths {string.Join(",", dupedPaths)}"
+        );
+        var epsDic = eps.ToDictionary(x => x.Path).AsReadOnly();
+        app.Map(
+            "/api",
+            app =>
+                app.Run(
+                    async (ctx) =>
+                    {
+                        epsDic[ctx.Request.Path.Value.ToLower()].Execute(ctx);
+                    }
+                )
+        );
+        return app;
     }
 }

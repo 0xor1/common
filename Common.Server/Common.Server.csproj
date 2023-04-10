@@ -16,22 +16,22 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AWSSDK.S3" Version="3.7.103.31"/>
-        <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.100.93"/>
+        <PackageReference Include="AWSSDK.S3" Version="3.7.103.31" />
+        <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.100.93" />
         <PackageReference Include="CSharpier.MsBuild" Version="0.22.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.2"/>
-        <PackageReference Include="Humanizer.Core" Version="2.14.1"/>
-        <PackageReference Include="MessagePack" Version="2.4.59"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.2" />
+        <PackageReference Include="Humanizer.Core" Version="2.14.1" />
+        <PackageReference Include="MessagePack" Version="2.4.59" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="..\README.md" Pack="true" PackagePath="\"/>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Common.Shared\Common.Shared.csproj"/>
+        <ProjectReference Include="..\Common.Shared\Common.Shared.csproj" />
     </ItemGroup>
 </Project>

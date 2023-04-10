@@ -1,6 +1,7 @@
 ﻿using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.SimpleEmail;
+using Common.Server.Auth;
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,8 +12,9 @@ namespace Common.Server;
 public static class ServiceExts
 {
     public static void AddApiServices<TDbCtx>(this IServiceCollection services, IConfig config, S s)
-        where TDbCtx : DbContext
+        where TDbCtx : DbContext, IAuthDb
     {
+        services.AddSingleton(config);
         services.AddSingleton(s);
         services.AddSingleton(ISessionManager.Init(config.Session.SignatureKeys));
         if (config.Env == Env.LCL)
@@ -39,6 +41,7 @@ public static class ServiceExts
                 )
         );
         services.AddScoped<IStoreClient, S3StoreClient>();
+
         services.AddDbContext<TDbCtx>(dbContextOptions =>
         {
             var cnnStrBldr = new MySqlConnectionStringBuilder(config.Db.Connection);

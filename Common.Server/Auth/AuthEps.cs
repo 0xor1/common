@@ -2,23 +2,34 @@ using Common.Shared;
 using Common.Shared.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using ApiSession = Common.Shared.Auth.Session;
 
 namespace Common.Server.Auth;
 
-public static class AuthEps
+public interface IAuthDb
 {
+    DatabaseFacade Database { get; }
+    DbSet<Auth> Auths { get; }
+
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+}
+
+public static class AuthEps<TDbCtx>
+    where TDbCtx : IAuthDb
+{
+    private static readonly IAuthApi api = IAuthApi.Init();
     private const int AuthAttemptsRateLimit = 5;
 
     public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
         new List<IRpcEndpoint>
         {
             new RpcEndpoint<Nothing, ApiSession>(
-                AuthApi.GetSession,
+                api.GetSession,
                 (ctx, req) => ctx.GetSession().ToApiSession().Task()
             ),
             new RpcEndpoint<Register, Nothing>(
-                AuthApi.Register,
+                api.Register,
                 async (ctx, req) =>
                 {
                     // basic validation
@@ -31,7 +42,7 @@ public static class AuthEps
                     };
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
                     ctx.ErrorFromValidationResult(AuthValidator.Pwd(req.Pwd));
-                    var db = ctx.Get<AuthDb>();
+                    var db = ctx.Get<TDbCtx>();
                     // start db tx
                     await using var tx = await db.Database.BeginTransactionAsync();
                     try
@@ -108,7 +119,7 @@ public static class AuthEps
                 }
             ),
             new RpcEndpoint<VerifyEmail, Nothing>(
-                AuthApi.VerifyEmail,
+                api.VerifyEmail,
                 async (ctx, req) =>
                 {
                     // !!! ToLower all emails in all Auth_ api endpoints
@@ -117,7 +128,7 @@ public static class AuthEps
                         Email = req.Email.ToLower()
                     };
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
-                    var db = ctx.Get<AuthDb>();
+                    var db = ctx.Get<TDbCtx>();
                     // start db tx
                     await using var tx = await db.Database.BeginTransactionAsync();
                     try
@@ -159,7 +170,7 @@ public static class AuthEps
                 }
             ),
             new RpcEndpoint<SendResetPwdEmail, Nothing>(
-                AuthApi.SendResetPwdEmail,
+                api.SendResetPwdEmail,
                 async (ctx, req) =>
                 {
                     // basic validation
@@ -168,7 +179,7 @@ public static class AuthEps
                     // !!! ToLower all emails in all Auth_ api endpoints
                     req = new SendResetPwdEmail(req.Email.ToLower());
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
-                    var db = ctx.Get<AuthDb>();
+                    var db = ctx.Get<TDbCtx>();
                     // start db tx
                     await using var tx = await db.Database.BeginTransactionAsync();
                     try
@@ -212,7 +223,7 @@ public static class AuthEps
                 }
             ),
             new RpcEndpoint<ResetPwd, Nothing>(
-                AuthApi.ResetPwd,
+                api.ResetPwd,
                 async (ctx, req) =>
                 {
                     // !!! ToLower all emails in all Auth_ api endpoints
@@ -222,7 +233,7 @@ public static class AuthEps
                     };
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
                     ctx.ErrorFromValidationResult(AuthValidator.Pwd(req.NewPwd));
-                    var db = ctx.Get<AuthDb>();
+                    var db = ctx.Get<TDbCtx>();
                     // start db tx
                     await using var tx = await db.Database.BeginTransactionAsync();
                     try
@@ -255,7 +266,7 @@ public static class AuthEps
                 }
             ),
             new RpcEndpoint<SignIn, ApiSession>(
-                AuthApi.SignIn,
+                api.SignIn,
                 async (ctx, req) =>
                 {
                     var ses = ctx.GetSession();
@@ -266,7 +277,7 @@ public static class AuthEps
                         Email = req.Email.ToLower()
                     };
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
-                    var db = ctx.Get<AuthDb>();
+                    var db = ctx.Get<TDbCtx>();
                     // start db tx
                     await using var tx = await db.Database.BeginTransactionAsync();
                     var auth = await db.Auths.SingleOrDefaultAsync(x => x.Email.Equals(req.Email));
@@ -295,7 +306,7 @@ public static class AuthEps
                 }
             ),
             new RpcEndpoint<Nothing, ApiSession>(
-                AuthApi.SignOut,
+                api.SignOut,
                 (ctx, req) =>
                 {
                     // basic validation
@@ -306,7 +317,7 @@ public static class AuthEps
                 }
             ),
             new RpcEndpoint<SetL10n, ApiSession>(
-                AuthApi.SetL10n,
+                api.SetL10n,
                 async (ctx, req) =>
                 {
                     var ses = ctx.GetSession();
@@ -328,7 +339,7 @@ public static class AuthEps
                     );
                     if (ses.IsAuthed)
                     {
-                        var db = ctx.Get<AuthDb>();
+                        var db = ctx.Get<TDbCtx>();
                         await using var tx = await db.Database.BeginTransactionAsync();
                         var auth = await db.Auths.SingleOrDefaultAsync(x => x.Id.Equals(ses.Id));
                         ctx.ErrorIf(auth == null, S.NoMatchingRecord);

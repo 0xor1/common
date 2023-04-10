@@ -300,7 +300,8 @@ public static class AuthEps
                 {
                     // basic validation
                     var ses = ctx.GetSession();
-                    if (ses.IsAuthed) ses = ctx.ClearSession();
+                    if (ses.IsAuthed)
+                        ses = ctx.ClearSession();
                     return ses.ToApiSession().Task();
                 }
             ),

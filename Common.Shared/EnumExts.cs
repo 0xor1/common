@@ -4,5 +4,8 @@ namespace Common.Shared;
 
 public static class EnumExts
 {
-    public static Key ToKey(this Enum input) => Key.Force(input.Humanize(LetterCasing.Title));
+    public static Key ToKey(this Enum input)
+    {
+        return Key.Force(input.Humanize(LetterCasing.Title));
+    }
 }

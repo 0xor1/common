@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Security;
 using System.Security.Cryptography;
-using MessagePack;
 using Common.Shared;
+using MessagePack;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,10 +33,12 @@ public record Session
     public string TimeFmt { get; init; }
 
     [IgnoreMember]
-    public bool IsAnon => !this.IsAuthed;
+    public bool IsAnon => !IsAuthed;
 
-    public Common.Shared.Auth.Session ToApiSession() =>
-        new(Id, IsAuthed, StartedOn, RememberMe, Lang, DateFmt, TimeFmt);
+    public Shared.Auth.Session ToApiSession()
+    {
+        return new(Id, IsAuthed, StartedOn, RememberMe, Lang, DateFmt, TimeFmt);
+    }
 }
 
 [MessagePackObject]
@@ -51,6 +53,7 @@ public record SignedSession
 
 public interface ISessionManager
 {
+    private static ISessionManager? _inst;
     internal Session Get(HttpContext ctx);
 
     internal Session Create(
@@ -65,7 +68,6 @@ public interface ISessionManager
 
     internal Session Clear(HttpContext ctx);
 
-    private static ISessionManager? _inst;
     public static ISessionManager Init(IReadOnlyList<string> signatureKeys)
     {
         return _inst ??= new SessionManager(signatureKeys);
@@ -81,18 +83,14 @@ internal record SessionManager : ISessionManager
     {
         SignatureKeys = signatureKeys.Select(x => x.FromB64()).ToArray();
         if (SignatureKeys.Count(x => x.Length != 64) > 0)
-        {
             throw new InvalidDataException(
                 "config: all session signature keys must be 64 bytes long"
             );
-        }
 
         if (SignatureKeys.Length == 0)
-        {
             throw new InvalidDataException(
                 "config: there must be at least 1 session signature key"
             );
-        }
     }
 
     public Session Get(HttpContext ctx)
@@ -107,6 +105,7 @@ internal record SessionManager : ISessionManager
         {
             ses = (Session)ctx.Items[SessionKey].NotNull();
         }
+
         return ses;
     }
 
@@ -120,7 +119,7 @@ internal record SessionManager : ISessionManager
         string timeFmt
     )
     {
-        var ses = new Session()
+        var ses = new Session
         {
             Id = userId,
             StartedOn = DateTime.UtcNow,
@@ -160,18 +159,15 @@ internal record SessionManager : ISessionManager
     {
         var c = ctx.Request.Cookies[SessionKey];
         if (c.IsNull())
-        {
             // there is no session set so use sign out to create a
             // new anon session
             return _Clear(ctx);
-        }
 
         // there is a session so lets get it from the cookie
 
         var signedSes = MessagePackSerializer.Deserialize<SignedSession>(c.FromB64());
         var i = 0;
         foreach (var signatureKey in SignatureKeys)
-        {
             using (var hmac = new HMACSHA256(signatureKey))
             {
                 var sesSig = hmac.ComputeHash(signedSes.Session);
@@ -179,15 +175,14 @@ internal record SessionManager : ISessionManager
                 {
                     var ses = MessagePackSerializer.Deserialize<Session>(signedSes.Session);
                     if (i > 0)
-                    {
                         // if it wasnt signed using the latest key, resign the cookie using the latest key
                         SetCookie(ctx, ses);
-                    }
                     return ses;
                 }
+
                 i++;
             }
-        }
+
         throw new SecurityException("Session signature verification failed");
     }
 
@@ -201,15 +196,16 @@ internal record SessionManager : ISessionManager
         {
             sesSig = hmac.ComputeHash(sesBytes);
         }
+
         // create the cookie value with the session and signature
-        var signedSes = new SignedSession() { Session = sesBytes, Signature = sesSig };
+        var signedSes = new SignedSession { Session = sesBytes, Signature = sesSig };
         // get final cookie bytes
         var cookieBytes = MessagePackSerializer.Serialize(signedSes);
         // create cookie
         ctx.Response.Cookies.Append(
             SessionKey,
             cookieBytes.ToB64(),
-            new CookieOptions()
+            new CookieOptions
             {
                 Secure = true,
                 HttpOnly = true,
@@ -225,12 +221,20 @@ public static class HttpContextExts
 {
     // these require that ISessionManager was added to service container
     public static T Get<T>(this HttpContext ctx)
-        where T : notnull => ctx.RequestServices.GetRequiredService<T>();
+        where T : notnull
+    {
+        return ctx.RequestServices.GetRequiredService<T>();
+    }
 
-    private static ISessionManager GetSessionManager(this HttpContext ctx) =>
-        ctx.Get<ISessionManager>();
+    private static ISessionManager GetSessionManager(this HttpContext ctx)
+    {
+        return ctx.Get<ISessionManager>();
+    }
 
-    public static Session GetSession(this HttpContext ctx) => ctx.GetSessionManager().Get(ctx);
+    public static Session GetSession(this HttpContext ctx)
+    {
+        return ctx.GetSessionManager().Get(ctx);
+    }
 
     public static Session CreateSession(
         this HttpContext ctx,
@@ -240,9 +244,16 @@ public static class HttpContextExts
         string lang,
         string dateFmt,
         string timeFmt
-    ) => ctx.GetSessionManager().Create(ctx, userId, isAuthed, rememberMe, lang, dateFmt, timeFmt);
+    )
+    {
+        return ctx.GetSessionManager()
+            .Create(ctx, userId, isAuthed, rememberMe, lang, dateFmt, timeFmt);
+    }
 
-    public static Session ClearSession(this HttpContext ctx) => ctx.GetSessionManager().Clear(ctx);
+    public static Session ClearSession(this HttpContext ctx)
+    {
+        return ctx.GetSessionManager().Clear(ctx);
+    }
 
     public static void ErrorIf(
         this HttpContext ctx,
@@ -250,13 +261,17 @@ public static class HttpContextExts
         string key,
         object? model = null,
         HttpStatusCode code = HttpStatusCode.InternalServerError
-    ) => Throw.If(condition, () => new RpcException(ctx.String(key, model), code));
+    )
+    {
+        Throw.If(condition, () => new RpcException(ctx.String(key, model), code));
+    }
 
     public static void ErrorFromValidationResult(
         this HttpContext ctx,
         ValidationResult res,
         HttpStatusCode code = HttpStatusCode.InternalServerError
-    ) =>
+    )
+    {
         Throw.If(
             !res.Valid,
             () =>
@@ -265,7 +280,10 @@ public static class HttpContextExts
                     code
                 )
         );
+    }
 
-    public static string String(this HttpContext ctx, string key, object? model = null) =>
-        ctx.Get<S>().GetOrAddress(ctx.GetSession().Lang, key, model);
+    public static string String(this HttpContext ctx, string key, object? model = null)
+    {
+        return ctx.Get<S>().GetOrAddress(ctx.GetSession().Lang, key, model);
+    }
 }

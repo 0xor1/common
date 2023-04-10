@@ -8,13 +8,16 @@ public static class Crypto
 {
     public static byte[] Bytes(int n)
     {
-        byte[] random = new Byte[n];
+        var random = new byte[n];
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(random);
         return random;
     }
 
-    public static string String(int n) => Bytes(n).ToB64();
+    public static string String(int n)
+    {
+        return Bytes(n).ToB64();
+    }
 
     public static Pwd HashPwd(string pwd)
     {
@@ -29,12 +32,12 @@ public static class Crypto
 
     private static Pwd HashPwdV1(string pwd, byte[] salt, int iters, int hashLen)
     {
-        return new Pwd()
+        return new Pwd
         {
             PwdVersion = 1,
             PwdSalt = salt,
             PwdHash = KeyDerivation.Pbkdf2(pwd, salt, KeyDerivationPrf.HMACSHA512, iters, hashLen),
-            PwdIters = iters,
+            PwdIters = iters
         };
     }
 }

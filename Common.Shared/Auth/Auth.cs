@@ -1,4 +1,3 @@
-using MessagePack;
 using Newtonsoft.Json;
 
 namespace Common.Shared.Auth;
@@ -8,8 +7,10 @@ public static class AuthApi
     public static readonly Rpc<Nothing, Session> GetSession = new("/auth/get_session");
     public static Rpc<Register, Nothing> Register { get; } = new("/auth/register");
     public static Rpc<VerifyEmail, Nothing> VerifyEmail { get; } = new("/auth/verify_email");
+
     public static Rpc<SendResetPwdEmail, Nothing> SendResetPwdEmail { get; } =
         new("/auth/send_reset_pwd_email");
+
     public static Rpc<ResetPwd, Nothing> ResetPwd { get; } = new("/auth/reset_pwd");
     public static Rpc<SignIn, Session> SignIn { get; } = new("/auth/sign_in");
     public static Rpc<Nothing, Session> SignOut { get; } = new("/auth/sign_out");

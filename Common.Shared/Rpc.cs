@@ -7,12 +7,21 @@ public static class Rpc
     public const string QueryParam = "arg";
     public const string DataHeader = "X-Data";
 
-    public static byte[] Serialize(object? v) => JsonConvert.SerializeObject(v).ToUtf8Bytes();
+    public static byte[] Serialize(object? v)
+    {
+        return JsonConvert.SerializeObject(v).ToUtf8Bytes();
+    }
 
     public static T Deserialize<T>(byte[] bs)
-        where T : class => JsonConvert.DeserializeObject<T>(bs.FromUtf8Bytes()).NotNull();
+        where T : class
+    {
+        return JsonConvert.DeserializeObject<T>(bs.FromUtf8Bytes()).NotNull();
+    }
 
-    public static bool HasStream<T>() => typeof(IStream).IsAssignableFrom(typeof(T));
+    public static bool HasStream<T>()
+    {
+        return typeof(IStream).IsAssignableFrom(typeof(T));
+    }
 }
 
 public record Rpc<TArg, TRes>(string Path)
@@ -21,7 +30,10 @@ public record Rpc<TArg, TRes>(string Path)
 {
     private static HttpClient? _client;
 
-    public void Init(HttpClient client) => _client ??= client;
+    public void Init(HttpClient client)
+    {
+        _client ??= client;
+    }
 
     public async Task<TRes> Do(TArg arg)
     {
@@ -40,9 +52,7 @@ public record Rpc<TArg, TRes>(string Path)
         using var resp = await _client.NotNull().SendAsync(req);
 
         if (!Rpc.HasStream<TRes>())
-        {
             return Rpc.Deserialize<TRes>(await resp.Content.ReadAsByteArrayAsync()).NotNull();
-        }
 
         var resBs = resp.Headers.GetValues(Rpc.DataHeader).First().FromB64();
         var res = Rpc.Deserialize<TRes>(resBs).NotNull();

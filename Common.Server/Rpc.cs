@@ -7,13 +7,13 @@ namespace Common.Server;
 
 public class RpcException : Exception
 {
-    public HttpStatusCode Code { get; }
-
     public RpcException(string message, HttpStatusCode code = HttpStatusCode.InternalServerError)
         : base(message)
     {
         Code = code;
     }
+
+    public HttpStatusCode Code { get; }
 }
 
 public interface IRpcEndpoint
@@ -57,6 +57,7 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<HttpContext, TAr
             await ctx.Request.Body.CopyToAsync(ms);
             argBs = ms.ToArray();
         }
+
         var arg = Rpc.Deserialize<TArg>(argBs);
 
         if (Rpc.HasStream<TArg>())
@@ -97,6 +98,7 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<HttpContext, TAr
         {
             ctx.Get<ILogger<RpcEndpoint<TArg, TRes>>>().LogError(ex, $"Error thrown by {Def.Path}");
         }
+
         ctx.Response.StatusCode = code;
         await ctx.Response.WriteAsync(message);
     }

@@ -1,11 +1,12 @@
 namespace Common.Client;
 
-public interface ISession{
+public interface ISession
+{
     string Id { get; }
-    bool IsAuthed { get; } 
+    bool IsAuthed { get; }
     bool IsAnon => !IsAuthed;
-    string Lang { get; } 
-    string DateFmt { get; } 
+    string Lang { get; }
+    string DateFmt { get; }
     string TimeFmt { get; }
 }
 

@@ -8,8 +8,10 @@ namespace Common.Server.Auth;
 
 public static class AuthEps
 {
+    private const int AuthAttemptsRateLimit = 5;
+
     public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
-        new List<IRpcEndpoint>()
+        new List<IRpcEndpoint>
         {
             new RpcEndpoint<Nothing, ApiSession>(
                 AuthApi.GetSession,
@@ -44,7 +46,7 @@ public static class AuthEps
                         {
                             var verifyEmailCode = Crypto.String(32);
                             var pwd = Crypto.HashPwd(req.Pwd);
-                            existing = new Auth()
+                            existing = new Auth
                             {
                                 Id = ses.Id,
                                 Email = req.Email,
@@ -82,7 +84,7 @@ public static class AuthEps
                             var model = new
                             {
                                 BaseHref = config.Server.Listen,
-                                Email = existing.Email,
+                                existing.Email,
                                 Code = existing.VerifyEmailCode
                             };
                             await emailClient.SendEmailAsync(
@@ -90,9 +92,10 @@ public static class AuthEps
                                 ctx.String(S.AuthConfirmEmailHtml, model),
                                 ctx.String(S.AuthConfirmEmailText, model),
                                 config.Email.NoReplyAddress,
-                                new() { req.Email }
+                                new List<string> { req.Email }
                             );
                         }
+
                         await tx.CommitAsync();
                     }
                     catch
@@ -163,7 +166,7 @@ public static class AuthEps
                     var ses = ctx.GetSession();
                     ctx.ErrorIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
                     // !!! ToLower all emails in all Auth_ api endpoints
-                    req = new (Email: req.Email.ToLower());
+                    req = new SendResetPwdEmail(req.Email.ToLower());
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
                     var db = ctx.Get<AuthDb>();
                     // start db tx
@@ -174,12 +177,10 @@ public static class AuthEps
                             x => x.Email.Equals(req.Email)
                         );
                         if (existing == null || existing.ResetPwdCodeCreatedOn.MinutesSince() < 10)
-                        {
                             // if email is not associated with an account or
                             // a reset pwd was sent within the last 10 minutes
                             // dont do anything
-                            return new ();
-                        }
+                            return new Nothing();
 
                         existing.ResetPwdCodeCreatedOn = DateTime.UtcNow;
                         existing.ResetPwdCode = Crypto.String(32);
@@ -188,7 +189,7 @@ public static class AuthEps
                         var model = new
                         {
                             BaseHref = config.Server.Listen,
-                            Email = existing.Email,
+                            existing.Email,
                             Code = existing.ResetPwdCode
                         };
                         var emailClient = ctx.Get<IEmailClient>();
@@ -197,7 +198,7 @@ public static class AuthEps
                             ctx.String(S.AuthResetPwdHtml, model),
                             ctx.String(S.AuthResetPwdText, model),
                             config.Email.NoReplyAddress,
-                            new () { req.Email }
+                            new List<string> { req.Email }
                         );
                         await tx.CommitAsync();
                     }
@@ -286,6 +287,7 @@ public static class AuthEps
                             auth.TimeFmt
                         );
                     }
+
                     await db.SaveChangesAsync();
                     await tx.CommitAsync();
                     ctx.ErrorIf(!pwdIsValid, S.NoMatchingRecord);
@@ -298,10 +300,7 @@ public static class AuthEps
                 {
                     // basic validation
                     var ses = ctx.GetSession();
-                    if (ses.IsAuthed)
-                    {
-                        ses = ctx.ClearSession();
-                    }
+                    if (ses.IsAuthed) ses = ctx.ClearSession();
                     return ses.ToApiSession().Task();
                 }
             ),
@@ -315,9 +314,7 @@ public static class AuthEps
                         && (req.DateFmt.IsNullOrWhiteSpace() || ses.DateFmt == req.DateFmt)
                         && (req.TimeFmt.IsNullOrWhiteSpace() || ses.TimeFmt == req.TimeFmt)
                     )
-                    {
                         return ses.ToApiSession();
-                    }
 
                     var s = ctx.Get<S>();
                     ses = ctx.CreateSession(
@@ -341,12 +338,11 @@ public static class AuthEps
                         await db.SaveChangesAsync();
                         await tx.CommitAsync();
                     }
+
                     return ses.ToApiSession();
                 }
             )
         };
-
-    private const int AuthAttemptsRateLimit = 5;
 
     private static void RateLimitAuthAttempts(HttpContext ctx, Auth auth)
     {

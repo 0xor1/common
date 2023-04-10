@@ -1,5 +1,4 @@
-﻿using Amazon;
-using Amazon.Runtime;
+﻿using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.SimpleEmail;
 using Common.Shared;
@@ -31,6 +30,7 @@ public static class ServiceExts
             );
             services.AddScoped<IEmailClient, SesEmailClient>();
         }
+
         services.AddScoped<AmazonS3Client>(
             sp =>
                 new AmazonS3Client(

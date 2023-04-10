@@ -14,13 +14,14 @@ public partial record Key
 {
     public const int Min = 1;
     public const int Max = 50;
-    public string Value { get; }
 
     public Key(string value)
     {
         Validate(value);
         Value = value;
     }
+
+    public string Value { get; }
 
     [GeneratedRegex(@"__")]
     public static partial Regex NoDoubleUnderscores();
@@ -43,27 +44,17 @@ public partial record Key
     private static void Validate(string str)
     {
         if (str.Length is < Min or > Max)
-        {
             throw new InvalidDataException($"{str} must be {Min} to {Max} characters long");
-        }
         if (NoDoubleUnderscores().IsMatch(str))
-        {
             throw new InvalidDataException($"{str} must not contain double underscores");
-        }
         if (!StartLetter().IsMatch(str))
-        {
             throw new InvalidDataException($"{str} must start with a letter");
-        }
         if (EndUnderscore().IsMatch(str))
-        {
             throw new InvalidDataException($"{str} must not end with _");
-        }
         if (!ValidChars().IsMatch(str))
-        {
             throw new InvalidDataException(
                 $"{str} must only container lower case letters, digits and underscore"
             );
-        }
     }
 
     public static bool IsValid(string maybeKey)
@@ -82,28 +73,31 @@ public partial record Key
     public static Key Force(string k)
     {
         if (IsValid(k))
-        {
-            return new(k);
-        }
+            return new Key(k);
         k = k.ToLower();
         k = NotLowerAlphaNumeric().Replace(k, "_");
         k = ConsecutiveUnderscores().Replace(k, "_");
         k = k.Trim('_');
         if (k == "")
-        {
             k = "a";
-        }
         if (k.Length > Max)
         {
             k = k.Substring(0, 50);
             k = k.Trim('_');
         }
-        return new(k);
+
+        return new Key(k);
     }
 
-    public static explicit operator Key?(string? b) => b is null ? null : new Key(b);
+    public static explicit operator Key?(string? b)
+    {
+        return b is null ? null : new Key(b);
+    }
 
-    public override string ToString() => Value;
+    public override string ToString()
+    {
+        return Value;
+    }
 }
 
 public class KeyConverter : TypeConverter
@@ -115,9 +109,7 @@ public class KeyConverter : TypeConverter
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {
         if (sourceType == typeof(string))
-        {
             return true;
-        }
         return base.CanConvertFrom(context, sourceType);
     }
 
@@ -129,9 +121,7 @@ public class KeyConverter : TypeConverter
     )
     {
         if (value is string s)
-        {
             return new Key(s);
-        }
         return base.ConvertFrom(context, culture, value);
     }
 
@@ -144,9 +134,7 @@ public class KeyConverter : TypeConverter
     )
     {
         if (destinationType == typeof(string) && value is not null)
-        {
             return ((Key)value).Value;
-        }
         return base.ConvertTo(context, culture, value, destinationType);
     }
 }

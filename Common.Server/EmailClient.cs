@@ -37,7 +37,7 @@ public class LogEmailClient : IEmailClient
     )
     {
         _log.LogInformation(
-            $"Sending Email:\nsubject: {subject}\nbodyHtml: {bodyHtml}\nbodyText: {bodyText}\nsenderAddress: {senderAddress}\ntoAddress: {String.Join(", ", toAddresses)}\nccAddress: {String.Join(", ", ccAddresses ?? new List<string>())}\nbccAddress: {String.Join(", ", bccAddresses ?? new List<string>())}"
+            $"Sending Email:\nsubject: {subject}\nbodyHtml: {bodyHtml}\nbodyText: {bodyText}\nsenderAddress: {senderAddress}\ntoAddress: {string.Join(", ", toAddresses)}\nccAddress: {string.Join(", ", ccAddresses ?? new List<string>())}\nbccAddress: {string.Join(", ", bccAddresses ?? new List<string>())}"
         );
     }
 }

@@ -4,25 +4,33 @@ namespace Common.Client;
 
 public interface L
 {
+    private static L? _inst;
+
     void Config(string lang, string date, string time);
+
     // S for String
     public string S(string key, object? model = null);
+
     // D for Date
     public string D(DateTime dt);
+
     // T for Time
     public string T(DateTime dt);
-    private static L? _inst;
-    public static L Init(S s) => _inst ??= new LImpl(s);
+
+    public static L Init(S s)
+    {
+        return _inst ??= new LImpl(s);
+    }
 }
 
 // L for Localizer
-internal class LImpl: L
+internal class LImpl : L
 {
-    private string _lang;
-    private string _dateFmt;
-    private string _timeFmt;
     private readonly S _s;
-    
+    private string _dateFmt;
+    private string _lang;
+    private string _timeFmt;
+
 
     internal LImpl(S s)
     {
@@ -31,7 +39,7 @@ internal class LImpl: L
         _dateFmt = s.DefaultDateFmt;
         _timeFmt = s.DefaultTimeFmt;
     }
-    
+
     public void Config(string lang, string date, string time)
     {
         _lang = lang;
@@ -40,12 +48,20 @@ internal class LImpl: L
     }
 
     // S for String
-    public string S(string key, object? model = null) =>
-        _s.GetOrAddress(_lang, key, model);
+    public string S(string key, object? model = null)
+    {
+        return _s.GetOrAddress(_lang, key, model);
+    }
 
     // D for Date
-    public string D(DateTime dt) => dt.ToLocalTime().ToString(_dateFmt);
+    public string D(DateTime dt)
+    {
+        return dt.ToLocalTime().ToString(_dateFmt);
+    }
 
     // T for Time
-    public string T(DateTime dt) => dt.ToLocalTime().ToString(_timeFmt);
+    public string T(DateTime dt)
+    {
+        return dt.ToLocalTime().ToString(_timeFmt);
+    }
 }

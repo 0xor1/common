@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using Common.Shared;
 
 namespace Common.Shared;
 
@@ -12,56 +11,59 @@ public record ValidationResult
 
 public class Message
 {
-    public string Key { get; set; }
-    public object? Model { get; set; }
-
     public Message(string key, object? model = null)
     {
         Key = key;
         Model = model;
     }
+
+    public string Key { get; set; }
+    public object? Model { get; set; }
 }
 
 public static partial class AuthValidator
 {
     public static ValidationResult Email(string str)
     {
-        var res = new ValidationResult() { Message = new(S.AuthInvalidEmail) };
+        var res = new ValidationResult { Message = new Message(S.AuthInvalidEmail) };
         if (!EmailRegex().IsMatch(str))
-        {
             res.Valid = false;
-        }
         return res;
     }
 
     public static ValidationResult Pwd(string str)
     {
-        var res = new ValidationResult() { Message = new(S.AuthInvalidPwd) };
+        var res = new ValidationResult { Message = new Message(S.AuthInvalidPwd) };
         if (!EightOrMoreCharsRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(S.AuthLessThan8Chars));
+            res.SubMessages.Add(new Message(S.AuthLessThan8Chars));
         }
+
         if (!LowerCaseRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(S.AuthNoLowerCaseChar));
+            res.SubMessages.Add(new Message(S.AuthNoLowerCaseChar));
         }
+
         if (!UpperCaseRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(S.AuthNoUpperCaseChar));
+            res.SubMessages.Add(new Message(S.AuthNoUpperCaseChar));
         }
+
         if (!DigitRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(S.AuthNoDigit));
+            res.SubMessages.Add(new Message(S.AuthNoDigit));
         }
+
         if (!SpecialCharRegex().IsMatch(str))
         {
             res.Valid = false;
-            res.SubMessages.Add(new(S.AuthNoSpecialChar));
+            res.SubMessages.Add(new Message(S.AuthNoSpecialChar));
         }
+
         return res;
     }
 

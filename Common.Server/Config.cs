@@ -79,17 +79,16 @@ public static class AwsStringExts
     {
         var re = RegionEndpoint.GetBySystemName(region);
         if (re == null)
-        {
             throw new InvalidSetupException(
                 $"couldn't find aws region endpoint with system name: {region}"
             );
-        }
         return re;
     }
 }
 
 public interface IConfig
 {
+    private static IConfig? _inst;
     public Env Env { get; }
     public ServerConfig Server { get; }
     public DbConfig Db { get; }
@@ -97,11 +96,12 @@ public interface IConfig
     public EmailConfig Email { get; }
     public StoreConfig Store { get; }
 
-    private static IConfig? _inst;
-    public static IConfig Init() =>
-        _inst ??= JsonConvert
+    public static IConfig Init()
+    {
+        return _inst ??= JsonConvert
             .DeserializeObject<Config>(
                 File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
             )
             .NotNull();
+    }
 }

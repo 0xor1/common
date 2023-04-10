@@ -31,7 +31,7 @@ public static class NullExts
     )
         where T : class
     {
-        T? obj = await task;
+        var obj = await task;
         ArgumentNullException.ThrowIfNull(obj, paramName);
         return obj;
     }
@@ -42,20 +42,32 @@ public static class NullExts
     )
         where T : class
     {
-        T? obj = await task;
+        var obj = await task;
         ArgumentNullException.ThrowIfNull(obj, paramName);
         return obj;
     }
 
     public static bool IsNull<T>([NotNullWhen(false)] this T? obj)
-        where T : class => obj is null;
+        where T : class
+    {
+        return obj is null;
+    }
 
     public static bool IsNull<T>([NotNullWhen(false)] this T? obj)
-        where T : struct => !obj.HasValue;
+        where T : struct
+    {
+        return !obj.HasValue;
+    }
 
     public static bool IsntNull<T>([NotNullWhen(true)] this T? obj)
-        where T : class => !obj.IsNull();
+        where T : class
+    {
+        return !obj.IsNull();
+    }
 
     public static bool IsntNull<T>([NotNullWhen(true)] this T? obj)
-        where T : struct => !obj.IsNull();
+        where T : struct
+    {
+        return !obj.IsNull();
+    }
 }

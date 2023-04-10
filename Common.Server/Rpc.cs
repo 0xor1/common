@@ -95,8 +95,7 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<HttpContext, TAr
         }
         else
         {
-            ctx.GetRequiredService<ILogger<RpcEndpoint<TArg, TRes>>>()
-                .LogError(ex, $"Error thrown by {Def.Path}");
+            ctx.Get<ILogger<RpcEndpoint<TArg, TRes>>>().LogError(ex, $"Error thrown by {Def.Path}");
         }
         ctx.Response.StatusCode = code;
         await ctx.Response.WriteAsync(message);

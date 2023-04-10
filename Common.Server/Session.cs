@@ -36,7 +36,7 @@ public record Session
     public bool IsAnon => !this.IsAuthed;
 
     public Common.Shared.Auth.Session ToApiSession() =>
-        new (Id, IsAuthed, StartedOn, RememberMe, Lang, DateFmt, TimeFmt);
+        new(Id, IsAuthed, StartedOn, RememberMe, Lang, DateFmt, TimeFmt);
 }
 
 [MessagePackObject]
@@ -144,7 +144,7 @@ internal record SessionManager : ISessionManager
 
     private Session _Clear(HttpContext ctx)
     {
-        var s = ctx.GetRequiredService<S>();
+        var s = ctx.Get<S>();
         return Create(
             ctx,
             Id.New(),
@@ -224,11 +224,11 @@ internal record SessionManager : ISessionManager
 public static class HttpContextExts
 {
     // these require that ISessionManager was added to service container
-    public static T GetRequiredService<T>(this HttpContext ctx)
+    public static T Get<T>(this HttpContext ctx)
         where T : notnull => ctx.RequestServices.GetRequiredService<T>();
 
     private static ISessionManager GetSessionManager(this HttpContext ctx) =>
-        ctx.GetRequiredService<ISessionManager>();
+        ctx.Get<ISessionManager>();
 
     public static Session GetSession(this HttpContext ctx) => ctx.GetSessionManager().Get(ctx);
 
@@ -267,5 +267,5 @@ public static class HttpContextExts
         );
 
     public static string String(this HttpContext ctx, string key, object? model = null) =>
-        ctx.GetRequiredService<S>().GetOrAddress(ctx.GetSession().Lang, key, model);
+        ctx.Get<S>().GetOrAddress(ctx.GetSession().Lang, key, model);
 }

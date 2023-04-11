@@ -73,19 +73,20 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<HttpContext, TAr
         return arg;
     }
 
-    private async Task WriteResp(HttpContext ctx, TRes res)
+    private async Task WriteResp(HttpContext ctx, TRes val)
     {
+        IResult res;
+        ctx.Response.StatusCode = (int)HttpStatusCode.OK;
         if (Rpc.HasStream<TRes>())
         {
-            ctx.Response.Headers.Add(Rpc.DataHeader, Rpc.Serialize(res).ToB64());
-            ctx.Response.Body = (res as IStream).NotNull().Stream;
+            res = Results.Stream((val as IStream).NotNull().Stream);
+            ctx.Response.Headers.Add(Rpc.DataHeader, Rpc.Serialize(val).ToB64());
         }
         else
         {
-            var bs = Rpc.Serialize(res);
-            ctx.Response.ContentLength = bs.Length;
-            ctx.Response.Body = new MemoryStream(bs);
+            res = Results.Bytes(Rpc.Serialize(val));
         }
+        await res.ExecuteAsync(ctx);
     }
 
     private async Task HandleException(HttpContext ctx, Exception ex)

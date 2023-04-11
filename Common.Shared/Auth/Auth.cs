@@ -59,8 +59,8 @@ public record Session(
     string TimeFmt
 ) : ISession
 {
-    public Session(string lang, string dateFmt, string timeFmt)
-        : this(string.Empty, false, DateTime.UtcNow, false, lang, dateFmt, timeFmt) { }
+    public static Session Default(string lang, string dateFmt, string timeFmt) =>
+        new(string.Empty, false, DateTime.UtcNow, false, lang, dateFmt, timeFmt);
 
     [JsonIgnore]
     public bool IsAnon => !IsAuthed;

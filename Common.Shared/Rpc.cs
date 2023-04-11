@@ -31,7 +31,7 @@ public record RpcBase
 
     public static void Init(string baseHref, HttpClient client)
     {
-        _baseHref ??= baseHref.TrimEnd('/');
+        _baseHref ??= baseHref + "api";
         _client ??= client;
     }
 }
@@ -50,7 +50,7 @@ public record Rpc<TArg, TRes> : RpcBase
     public async Task<TRes> Do(TArg arg)
     {
         var argsBs = Rpc.Serialize(arg);
-        using var req = new HttpRequestMessage(HttpMethod.Post, _baseHref + "/api" + Path);
+        using var req = new HttpRequestMessage(HttpMethod.Post, _baseHref + Path);
         if (Rpc.HasStream<TArg>())
         {
             req.Content = new StreamContent((arg as IStream).NotNull().Stream);
@@ -65,8 +65,8 @@ public record Rpc<TArg, TRes> : RpcBase
 
         if (!Rpc.HasStream<TRes>())
         {
-            var str = await resp.Content.ReadAsStringAsync();
-            return Rpc.Deserialize<TRes>(await resp.Content.ReadAsByteArrayAsync()).NotNull();
+            var bs = await resp.Content.ReadAsByteArrayAsync();
+            return Rpc.Deserialize<TRes>(bs).NotNull();
         }
 
         var resBs = resp.Headers.GetValues(Rpc.DataHeader).First().FromB64();

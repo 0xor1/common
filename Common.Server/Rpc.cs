@@ -126,12 +126,7 @@ public static class RpcExts
         app.Map(
             "/api",
             app =>
-                app.Run(
-                    async (ctx) =>
-                    {
-                        epsDic[ctx.Request.Path.Value.ToLower()].Execute(ctx);
-                    }
-                )
+                app.Run(async (ctx) => await epsDic[ctx.Request.Path.Value.ToLower()].Execute(ctx))
         );
         return app;
     }

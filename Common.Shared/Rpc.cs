@@ -13,15 +13,9 @@ public static class Rpc
     }
 
     public static T Deserialize<T>(byte[] bs)
-        where T : class
-    {
-        return JsonConvert.DeserializeObject<T>(bs.FromUtf8Bytes()).NotNull();
-    }
+        where T : class => JsonConvert.DeserializeObject<T>(bs.FromUtf8Bytes()).NotNull();
 
-    public static bool HasStream<T>()
-    {
-        return typeof(IStream).IsAssignableFrom(typeof(T));
-    }
+    public static bool HasStream<T>() => typeof(IStream).IsAssignableFrom(typeof(T));
 }
 
 public record RpcBase

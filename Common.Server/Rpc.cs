@@ -6,17 +6,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Common.Server;
 
-public class RpcException : Exception
-{
-    public RpcException(string message, HttpStatusCode code = HttpStatusCode.InternalServerError)
-        : base(message)
-    {
-        Code = code;
-    }
-
-    public HttpStatusCode Code { get; }
-}
-
 public interface IRpcEndpoint
 {
     string Path { get; }
@@ -96,7 +85,7 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<HttpContext, TAr
         if (ex is RpcException)
         {
             var re = (ex as RpcException).NotNull();
-            code = (int)re.Code;
+            code = re.Code;
             message = re.Message;
         }
         else

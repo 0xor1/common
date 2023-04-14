@@ -3,6 +3,17 @@ using Newtonsoft.Json;
 
 namespace Common.Shared;
 
+public class RpcException : Exception
+{
+    public RpcException(string message, int code = 500)
+        : base(message)
+    {
+        Code = code;
+    }
+
+    public int Code { get; }
+}
+
 public static class Rpc
 {
     public const string QueryParam = "arg";
@@ -63,6 +74,7 @@ public record Rpc<TArg, TRes> : RpcBase
         {
             var msg = await resp.Content.ReadAsStringAsync();
             _rpcExceptionHandler(msg);
+            throw new RpcException(msg, (int)resp.StatusCode);
         }
 
         if (!Rpc.HasStream<TRes>())

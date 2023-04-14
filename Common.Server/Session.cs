@@ -263,7 +263,7 @@ public static class HttpContextExts
         HttpStatusCode code = HttpStatusCode.InternalServerError
     )
     {
-        Throw.If(condition, () => new RpcException(ctx.String(key, model), code));
+        Throw.If(condition, () => new RpcException(ctx.String(key, model), (int)code));
     }
 
     public static void ErrorFromValidationResult(
@@ -277,7 +277,7 @@ public static class HttpContextExts
             () =>
                 new RpcException(
                     $"{ctx.String(res.Message.Key, res.Message.Model)}{(res.SubMessages.Any() ? $":\n{string.Join("\n", res.SubMessages.Select(x => ctx.String(x.Key, x.Model)))}" : "")}",
-                    code
+                    (int)code
                 )
         );
     }

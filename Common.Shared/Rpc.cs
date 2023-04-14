@@ -56,6 +56,10 @@ public record Rpc<TArg, TRes> : RpcBase
         }
 
         using var resp = await _client.NotNull().SendAsync(req);
+        if (!resp.IsSuccessStatusCode)
+        {
+            var msg = await resp.Content.ReadAsStringAsync();
+        }
 
         if (!Rpc.HasStream<TRes>())
         {

@@ -40,14 +40,14 @@ public class AuthService<TApi> : IAuthService
     public async Task Register(string email, string pwd)
     {
         var ses = await GetSession();
-        Throw.OpIf(ses.IsAuthed, "already in authenticated session");
+        Throw.OpIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
         await _api.Auth.Register.Do(new(email, pwd));
     }
 
     public async Task<ISession> SignIn(string email, string pwd, bool rememberMe)
     {
         var ses = await GetSession();
-        Throw.OpIf(ses.IsAuthed, "already in authenticated session");
+        Throw.OpIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
         return Session = await _api.Auth.SignIn.Do(new(email, pwd, rememberMe));
     }
 

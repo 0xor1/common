@@ -105,7 +105,7 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<HttpContext, TAr
         }
 
         ctx.Response.StatusCode = code;
-        await ctx.Response.WriteAsync(message);
+        await Results.Text(content: message, statusCode: code).ExecuteAsync(ctx);
     }
 }
 

@@ -49,6 +49,7 @@ public interface S
     public const string AuthResetPwdSubject = "auth_reset_pwd_subject";
     public const string AuthResetPwdHtml = "auth_reset_pwd_html";
     public const string AuthResetPwdText = "auth_reset_pwd_text";
+    public const string ApiError = "api_error";
     public static readonly FluidParser Parser = new();
 
     private static S? _inst;

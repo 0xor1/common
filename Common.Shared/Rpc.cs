@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using Newtonsoft.Json;
 
 namespace Common.Shared;
@@ -22,11 +23,13 @@ public record RpcBase
 {
     protected static string? _baseHref;
     protected static HttpClient? _client;
+    protected static Action<string>? _rpcExceptionHandler;
 
-    public static void Init(string baseHref, HttpClient client)
+    public static void Init(string baseHref, HttpClient client, Action<string> reh)
     {
         _baseHref ??= baseHref + "api";
         _client ??= client;
+        _rpcExceptionHandler ??= reh;
     }
 }
 
@@ -59,6 +62,7 @@ public record Rpc<TArg, TRes> : RpcBase
         if (!resp.IsSuccessStatusCode)
         {
             var msg = await resp.Content.ReadAsStringAsync();
+            _rpcExceptionHandler(msg);
         }
 
         if (!Rpc.HasStream<TRes>())

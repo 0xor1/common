@@ -18,14 +18,16 @@ public static class Client
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
         var client = new HttpClient();
-        RpcBase.Init(builder.HostEnvironment.BaseAddress, client);
+        var l = L.Init(s);
+        var ns = new NotificationService();
+        RpcBase.Init(builder.HostEnvironment.BaseAddress, client, (strKey) => 
+            ns.Notify(NotificationSeverity.Error, l.S(S.ApiError), l.S(strKey), duration: 10000D));
 
         builder.Services.AddSingleton(s);
-        builder.Services.AddSingleton(L.Init(s));
-        builder.Services.AddSingleton(client);
+        builder.Services.AddSingleton(l);
         builder.Services.AddSingleton(api);
         builder.Services.AddSingleton<IAuthService, AuthService<TApi>>();
-        builder.Services.AddSingleton<NotificationService>();
+        builder.Services.AddSingleton(ns);
         await builder.Build().RunAsync();
     }
 }

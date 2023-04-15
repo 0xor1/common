@@ -1,7 +1,9 @@
 using Common.Shared;
+using Microsoft.EntityFrameworkCore;
 
 namespace Common.Server.Auth;
 
+[PrimaryKey(nameof(Id))]
 public class Auth : Pwd
 {
     public string Id { get; set; }

@@ -18,14 +18,21 @@ public static class Rpc
 {
     public const string QueryParam = "arg";
     public const string DataHeader = "X-Data";
+    private static readonly JsonSerializerSettings SerializerSettings =
+        new()
+        {
+            MissingMemberHandling = MissingMemberHandling.Error,
+            NullValueHandling = NullValueHandling.Ignore,
+        };
 
     public static byte[] Serialize(object? v)
     {
-        return JsonConvert.SerializeObject(v).ToUtf8Bytes();
+        return JsonConvert.SerializeObject(v, SerializerSettings).ToUtf8Bytes();
     }
 
     public static T Deserialize<T>(byte[] bs)
-        where T : class => JsonConvert.DeserializeObject<T>(bs.FromUtf8Bytes()).NotNull();
+        where T : class =>
+        JsonConvert.DeserializeObject<T>(bs.FromUtf8Bytes(), SerializerSettings).NotNull();
 
     public static bool HasStream<T>() => typeof(IStream).IsAssignableFrom(typeof(T));
 }

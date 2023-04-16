@@ -42,6 +42,7 @@ public interface S
     public const string AuthInvalidResetPwdCode = "auth_invalid_reset_pwd_code";
     public const string AuthAccountNotVerified = "auth_account_not_verified";
     public const string AuthAlreadyAuthenticated = "auth_already_authenticated";
+    public const string AuthNotAuthenticated = "auth_not_authenticated";
     public const string AuthAttemptRateLimit = "auth_attempt_rate_limit";
     public const string AuthConfirmEmailSubject = "auth_confirm_email_subject";
     public const string AuthConfirmEmailHtml = "auth_confirm_email_html";

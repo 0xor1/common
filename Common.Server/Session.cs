@@ -236,6 +236,13 @@ public static class HttpContextExts
         return ctx.GetSessionManager().Get(ctx);
     }
 
+    public static Session GetAuthedSession(this HttpContext ctx)
+    {
+        var ses = ctx.GetSession();
+        ctx.ErrorIf(ses.IsAnon, S.AuthNotAuthenticated, null, HttpStatusCode.Unauthorized);
+        return ses;
+    }
+
     public static Session CreateSession(
         this HttpContext ctx,
         string userId,

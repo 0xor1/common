@@ -20,8 +20,8 @@ public static class Client
         var client = new HttpClient();
         var l = L.Init(s);
         var ns = new NotificationService();
-        RpcBase.Init(builder.HostEnvironment.BaseAddress, client, (strKey) => 
-            ns.Notify(NotificationSeverity.Error, l.S(S.ApiError), l.S(strKey), duration: 10000D));
+        RpcBase.Init(builder.HostEnvironment.BaseAddress, client, (message) => 
+            ns.Notify(NotificationSeverity.Error, l.S(S.ApiError), message, duration: 10000D));
 
         builder.Services.AddSingleton(s);
         builder.Services.AddSingleton(l);

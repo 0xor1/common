@@ -18,18 +18,18 @@ public interface IAuthDb
 public static class AuthEps<TDbCtx>
     where TDbCtx : IAuthDb
 {
-    private static readonly IAuthApi api = IAuthApi.Init();
+    private static readonly IAuthApi Api = IAuthApi.Init();
     private const int AuthAttemptsRateLimit = 5;
 
     public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
         new List<IRpcEndpoint>
         {
             new RpcEndpoint<Nothing, ApiSession>(
-                api.GetSession,
+                Api.GetSession,
                 (ctx, req) => ctx.GetSession().ToApiSession().Task()
             ),
             new RpcEndpoint<Register, Nothing>(
-                api.Register,
+                Api.Register,
                 async (ctx, req) =>
                 {
                     // basic validation
@@ -119,7 +119,7 @@ public static class AuthEps<TDbCtx>
                 }
             ),
             new RpcEndpoint<VerifyEmail, Nothing>(
-                api.VerifyEmail,
+                Api.VerifyEmail,
                 async (ctx, req) =>
                 {
                     // !!! ToLower all emails in all Auth_ api endpoints
@@ -170,7 +170,7 @@ public static class AuthEps<TDbCtx>
                 }
             ),
             new RpcEndpoint<SendResetPwdEmail, Nothing>(
-                api.SendResetPwdEmail,
+                Api.SendResetPwdEmail,
                 async (ctx, req) =>
                 {
                     // basic validation
@@ -223,7 +223,7 @@ public static class AuthEps<TDbCtx>
                 }
             ),
             new RpcEndpoint<ResetPwd, Nothing>(
-                api.ResetPwd,
+                Api.ResetPwd,
                 async (ctx, req) =>
                 {
                     // !!! ToLower all emails in all Auth_ api endpoints
@@ -266,7 +266,7 @@ public static class AuthEps<TDbCtx>
                 }
             ),
             new RpcEndpoint<SignIn, ApiSession>(
-                api.SignIn,
+                Api.SignIn,
                 async (ctx, req) =>
                 {
                     var ses = ctx.GetSession();
@@ -306,7 +306,7 @@ public static class AuthEps<TDbCtx>
                 }
             ),
             new RpcEndpoint<Nothing, ApiSession>(
-                api.SignOut,
+                Api.SignOut,
                 (ctx, req) =>
                 {
                     // basic validation
@@ -317,7 +317,7 @@ public static class AuthEps<TDbCtx>
                 }
             ),
             new RpcEndpoint<SetL10n, ApiSession>(
-                api.SetL10n,
+                Api.SetL10n,
                 async (ctx, req) =>
                 {
                     var ses = ctx.GetSession();

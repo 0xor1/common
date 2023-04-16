@@ -34,7 +34,7 @@ public static class HttpContextExts
 
     public static async Task<TRes> DbTx<TDBCtx, TRes>(
         this HttpContext ctx,
-        Func<TDBCtx, Task<TRes>> fn
+        Func<TDBCtx, Session, Task<TRes>> fn
     )
         where TDBCtx : DbContext
     {
@@ -42,7 +42,7 @@ public static class HttpContextExts
         var tx = await db.Database.BeginTransactionAsync();
         try
         {
-            var res = await fn(db);
+            var res = await fn(db, ctx.GetAuthedSession());
             await db.SaveChangesAsync();
             return res;
         }

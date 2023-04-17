@@ -16,7 +16,7 @@ public static class TaskExt
         {
             return await allTasks;
         }
-        catch (Exception)
+        catch
         {
             throw allTasks.Exception.NotNull();
         }

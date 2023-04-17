@@ -22,6 +22,7 @@ public static class Rpc
     private static readonly JsonSerializerSettings SerializerSettings =
         new()
         {
+            Formatting = Formatting.None,
             MissingMemberHandling = MissingMemberHandling.Error,
             NullValueHandling = NullValueHandling.Ignore,
             Converters = new List<JsonConverter>()

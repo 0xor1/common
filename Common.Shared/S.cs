@@ -29,6 +29,7 @@ public interface S
 {
     // common string keys used in shared code.
     public const string Invalid = "invalid";
+    public const string RpcUnknownEndpoint = "rpc_unknown_endpoint";
     public const string UnexpectedError = "unexpected_error";
     public const string NoMatchingRecord = "no_matching_record";
     public const string AuthInvalidEmail = "auth_invalid_email";

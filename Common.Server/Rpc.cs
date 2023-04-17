@@ -115,7 +115,19 @@ public static class RpcExts
         app.Map(
             "/api",
             app =>
-                app.Run(async (ctx) => await epsDic[ctx.Request.Path.Value.ToLower()].Execute(ctx))
+                app.Run(
+                    async (ctx) =>
+                    {
+                        var epKey = ctx.Request.Path.Value.NotNull().ToLower();
+                        ctx.ErrorIf(
+                            !epsDic.ContainsKey(epKey),
+                            S.RpcUnknownEndpoint,
+                            null,
+                            HttpStatusCode.NotFound
+                        );
+                        await epsDic[epKey].Execute(ctx);
+                    }
+                )
         );
         return app;
     }

@@ -26,7 +26,7 @@ public static class AuthEps<TDbCtx>
         {
             new RpcEndpoint<Nothing, ApiSession>(
                 Api.GetSession,
-                (ctx, req) => ctx.GetSession().ToApiSession().Task()
+                (ctx, req) => ctx.GetSession().ToApiSession().AsTask()
             ),
             new RpcEndpoint<Register, Nothing>(
                 Api.Register,
@@ -313,7 +313,7 @@ public static class AuthEps<TDbCtx>
                     var ses = ctx.GetSession();
                     if (ses.IsAuthed)
                         ses = ctx.ClearSession();
-                    return ses.ToApiSession().Task();
+                    return ses.ToApiSession().AsTask();
                 }
             ),
             new RpcEndpoint<SetL10n, ApiSession>(

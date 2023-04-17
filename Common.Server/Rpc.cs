@@ -118,14 +118,16 @@ public static class RpcExts
                 app.Run(
                     async (ctx) =>
                     {
-                        var epKey = ctx.Request.Path.Value.NotNull().ToLower();
                         ctx.ErrorIf(
-                            !epsDic.ContainsKey(epKey),
+                            !epsDic.TryGetValue(
+                                ctx.Request.Path.Value.NotNull().ToLower(),
+                                out var ep
+                            ),
                             S.RpcUnknownEndpoint,
                             null,
                             HttpStatusCode.NotFound
                         );
-                        await epsDic[epKey].Execute(ctx);
+                        await ep.NotNull().Execute(ctx);
                     }
                 )
         );

@@ -44,6 +44,7 @@ public static class HttpContextExts
         {
             var res = await fn(db, ctx.GetAuthedSession());
             await db.SaveChangesAsync();
+            await tx.CommitAsync();
             return res;
         }
         catch (Exception ex)

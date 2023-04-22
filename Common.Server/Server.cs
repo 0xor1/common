@@ -11,7 +11,9 @@ public static class Server
     public static void Run<TDbCtx>(string[] args, S s, IReadOnlyList<IRpcEndpoint> eps)
         where TDbCtx : DbContext, IAuthDb
     {
-        var config = IConfig.Init();
+        var config = Config.FromJson(
+            File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
+        );
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddApiServices<TDbCtx>(config, s);
 

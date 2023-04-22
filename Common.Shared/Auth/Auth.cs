@@ -9,34 +9,54 @@ public interface IApi
 
 public interface IAuthApi
 {
-    public Rpc<Nothing, Session> GetSession { get; }
-    public Rpc<Register, Nothing> Register { get; }
-    public Rpc<VerifyEmail, Nothing> VerifyEmail { get; }
-
-    public Rpc<SendResetPwdEmail, Nothing> SendResetPwdEmail { get; }
-
-    public Rpc<ResetPwd, Nothing> ResetPwd { get; }
-    public Rpc<SignIn, Session> SignIn { get; }
-    public Rpc<Nothing, Session> SignOut { get; }
-    public Rpc<SetL10n, Session> SetL10n { get; }
-
-    private static IAuthApi? _inst;
-    public static IAuthApi Init() => _inst ??= new AuthApi();
+    Task<Session> GetSession();
+    Task Register(Register arg);
+    Task VerifyEmail(VerifyEmail arg);
+    Task SendResetPwdEmail(SendResetPwdEmail arg);
+    Task ResetPwd(ResetPwd arg);
+    Task<Session> SignIn(SignIn arg);
+    Task<Session> SignOut();
+    Task<Session> SetL10n(SetL10n arg);
 }
 
-internal class AuthApi : IAuthApi
+public class AuthApi : IAuthApi
 {
-    public Rpc<Nothing, Session> GetSession { get; } = new("/auth/get_session");
-    public Rpc<Register, Nothing> Register { get; } = new("/auth/register");
-    public Rpc<VerifyEmail, Nothing> VerifyEmail { get; } = new("/auth/verify_email");
+    private readonly IRpcClient _client;
 
-    public Rpc<SendResetPwdEmail, Nothing> SendResetPwdEmail { get; } =
+    public AuthApi(IRpcClient client)
+    {
+        _client = client;
+    }
+
+    public Task<Session> GetSession() => _client.Do(AuthRpcs.GetSession, Nothing.Inst);
+
+    public Task Register(Register arg) => _client.Do(AuthRpcs.Register, arg);
+
+    public Task VerifyEmail(VerifyEmail arg) => _client.Do(AuthRpcs.VerifyEmail, arg);
+
+    public Task SendResetPwdEmail(SendResetPwdEmail arg) =>
+        _client.Do(AuthRpcs.SendResetPwdEmail, arg);
+
+    public Task ResetPwd(ResetPwd arg) => _client.Do(AuthRpcs.ResetPwd, arg);
+
+    public Task<Session> SignIn(SignIn arg) => _client.Do(AuthRpcs.SignIn, arg);
+
+    public Task<Session> SignOut() => _client.Do(AuthRpcs.SignOut, Nothing.Inst);
+
+    public Task<Session> SetL10n(SetL10n arg) => _client.Do(AuthRpcs.SetL10n, arg);
+}
+
+public static class AuthRpcs
+{
+    public static readonly Rpc<Nothing, Session> GetSession = new("/auth/get_session");
+    public static readonly Rpc<Register, Nothing> Register = new("/auth/register");
+    public static readonly Rpc<VerifyEmail, Nothing> VerifyEmail = new("/auth/verify_email");
+    public static readonly Rpc<SendResetPwdEmail, Nothing> SendResetPwdEmail =
         new("/auth/send_reset_pwd_email");
-
-    public Rpc<ResetPwd, Nothing> ResetPwd { get; } = new("/auth/reset_pwd");
-    public Rpc<SignIn, Session> SignIn { get; } = new("/auth/sign_in");
-    public Rpc<Nothing, Session> SignOut { get; } = new("/auth/sign_out");
-    public Rpc<SetL10n, Session> SetL10n { get; } = new("/auth/set_l10n");
+    public static readonly Rpc<ResetPwd, Nothing> ResetPwd = new("/auth/reset_pwd");
+    public static readonly Rpc<SignIn, Session> SignIn = new("/auth/sign_in");
+    public static readonly Rpc<Nothing, Session> SignOut = new("/auth/sign_out");
+    public static readonly Rpc<SetL10n, Session> SetL10n = new("/auth/set_l10n");
 }
 
 public interface ISession

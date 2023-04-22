@@ -1,0 +1,21 @@
+{
+  "env": "lcl",
+  "server": {
+    "listen": "https://localhost:9500"
+  },
+  "db": {
+    "connection": "Server=localhost;Database=Common;Uid=Common;Pwd=C0-Mm-0n-C0-Mm-0n"
+  },
+  "session": {
+    "signatureKeys": [
+      "MlSZpzRgE0NovHM66Zm0MJf_B-0GK4eFABsN3BemeiP1uw9PxxyM2GHYhNmgveS5g5-QMM37tVq4XxOxCBfnjw",
+      "YYHMi8l-UeuyDkBx3E1IEO-CGb7s5Dspe6MeARFdHoO0a8jcX4h0uM-CMHTSlUjUj3ix41MmqbaGmSzzmNM8DA"
+    ]
+  },
+  "email": {
+    "region": "eu-west-1",
+    "key": "abc",
+    "secret": "123",
+    "noReplyAddress": "noreply@yolo.solo"
+  }
+}

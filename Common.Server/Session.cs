@@ -39,19 +39,8 @@ public record Session
     }
 }
 
-[MessagePackObject]
-public record SignedSession
+public interface IRpcHttpSessionManager
 {
-    [Key(0)]
-    public byte[] Session { get; init; }
-
-    [Key(1)]
-    public byte[] Signature { get; init; }
-}
-
-public interface ISessionManager
-{
-    private static ISessionManager? _inst;
     internal Session Get(HttpContext ctx);
 
     internal Session Create(
@@ -65,20 +54,27 @@ public interface ISessionManager
     );
 
     internal Session Clear(HttpContext ctx);
-
-    public static ISessionManager Init(IReadOnlyList<string> signatureKeys)
-    {
-        return _inst ??= new SessionManager(signatureKeys);
-    }
 }
 
-internal record SessionManager : ISessionManager
+internal record RpcHttpSessionManager : IRpcHttpSessionManager
 {
     private const string SessionKey = "s";
     private readonly byte[][] SignatureKeys;
+    private readonly S _s;
 
-    internal SessionManager(IReadOnlyList<string> signatureKeys)
+    [MessagePackObject]
+    private record SignedSession
     {
+        [Key(0)]
+        public byte[] Session { get; init; }
+
+        [Key(1)]
+        public byte[] Signature { get; init; }
+    }
+
+    public RpcHttpSessionManager(IReadOnlyList<string> signatureKeys, S s)
+    {
+        _s = s;
         SignatureKeys = signatureKeys.Select(x => x.FromB64()).ToArray();
         if (SignatureKeys.Count(x => x.Length != 64) > 0)
             throw new InvalidDataException(
@@ -141,15 +137,14 @@ internal record SessionManager : ISessionManager
 
     private Session _Clear(HttpContext ctx)
     {
-        var s = ctx.Get<S>();
         return Create(
             ctx,
             Id.New(),
             false,
             false,
-            s.BestLang(ctx.Request.Headers.AcceptLanguage.ToArray().FirstOrDefault() ?? ""),
-            s.DefaultDateFmt,
-            s.DefaultTimeFmt
+            _s.BestLang(ctx.Request.Headers.AcceptLanguage.ToArray().FirstOrDefault() ?? ""),
+            _s.DefaultDateFmt,
+            _s.DefaultTimeFmt
         );
     }
 

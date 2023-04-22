@@ -54,13 +54,9 @@ public interface S
     public const string ApiError = "api_error";
     public static readonly FluidParser Parser = new();
 
-    private static S? _inst;
     public string DefaultLang { get; }
     public string DefaultDateFmt { get; }
     public string DefaultTimeFmt { get; }
-    public IReadOnlyList<Lang> SupportedLangs { get; }
-    public IReadOnlyList<DateTimeFmt> SupportedDateFmts { get; }
-    public IReadOnlyList<DateTimeFmt> SupportedTimeFmts { get; }
 
     public IReadOnlyDictionary<
         string,
@@ -72,34 +68,14 @@ public interface S
     string GetOr(string lang, string key, string def, object? model = null);
     string GetOrAddress(string lang, string key, object? model = null);
     string BestLang(string acceptLangsHeader);
-
-    public static S Init(
-        string defaultLang,
-        string defaultDateFmt,
-        string defaultTimeFmt,
-        IReadOnlyList<Lang> supportedLangs,
-        IReadOnlyList<DateTimeFmt> supportedDateFmts,
-        IReadOnlyList<DateTimeFmt> supportedTimeFmts,
-        IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> library
-    )
-    {
-        return _inst ??= new SImpl(
-            defaultLang,
-            defaultDateFmt,
-            defaultTimeFmt,
-            supportedLangs,
-            supportedDateFmts,
-            supportedTimeFmts,
-            library
-        );
-    }
 }
 
-public class SImpl : S
+public class Strings : S
 {
     private static readonly SemaphoreSlim _ss = new(1, 1);
+    public static readonly FluidParser Parser = new();
 
-    internal SImpl(
+    public Strings(
         string defaultLang,
         string defaultDateFmt,
         string defaultTimeFmt,
@@ -198,7 +174,7 @@ public class SImpl : S
             try
             {
                 _ss.Wait();
-                tplStr.Template = S.Parser.Parse(tplStr.Raw);
+                tplStr.Template = Parser.Parse(tplStr.Raw);
             }
             finally
             {

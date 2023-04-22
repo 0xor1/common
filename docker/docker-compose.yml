@@ -1,0 +1,29 @@
+version: '3.7'
+services:
+
+  common-testall-sql:
+    container_name: common-testall-sql
+    build:
+      context: ../.
+      dockerfile: docker/sql.dockerfile
+    image: common-testall-sql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+    - "3306:3306"
+
+  common-testall-redis:
+    container_name: common-testall-redis
+    image: redis:7.0.4-alpine
+    ports:
+    - "6379:6379"
+
+  common-testall-minio:
+    container_name: common-testall-minio
+    image: minio/minio:RELEASE.2022-09-17T00-09-45Z
+    environment:
+      MINIO_ACCESS_KEY: localtest
+      MINIO_SECRET_KEY: localtest
+    ports:
+    - "9000:9000"
+    command: "minio server /data"

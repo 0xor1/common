@@ -5,7 +5,7 @@ public class RpcTests
     [Fact]
     public void SerializeDeserialize_TrimsStrings()
     {
-        var res = Rpc.Deserialize<Test>(Rpc.Serialize(new Test("  yolo  ")));
+        var res = RpcHttp.Deserialize<Test>(RpcHttp.Serialize(new Test("  yolo  ")));
         Assert.Equal("yolo", res.Value);
     }
 

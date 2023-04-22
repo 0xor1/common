@@ -35,20 +35,20 @@ public class AuthService<TApi> : IAuthService
     }
 
     public async Task<ISession> GetSession() =>
-        Session ??= await _api.Auth.GetSession.Do(new Nothing());
+        Session ??= await _api.Auth.GetSession();
 
     public async Task Register(string email, string pwd)
     {
         var ses = await GetSession();
         Throw.OpIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
-        await _api.Auth.Register.Do(new(email, pwd));
+        await _api.Auth.Register(new(email, pwd));
     }
 
     public async Task<ISession> SignIn(string email, string pwd, bool rememberMe)
     {
         var ses = await GetSession();
         Throw.OpIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
-        return Session = await _api.Auth.SignIn.Do(new(email, pwd, rememberMe));
+        return Session = await _api.Auth.SignIn(new(email, pwd, rememberMe));
     }
 
     public async Task<ISession> SignOut()
@@ -58,9 +58,9 @@ public class AuthService<TApi> : IAuthService
         {
             return ses;
         }
-        return Session = await _api.Auth.SignOut.Do(new Nothing());
+        return Session = await _api.Auth.SignOut();
     }
 
     public async Task<ISession> SetL10n(string lang, string dateFmt, string timeFmt) =>
-        Session = await _api.Auth.SetL10n.Do(new(lang, dateFmt, timeFmt));
+        Session = await _api.Auth.SetL10n(new(lang, dateFmt, timeFmt));
 }

@@ -10,22 +10,25 @@ namespace Common.Client;
 
 public static class Client
 {
-    public static async Task Run<TApp, TApi>(string[] args, S s, TApi api)
+    public static async Task Run<TApp, TApi>(string[] args, S s, Func<IRpcClient, TApi> apiFactory)
         where TApp : IComponent where  TApi : class, IApi
     {
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
         builder.RootComponents.Add<TApp>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
-        var client = new HttpClient();
-        var l = L.Init(s);
+        var httpClient = new HttpClient();
+        var l = new Localizer(s);
         var ns = new NotificationService();
-        RpcBase.Init(builder.HostEnvironment.BaseAddress, client, (message) => 
+        var rpcClient = new RpcHttpClient(builder.HostEnvironment.BaseAddress, httpClient, (message) => 
             ns.Notify(NotificationSeverity.Error, l.S(S.ApiError), message, duration: 10000D));
 
+        
+        builder.Services.AddSingleton(httpClient);
+        builder.Services.AddSingleton<IRpcClient>(rpcClient);
         builder.Services.AddSingleton(s);
         builder.Services.AddSingleton(l);
-        builder.Services.AddSingleton(api);
+        builder.Services.AddSingleton(apiFactory(rpcClient));
         builder.Services.AddSingleton<IAuthService, AuthService<TApi>>();
         builder.Services.AddSingleton(ns);
         await builder.Build().RunAsync();

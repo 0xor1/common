@@ -18,18 +18,17 @@ public interface IAuthDb
 public static class AuthEps<TDbCtx>
     where TDbCtx : IAuthDb
 {
-    private static readonly IAuthApi Api = IAuthApi.Init();
     private const int AuthAttemptsRateLimit = 5;
 
     public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
         new List<IRpcEndpoint>
         {
             new RpcEndpoint<Nothing, ApiSession>(
-                Api.GetSession,
+                AuthRpcs.GetSession,
                 (ctx, req) => ctx.GetSession().ToApiSession().AsTask()
             ),
             new RpcEndpoint<Register, Nothing>(
-                Api.Register,
+                AuthRpcs.Register,
                 async (ctx, req) =>
                 {
                     // basic validation
@@ -115,11 +114,11 @@ public static class AuthEps<TDbCtx>
                         throw;
                     }
 
-                    return new Nothing();
+                    return Nothing.Inst;
                 }
             ),
             new RpcEndpoint<VerifyEmail, Nothing>(
-                Api.VerifyEmail,
+                AuthRpcs.VerifyEmail,
                 async (ctx, req) =>
                 {
                     // !!! ToLower all emails in all Auth_ api endpoints
@@ -166,11 +165,11 @@ public static class AuthEps<TDbCtx>
                         throw;
                     }
 
-                    return new Nothing();
+                    return Nothing.Inst;
                 }
             ),
             new RpcEndpoint<SendResetPwdEmail, Nothing>(
-                Api.SendResetPwdEmail,
+                AuthRpcs.SendResetPwdEmail,
                 async (ctx, req) =>
                 {
                     // basic validation
@@ -191,7 +190,7 @@ public static class AuthEps<TDbCtx>
                             // if email is not associated with an account or
                             // a reset pwd was sent within the last 10 minutes
                             // dont do anything
-                            return new Nothing();
+                            return Nothing.Inst;
 
                         existing.ResetPwdCodeCreatedOn = DateTime.UtcNow;
                         existing.ResetPwdCode = Crypto.String(32);
@@ -219,11 +218,11 @@ public static class AuthEps<TDbCtx>
                         throw;
                     }
 
-                    return new Nothing();
+                    return Nothing.Inst;
                 }
             ),
             new RpcEndpoint<ResetPwd, Nothing>(
-                Api.ResetPwd,
+                AuthRpcs.ResetPwd,
                 async (ctx, req) =>
                 {
                     // !!! ToLower all emails in all Auth_ api endpoints
@@ -262,11 +261,11 @@ public static class AuthEps<TDbCtx>
                         throw;
                     }
 
-                    return new Nothing();
+                    return Nothing.Inst;
                 }
             ),
             new RpcEndpoint<SignIn, ApiSession>(
-                Api.SignIn,
+                AuthRpcs.SignIn,
                 async (ctx, req) =>
                 {
                     var ses = ctx.GetSession();
@@ -306,7 +305,7 @@ public static class AuthEps<TDbCtx>
                 }
             ),
             new RpcEndpoint<Nothing, ApiSession>(
-                Api.SignOut,
+                AuthRpcs.SignOut,
                 (ctx, req) =>
                 {
                     // basic validation
@@ -317,7 +316,7 @@ public static class AuthEps<TDbCtx>
                 }
             ),
             new RpcEndpoint<SetL10n, ApiSession>(
-                Api.SetL10n,
+                AuthRpcs.SetL10n,
                 async (ctx, req) =>
                 {
                     var ses = ctx.GetSession();
@@ -356,7 +355,7 @@ public static class AuthEps<TDbCtx>
             )
         };
 
-    private static void RateLimitAuthAttempts(HttpContext ctx, Auth auth)
+    private static void RateLimitAuthAttempts(IRpcCtx ctx, Auth auth)
     {
         ctx.ErrorIf(
             auth.LastSignInAttemptOn.SecondsSince() < AuthAttemptsRateLimit,

@@ -7,24 +7,23 @@ using Newtonsoft.Json.Converters;
 
 namespace Common.Server;
 
-[JsonConverter(typeof(StringEnumConverter))]
 public enum Env
 {
     [EnumMember(Value = "lcl")]
     [Description("lcl")]
-    LCL,
+    Lcl,
 
     [EnumMember(Value = "dev")]
     [Description("dev")]
-    DEV,
+    Dev,
 
     [EnumMember(Value = "stg")]
     [Description("stg")]
-    STG,
+    Stg,
 
     [EnumMember(Value = "pro")]
     [Description("pro")]
-    PRO
+    Pro
 }
 
 public record ServerConfig
@@ -63,16 +62,6 @@ public record StoreConfig
     public RegionEndpoint RegionEndpoint => Region.GetRegionEndpoint();
 }
 
-internal record Config : IConfig
-{
-    public Env Env { get; init; } = Env.LCL;
-    public ServerConfig Server { get; init; }
-    public DbConfig Db { get; init; }
-    public SessionConfig Session { get; init; }
-    public EmailConfig Email { get; init; }
-    public StoreConfig Store { get; init; }
-}
-
 public static class AwsStringExts
 {
     public static RegionEndpoint GetRegionEndpoint(this string region)
@@ -86,22 +75,38 @@ public static class AwsStringExts
     }
 }
 
+public record Config : IConfig
+{
+    public Env Env { get; init; } = Env.Lcl;
+    public ServerConfig Server { get; init; }
+    public DbConfig Db { get; init; }
+    public SessionConfig Session { get; init; }
+    public EmailConfig Email { get; init; }
+    public StoreConfig Store { get; init; }
+
+    public static Config FromJson(string json) =>
+        JsonConvert.DeserializeObject<Config>(json, SerializerSettings).NotNull();
+
+    private static readonly JsonSerializerSettings SerializerSettings =
+        new()
+        {
+            Formatting = Formatting.None,
+            MissingMemberHandling = MissingMemberHandling.Error,
+            NullValueHandling = NullValueHandling.Ignore,
+            Converters = new List<JsonConverter>()
+            {
+                new StringEnumConverter(),
+                new StrTrimConverter()
+            }
+        };
+}
+
 public interface IConfig
 {
-    private static IConfig? _inst;
     public Env Env { get; }
     public ServerConfig Server { get; }
     public DbConfig Db { get; }
     public SessionConfig Session { get; }
     public EmailConfig Email { get; }
     public StoreConfig Store { get; }
-
-    public static IConfig Init()
-    {
-        return _inst ??= JsonConvert
-            .DeserializeObject<Config>(
-                File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
-            )
-            .NotNull();
-    }
 }

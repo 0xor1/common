@@ -2,10 +2,9 @@
 
 namespace Common.Client;
 
+// L for Localizer
 public interface L
 {
-    private static L? _inst;
-
     void Config(string lang, string date, string time);
 
     // S for String
@@ -16,15 +15,9 @@ public interface L
 
     // T for Time
     public string T(DateTime dt);
-
-    public static L Init(S s)
-    {
-        return _inst ??= new LImpl(s);
-    }
 }
 
-// L for Localizer
-internal class LImpl : L
+internal class Localizer : L
 {
     private readonly S _s;
     private string _dateFmt;
@@ -32,7 +25,7 @@ internal class LImpl : L
     private string _timeFmt;
 
 
-    internal LImpl(S s)
+    public Localizer(S s)
     {
         _s = s;
         _lang = s.DefaultLang;

@@ -14,10 +14,13 @@ public static class ServiceExts
     public static void AddApiServices<TDbCtx>(this IServiceCollection services, IConfig config, S s)
         where TDbCtx : DbContext, IAuthDb
     {
+        services.AddLogging();
         services.AddSingleton(config);
         services.AddSingleton(s);
-        services.AddSingleton(ISessionManager.Init(config.Session.SignatureKeys));
-        if (config.Env == Env.LCL)
+        services.AddSingleton<IRpcHttpSessionManager>(
+            new RpcHttpSessionManager(config.Session.SignatureKeys, s)
+        );
+        if (config.Env == Env.Lcl)
         {
             services.AddScoped<IEmailClient, LogEmailClient>();
         }

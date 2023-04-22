@@ -1,8 +1,36 @@
-using System.Reflection.Metadata;
+using System.Net.Mime;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Common.Shared;
+
+public record Rpc<TArg, TRes>
+    where TArg : class
+    where TRes : class
+{
+    public string Path { get; }
+
+    public Rpc(string path)
+    {
+        Path = path.ToLower();
+    }
+}
+
+public record RpcStream(Stream Data, string Name, string Type, bool IsDownload, ulong Size);
+
+public record HasStream
+{
+    [JsonIgnore]
+    public RpcStream Stream { get; set; }
+}
+
+public record Nothing
+{
+    public static readonly Type Type = typeof(Nothing);
+    public static readonly Nothing Inst = new();
+
+    private Nothing() { }
+}
 
 public class RpcException : Exception
 {
@@ -15,10 +43,88 @@ public class RpcException : Exception
     public int Code { get; }
 }
 
-public static class Rpc
+public interface IRpcClient
+{
+    Task<TRes> Do<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)
+        where TArg : class
+        where TRes : class;
+}
+
+public record RpcHttpClient : IRpcClient
+{
+    private readonly string _baseHref;
+    private readonly HttpClient _client;
+    private readonly Action<string> _rpcExceptionHandler;
+
+    public RpcHttpClient(string baseHref, HttpClient client, Action<string> reh)
+    {
+        _baseHref = baseHref + "api";
+        _client = client;
+        _rpcExceptionHandler = reh;
+    }
+
+    public async Task<TRes> Do<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)
+        where TArg : class
+        where TRes : class
+    {
+        using var req = new HttpRequestMessage(HttpMethod.Post, _baseHref + rpc.Path);
+        if (RpcHttp.HasStream<TArg>())
+        {
+            var stream = (arg as HasStream).NotNull().Stream;
+            req.Content = new StreamContent(stream.Data);
+            req.Headers.Add(RpcHttp.DataHeader, RpcHttp.Serialize(arg).ToB64());
+            req.Headers.Add(RpcHttp.ContentNameHeader, stream.Name);
+            req.Headers.Add(RpcHttp.ContentTypeHeader, stream.Type);
+            req.Headers.Add(RpcHttp.ContentLengthHeader, stream.Size.ToString());
+        }
+        else if (typeof(TArg) != Nothing.Type)
+        {
+            req.Content = new ByteArrayContent(RpcHttp.Serialize(arg));
+        }
+
+        using var resp = await _client.NotNull().SendAsync(req);
+        if (!resp.IsSuccessStatusCode)
+        {
+            var msg = await resp.Content.ReadAsStringAsync();
+            _rpcExceptionHandler(msg);
+            throw new RpcException(msg, (int)resp.StatusCode);
+        }
+
+        if (!RpcHttp.HasStream<TRes>())
+        {
+            if (typeof(TRes) == Nothing.Type)
+            {
+                return (Nothing.Inst as TRes).NotNull();
+            }
+            var bs = await resp.Content.ReadAsByteArrayAsync();
+            return RpcHttp.Deserialize<TRes>(bs).NotNull();
+        }
+
+        var resBs = resp.Headers.GetValues(RpcHttp.DataHeader).First().FromB64();
+        var res = RpcHttp.Deserialize<TRes>(resBs).NotNull();
+        var sub = (res as HasStream).NotNull();
+        var cd = new ContentDisposition(
+            string.Join(";", resp.Headers.GetValues(RpcHttp.ContentDispositionHeader))
+        );
+        sub.Stream = new RpcStream(
+            await resp.Content.ReadAsStreamAsync(),
+            cd.FileName ?? "unnamed_file",
+            cd.DispositionType,
+            true,
+            (ulong)cd.Size
+        );
+        return res;
+    }
+}
+
+public static class RpcHttp
 {
     public const string QueryParam = "arg";
     public const string DataHeader = "X-Data";
+    public const string ContentNameHeader = "X-Content-Name";
+    public const string ContentTypeHeader = "Content-Type";
+    public const string ContentLengthHeader = "Content-Length";
+    public const string ContentDispositionHeader = "Content-Disposition";
     private static readonly JsonSerializerSettings SerializerSettings =
         new()
         {
@@ -32,85 +138,15 @@ public static class Rpc
             }
         };
 
-    public static byte[] Serialize(object? v)
-    {
-        return JsonConvert.SerializeObject(v, SerializerSettings).ToUtf8Bytes();
-    }
+    public static byte[] Serialize(object? v) =>
+        JsonConvert.SerializeObject(v, SerializerSettings).ToUtf8Bytes();
 
     public static T Deserialize<T>(byte[] bs)
         where T : class =>
         JsonConvert.DeserializeObject<T>(bs.FromUtf8Bytes(), SerializerSettings).NotNull();
 
-    public static bool HasStream<T>() => typeof(IStream).IsAssignableFrom(typeof(T));
+    public static bool HasStream<T>() => typeof(T).IsAssignableTo(typeof(HasStream));
 }
-
-public record RpcBase
-{
-    protected static string? _baseHref;
-    protected static HttpClient? _client;
-    protected static Action<string>? _rpcExceptionHandler;
-
-    public static void Init(string baseHref, HttpClient client, Action<string> reh)
-    {
-        _baseHref ??= baseHref + "api";
-        _client ??= client;
-        _rpcExceptionHandler ??= reh;
-    }
-}
-
-public record Rpc<TArg, TRes> : RpcBase
-    where TArg : class
-    where TRes : class
-{
-    public Rpc(string path)
-    {
-        Path = path.ToLower();
-    }
-
-    public string Path { get; }
-
-    public async Task<TRes> Do(TArg arg)
-    {
-        var argsBs = Rpc.Serialize(arg);
-        using var req = new HttpRequestMessage(HttpMethod.Post, _baseHref + Path);
-        if (Rpc.HasStream<TArg>())
-        {
-            req.Content = new StreamContent((arg as IStream).NotNull().Stream);
-            req.Headers.Add(Rpc.DataHeader, argsBs.ToB64());
-        }
-        else
-        {
-            req.Content = new ByteArrayContent(argsBs);
-        }
-
-        using var resp = await _client.NotNull().SendAsync(req);
-        if (!resp.IsSuccessStatusCode)
-        {
-            var msg = await resp.Content.ReadAsStringAsync();
-            _rpcExceptionHandler(msg);
-            throw new RpcException(msg, (int)resp.StatusCode);
-        }
-
-        if (!Rpc.HasStream<TRes>())
-        {
-            var bs = await resp.Content.ReadAsByteArrayAsync();
-            return Rpc.Deserialize<TRes>(bs).NotNull();
-        }
-
-        var resBs = resp.Headers.GetValues(Rpc.DataHeader).First().FromB64();
-        var res = Rpc.Deserialize<TRes>(resBs).NotNull();
-        var sub = (res as IStream).NotNull();
-        sub.Stream = await resp.Content.ReadAsStreamAsync();
-        return res;
-    }
-}
-
-public interface IStream
-{
-    public Stream Stream { get; set; }
-}
-
-public record Nothing;
 
 public class StrTrimConverter : JsonConverter
 {

@@ -1,25 +1,35 @@
 using System.Net;
+using System.Reflection;
 using Common.Server.Auth;
 using Common.Shared;
 using Common.Server;
+using Common.Shared.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Server.Test;
 
-public class RpcTestRig<TDbCtx>
+public class RpcTestRig<TDbCtx> : IAsyncDisposable
     where TDbCtx : DbContext, IAuthDb
 {
-    private readonly IServiceCollection _services = new ServiceCollection();
+    private readonly string Id = Shared.Id.New();
+    private readonly IServiceProvider _services;
     private readonly IConfig _config;
     private readonly S _s;
     private readonly IReadOnlyDictionary<string, IRpcEndpoint> _eps;
 
-    public RpcTestRig(IConfig config, S s, IReadOnlyList<IRpcEndpoint> eps)
+    public RpcTestRig(S s, IReadOnlyList<IRpcEndpoint> eps)
     {
-        _config = config;
+        var ass = Assembly.GetCallingAssembly();
+        var configName = ass.GetManifestResourceNames().Single(x => x.EndsWith("config.json"));
+        var configStream = ass.GetManifestResourceStream(configName).NotNull();
+        var streamReader = new StreamReader(configStream);
+        var configStr = streamReader.ReadToEnd();
+        _config = Config.FromJson(configStr);
         _s = s;
-        _services.AddApiServices<TDbCtx>(config, s);
+        var services = new ServiceCollection();
+        services.AddApiServices<TDbCtx>(_config, s);
+        _services = services.BuildServiceProvider();
         var dupedPaths = eps.Select(x => x.Path).GetDuplicates().ToList();
         Throw.SetupIf(
             dupedPaths.Any(),
@@ -28,13 +38,15 @@ public class RpcTestRig<TDbCtx>
         _eps = eps.ToDictionary(x => x.Path).AsReadOnly();
     }
 
-    private async Task<(Session, object)> Exe(string path, Session session, object arg)
+    private TDbCtx GetDb()
     {
-        var rpcCtx = new RpcTestCtx(
-            _services.BuildServiceProvider().CreateScope().ServiceProvider,
-            _s,
-            arg
-        );
+        return _services.GetRequiredService<TDbCtx>();
+    }
+
+    private async Task<(Session, object)> Exe(string path, Session? session, object arg)
+    {
+        using var scope = _services.CreateScope();
+        var rpcCtx = new RpcTestCtx(scope.ServiceProvider, session, _s, arg);
         rpcCtx.ErrorIf(
             !_eps.TryGetValue(path, out var ep),
             S.RpcUnknownEndpoint,
@@ -45,7 +57,33 @@ public class RpcTestRig<TDbCtx>
         return (rpcCtx.Session.NotNull(), rpcCtx.Res.NotNull());
     }
 
-    public IRpcClient NewClient() => new RpcTestClient(Exe);
+    private IRpcClient NewClient() => new RpcTestClient(Exe);
+
+    private List<string> _registeredEmails = new();
+
+    public async Task<T> NewApi<T>(Func<IRpcClient, T> cnstr, string? name = null)
+        where T : IAuthApi
+    {
+        var api = cnstr(NewClient());
+        if (!name.IsNullOrWhiteSpace())
+        {
+            var email = $"0xor1.common.server.test.{name}@{Id}.{name}";
+            var pwd = "asdASD123@";
+            await api.Register(new(email, "asdASD123@"));
+            await using var db = GetDb();
+            var code = db.Auths.Single(x => x.Email == email).VerifyEmailCode;
+            await api.VerifyEmail(new(email, code));
+            await api.SignIn(new(email, pwd, false));
+            _registeredEmails.Add(email);
+        }
+        return api;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await using var db = GetDb();
+        await db.Auths.Where(x => _registeredEmails.Contains(x.Email)).ExecuteDeleteAsync();
+    }
 }
 
 public class RpcTestClient : IRpcClient
@@ -76,11 +114,11 @@ public record RpcTestCtx : IRpcCtxInternal
     public object? Res { get; set; }
     public Exception? Exception { get; set; }
 
-    public RpcTestCtx(IServiceProvider services, S s, object arg)
+    public RpcTestCtx(IServiceProvider services, Session? session, S s, object arg)
     {
         _services = services;
         _s = s;
-        Session = ClearSession();
+        Session = session ?? ClearSession();
         Arg = arg;
     }
 
@@ -101,6 +139,7 @@ public record RpcTestCtx : IRpcCtxInternal
         Session = new Session()
         {
             Id = userId,
+            StartedOn = DateTime.UtcNow,
             IsAuthed = isAuthed,
             RememberMe = rememberMe,
             Lang = lang,

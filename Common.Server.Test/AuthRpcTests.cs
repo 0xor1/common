@@ -6,25 +6,25 @@ using Common.Shared.Auth;
 
 namespace Common.Server.Test;
 
-public class AuthRpcTests
+public class AuthRpcTests: IAsyncDisposable
 {
     private readonly RpcTestRig<CommonTestDb> _rpcTestRig;
-    private readonly IAuthApi _ali;
 
     public AuthRpcTests()
     {
-        var ass = Assembly.GetExecutingAssembly();
-        var configName = ass.GetManifestResourceNames().Single(x => x.EndsWith("config.json"));
-        var configStream = ass.GetManifestResourceStream(configName).NotNull();
-        var streamReader = new StreamReader(configStream);
-        var configStr = streamReader.ReadToEnd();
-        _rpcTestRig = new RpcTestRig<CommonTestDb>(Config.FromJson(configStr), S.Inst, AuthEps<CommonTestDb>.Eps);
-        _ali = new AuthApi(_rpcTestRig.NewClient());
+        _rpcTestRig = new RpcTestRig<CommonTestDb>(S.Inst, AuthEps<CommonTestDb>.Eps);
     }
 
     [Fact]
-    public async Task Test1()
+    public async Task AuthApi_BasicRegistrationFlowSuccess()
     {
-        await _ali.Register(new ("ali@ali.ali", "asdASD123@"));
+        var ali = await _rpcTestRig.NewApi((rpcClient) => new AuthApi(rpcClient), "ali");
+        var ses = await ali.GetSession();
+        Assert.True(ses.IsAuthed);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _rpcTestRig.DisposeAsync();
     }
 }

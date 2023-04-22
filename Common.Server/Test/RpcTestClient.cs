@@ -54,6 +54,10 @@ public class RpcTestRig<TDbCtx> : IAsyncDisposable
             HttpStatusCode.NotFound
         );
         await ep.NotNull().Execute(rpcCtx);
+        if (rpcCtx.Exception != null)
+        {
+            throw rpcCtx.Exception;
+        }
         return (rpcCtx.Session.NotNull(), rpcCtx.Res.NotNull());
     }
 

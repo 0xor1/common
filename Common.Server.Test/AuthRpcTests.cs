@@ -16,12 +16,29 @@ public class AuthRpcTests: IAsyncDisposable
     }
 
     [Fact]
-    public async Task AuthApi_BasicRegistrationFlowSuccess()
+    public async Task BasicRegistrationFlowSuccess()
     {
-        var ali = await _rpcTestRig.NewApi((rpcClient) => new AuthApi(rpcClient), "ali");
+        var ali = await NewApi("ali");
         var ses = await ali.GetSession();
         Assert.True(ses.IsAuthed);
     }
+
+    [Fact]
+    public async Task Register_ThrowsOnInvalidEmail()
+    {
+        var api = await NewApi();
+        try
+        {
+            await api.Register(new("invalid_email", "asdASD123@"));
+        }
+        catch (RpcException ex)
+        {
+            Assert.Equal("en:auth_invalid_email", ex.Message);
+        }
+    }
+
+    public async Task<IAuthApi> NewApi(string? name = null)
+        => await _rpcTestRig.NewApi(rpcClient => new AuthApi(rpcClient), name);
 
     public async ValueTask DisposeAsync()
     {

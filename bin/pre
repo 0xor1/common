@@ -1,0 +1,22 @@
+﻿#!/bin/bash
+
+docker ps --format '{{.Names}}' | grep "^common-" | awk '{print $1}' | xargs -I {} docker stop {}
+
+if [ "$1" == "nuke" ]; then
+    docker-compose -f docker/docker-compose.yml down --rmi all
+fi
+
+docker-compose -f docker/docker-compose.yml up -d
+
+./bin/wait-for-it -t 5 127.0.0.1:6379 -- echo "redis ready"
+./bin/wait-for-it -t 5 127.0.0.1:9000 -- echo "minio ready"
+./bin/wait-for-it -t 60 127.0.0.1:3306 -- echo "mariadb ready"
+
+dotnet build
+dotnet test
+
+if [ "$1" == "gh-actions" ]; then
+  echo "do gh actions stuff here, i.e. upload test coverage to coveralls.io"
+fi
+
+docker-compose -f docker/docker-compose.yml stop

@@ -13,10 +13,8 @@ docker-compose -f docker/docker-compose.yml up -d
 ./bin/wait-for-it -t 60 127.0.0.1:3306 -- echo "mariadb ready"
 
 dotnet build
-dotnet test
-
-if [ "$1" == "gh-actions" ]; then
-  echo "do gh actions stuff here, i.e. upload test coverage to coveralls.io"
-fi
+dotnet test --collect:"XPlat Code Coverage"
+dotnet tool install -g dotnet-reportgenerator-globaltool
+reportgenerator -reports:"*\TestResults\*\coverage.cobertura.xml " -targetdir:"test_coverage" -reporttypes:Html
 
 docker-compose -f docker/docker-compose.yml stop

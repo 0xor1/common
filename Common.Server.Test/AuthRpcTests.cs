@@ -33,7 +33,7 @@ public class AuthRpcTests: IAsyncDisposable
         }
         catch (RpcException ex)
         {
-            Assert.Equal("en:auth_invalid_email", ex.Message);
+            Assert.Equal(S.Inst.GetOrAddress(S.DefaultLang, Shared.S.AuthInvalidEmail), ex.Message);
         }
     }
 

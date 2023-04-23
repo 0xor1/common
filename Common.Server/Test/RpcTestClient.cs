@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Server.Test;
 
-public class RpcTestRig<TDbCtx> : IAsyncDisposable
+public class RpcTestRig<TDbCtx> : IDisposable
     where TDbCtx : DbContext, IAuthDb
 {
     private readonly string Id = Shared.Id.New();
@@ -38,9 +38,9 @@ public class RpcTestRig<TDbCtx> : IAsyncDisposable
         _eps = eps.ToDictionary(x => x.Path).AsReadOnly();
     }
 
-    private TDbCtx GetDb()
+    public TDbCtx GetDb()
     {
-        return _services.GetRequiredService<TDbCtx>();
+        return _services.CreateScope().ServiceProvider.GetRequiredService<TDbCtx>();
     }
 
     private async Task<(Session, object)> Exe(string path, Session? session, object arg)
@@ -65,14 +65,19 @@ public class RpcTestRig<TDbCtx> : IAsyncDisposable
 
     private List<string> _registeredEmails = new();
 
-    public async Task<T> NewApi<T>(Func<IRpcClient, T> cnstr, string? name = null)
+    public async Task<(T, string Email, string Pwd)> NewApi<T>(
+        Func<IRpcClient, T> cnstr,
+        string? name = null
+    )
         where T : IAuthApi
     {
         var api = cnstr(NewClient());
+        var email = "";
+        var pwd = "";
         if (!name.IsNullOrWhiteSpace())
         {
-            var email = $"0xor1.common.server.test.{name}@{Id}.{name}";
-            var pwd = "asdASD123@";
+            email = $"0xor1.common.server.test.{name}@{Id}.{name}";
+            pwd = "asdASD123@";
             await api.Register(new(email, "asdASD123@"));
             await using var db = GetDb();
             var code = db.Auths.Single(x => x.Email == email).VerifyEmailCode;
@@ -80,13 +85,13 @@ public class RpcTestRig<TDbCtx> : IAsyncDisposable
             await api.SignIn(new(email, pwd, false));
             _registeredEmails.Add(email);
         }
-        return api;
+        return (api, email, pwd);
     }
 
-    public async ValueTask DisposeAsync()
+    public void Dispose()
     {
-        await using var db = GetDb();
-        await db.Auths.Where(x => _registeredEmails.Contains(x.Email)).ExecuteDeleteAsync();
+        using var db = GetDb();
+        db.Auths.Where(x => _registeredEmails.Contains(x.Email)).ExecuteDelete();
     }
 }
 

@@ -279,28 +279,39 @@ public static class AuthEps<TDbCtx>
                     var db = ctx.Get<TDbCtx>();
                     // start db tx
                     await using var tx = await db.Database.BeginTransactionAsync();
-                    var auth = await db.Auths.SingleOrDefaultAsync(x => x.Email.Equals(req.Email));
-                    ctx.ErrorIf(auth == null, S.NoMatchingRecord);
-                    ctx.ErrorIf(auth.NotNull().ActivatedOn.IsZero(), S.AuthAccountNotVerified);
-                    RateLimitAuthAttempts(ctx, auth.NotNull());
-                    auth.LastSignInAttemptOn = DateTime.UtcNow;
-                    var pwdIsValid = Crypto.PwdIsValid(req.Pwd, auth);
-                    if (pwdIsValid)
+                    try
                     {
-                        auth.LastSignedInOn = DateTime.UtcNow;
-                        ses = ctx.CreateSession(
-                            auth.Id,
-                            true,
-                            req.RememberMe,
-                            auth.Lang,
-                            auth.DateFmt,
-                            auth.TimeFmt
+                        var auth = await db.Auths.SingleOrDefaultAsync(
+                            x => x.Email.Equals(req.Email)
                         );
+                        ctx.ErrorIf(auth == null, S.NoMatchingRecord);
+                        ctx.ErrorIf(auth.NotNull().ActivatedOn.IsZero(), S.AuthAccountNotVerified);
+                        RateLimitAuthAttempts(ctx, auth.NotNull());
+                        auth.LastSignInAttemptOn = DateTime.UtcNow;
+                        var pwdIsValid = Crypto.PwdIsValid(req.Pwd, auth);
+                        ctx.ErrorIf(!pwdIsValid, S.NoMatchingRecord);
+                        if (pwdIsValid)
+                        {
+                            auth.LastSignedInOn = DateTime.UtcNow;
+                            ses = ctx.CreateSession(
+                                auth.Id,
+                                true,
+                                req.RememberMe,
+                                auth.Lang,
+                                auth.DateFmt,
+                                auth.TimeFmt
+                            );
+                        }
+
+                        await db.SaveChangesAsync();
+                        await tx.CommitAsync();
+                    }
+                    catch
+                    {
+                        await tx.RollbackAsync();
+                        throw;
                     }
 
-                    await db.SaveChangesAsync();
-                    await tx.CommitAsync();
-                    ctx.ErrorIf(!pwdIsValid, S.NoMatchingRecord);
                     return ses.ToApiSession();
                 }
             ),
@@ -340,14 +351,27 @@ public static class AuthEps<TDbCtx>
                     {
                         var db = ctx.Get<TDbCtx>();
                         await using var tx = await db.Database.BeginTransactionAsync();
-                        var auth = await db.Auths.SingleOrDefaultAsync(x => x.Id.Equals(ses.Id));
-                        ctx.ErrorIf(auth == null, S.NoMatchingRecord);
-                        ctx.ErrorIf(auth.NotNull().ActivatedOn.IsZero(), S.AuthAccountNotVerified);
-                        auth.Lang = ses.Lang;
-                        auth.DateFmt = ses.DateFmt;
-                        auth.TimeFmt = ses.TimeFmt;
-                        await db.SaveChangesAsync();
-                        await tx.CommitAsync();
+                        try
+                        {
+                            var auth = await db.Auths.SingleOrDefaultAsync(
+                                x => x.Id.Equals(ses.Id)
+                            );
+                            ctx.ErrorIf(auth == null, S.NoMatchingRecord);
+                            ctx.ErrorIf(
+                                auth.NotNull().ActivatedOn.IsZero(),
+                                S.AuthAccountNotVerified
+                            );
+                            auth.Lang = ses.Lang;
+                            auth.DateFmt = ses.DateFmt;
+                            auth.TimeFmt = ses.TimeFmt;
+                            await db.SaveChangesAsync();
+                            await tx.CommitAsync();
+                        }
+                        catch
+                        {
+                            await tx.RollbackAsync();
+                            throw;
+                        }
                     }
 
                     return ses.ToApiSession();

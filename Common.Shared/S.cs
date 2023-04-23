@@ -56,6 +56,9 @@ public interface S
     public string DefaultLang { get; }
     public string DefaultDateFmt { get; }
     public string DefaultTimeFmt { get; }
+    public IReadOnlyList<Lang> SupportedLangs { get; }
+    public IReadOnlyList<DateTimeFmt> SupportedDateFmts { get; }
+    public IReadOnlyList<DateTimeFmt> SupportedTimeFmts { get; }
 
     public IReadOnlyDictionary<
         string,

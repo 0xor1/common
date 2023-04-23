@@ -233,7 +233,8 @@ public static class RpcCtxExts
 
     public static async Task<TRes> DbTx<TDbCtx, TRes>(
         this IRpcCtx ctx,
-        Func<TDbCtx, Session, Task<TRes>> fn
+        Func<TDbCtx, Session, Task<TRes>> fn,
+        bool mustBeAuthedSession = true
     )
         where TDbCtx : DbContext
     {
@@ -241,7 +242,7 @@ public static class RpcCtxExts
         var tx = await db.Database.BeginTransactionAsync();
         try
         {
-            var res = await fn(db, ctx.GetAuthedSession());
+            var res = await fn(db, mustBeAuthedSession ? ctx.GetAuthedSession() : ctx.GetSession());
             await db.SaveChangesAsync();
             await tx.CommitAsync();
             return res;

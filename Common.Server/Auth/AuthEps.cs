@@ -1,22 +1,17 @@
 using Common.Shared;
 using Common.Shared.Auth;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using ApiSession = Common.Shared.Auth.Session;
 
 namespace Common.Server.Auth;
 
 public interface IAuthDb
 {
-    DatabaseFacade Database { get; }
     DbSet<Auth> Auths { get; }
-
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
 public static class AuthEps<TDbCtx>
-    where TDbCtx : IAuthDb
+    where TDbCtx : DbContext, IAuthDb
 {
     private const int AuthAttemptsRateLimit = 5;
 
@@ -41,80 +36,71 @@ public static class AuthEps<TDbCtx>
                     };
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
                     ctx.ErrorFromValidationResult(AuthValidator.Pwd(req.Pwd));
-                    var db = ctx.Get<TDbCtx>();
-                    // start db tx
-                    await using var tx = await db.Database.BeginTransactionAsync();
-                    try
-                    {
-                        var existing = await db.Auths.SingleOrDefaultAsync(
-                            x =>
-                                x.Email.Equals(req.Email)
-                                || (x.NewEmail != null && x.NewEmail.Equals(req.Email))
-                        );
-                        var newCreated = existing == null;
-                        if (existing == null)
+                    return await ctx.DbTx<TDbCtx, Nothing>(
+                        async (db, ses) =>
                         {
-                            var verifyEmailCode = Crypto.String(32);
-                            var pwd = Crypto.HashPwd(req.Pwd);
-                            existing = new Auth
+                            var existing = await db.Auths.SingleOrDefaultAsync(
+                                x =>
+                                    x.Email.Equals(req.Email)
+                                    || (x.NewEmail != null && x.NewEmail.Equals(req.Email))
+                            );
+                            var newCreated = existing == null;
+                            if (existing == null)
                             {
-                                Id = ses.Id,
-                                Email = req.Email,
-                                VerifyEmailCodeCreatedOn = DateTime.UtcNow,
-                                VerifyEmailCode = verifyEmailCode,
-                                Lang = ses.Lang,
-                                DateFmt = ses.DateFmt,
-                                TimeFmt = ses.TimeFmt,
-                                PwdVersion = pwd.PwdVersion,
-                                PwdSalt = pwd.PwdSalt,
-                                PwdHash = pwd.PwdHash,
-                                PwdIters = pwd.PwdIters
-                            };
-                            await db.Auths.AddAsync(existing);
-                            await db.SaveChangesAsync();
-                        }
+                                var verifyEmailCode = Crypto.String(32);
+                                var pwd = Crypto.HashPwd(req.Pwd);
+                                existing = new Auth
+                                {
+                                    Id = ses.Id,
+                                    Email = req.Email,
+                                    VerifyEmailCodeCreatedOn = DateTime.UtcNow,
+                                    VerifyEmailCode = verifyEmailCode,
+                                    Lang = ses.Lang,
+                                    DateFmt = ses.DateFmt,
+                                    TimeFmt = ses.TimeFmt,
+                                    PwdVersion = pwd.PwdVersion,
+                                    PwdSalt = pwd.PwdSalt,
+                                    PwdHash = pwd.PwdHash,
+                                    PwdIters = pwd.PwdIters
+                                };
+                                await db.Auths.AddAsync(existing);
+                            }
 
-                        if (
-                            !existing.VerifyEmailCode.IsNullOrEmpty()
-                            && (
-                                newCreated
-                                || (
-                                    existing.VerifyEmailCodeCreatedOn.MinutesSince() > 10
-                                    && existing.ActivatedOn.IsZero()
+                            if (
+                                !existing.VerifyEmailCode.IsNullOrEmpty()
+                                && (
+                                    newCreated
+                                    || (
+                                        existing.VerifyEmailCodeCreatedOn.MinutesSince() > 10
+                                        && existing.ActivatedOn.IsZero()
+                                    )
                                 )
                             )
-                        )
-                        {
-                            // if there is a verify email code and
-                            // we've just registered a new account
-                            // or the verify email was sent over 10 mins ago
-                            // and the account is not yet activated
-                            var config = ctx.Get<IConfig>();
-                            var emailClient = ctx.Get<IEmailClient>();
-                            var model = new
                             {
-                                BaseHref = config.Server.Listen,
-                                existing.Email,
-                                Code = existing.VerifyEmailCode
-                            };
-                            await emailClient.SendEmailAsync(
-                                ctx.String(S.AuthConfirmEmailSubject),
-                                ctx.String(S.AuthConfirmEmailHtml, model),
-                                ctx.String(S.AuthConfirmEmailText, model),
-                                config.Email.NoReplyAddress,
-                                new List<string> { req.Email }
-                            );
-                        }
-
-                        await tx.CommitAsync();
-                    }
-                    catch
-                    {
-                        await tx.RollbackAsync();
-                        throw;
-                    }
-
-                    return Nothing.Inst;
+                                // if there is a verify email code and
+                                // we've just registered a new account
+                                // or the verify email was sent over 10 mins ago
+                                // and the account is not yet activated
+                                var config = ctx.Get<IConfig>();
+                                var emailClient = ctx.Get<IEmailClient>();
+                                var model = new
+                                {
+                                    BaseHref = config.Server.Listen,
+                                    existing.Email,
+                                    Code = existing.VerifyEmailCode
+                                };
+                                await emailClient.SendEmailAsync(
+                                    ctx.String(S.AuthConfirmEmailSubject),
+                                    ctx.String(S.AuthConfirmEmailHtml, model),
+                                    ctx.String(S.AuthConfirmEmailText, model),
+                                    config.Email.NoReplyAddress,
+                                    new List<string> { req.Email }
+                                );
+                            }
+                            return Nothing.Inst;
+                        },
+                        false
+                    );
                 }
             ),
             new RpcEndpoint<VerifyEmail, Nothing>(
@@ -127,45 +113,37 @@ public static class AuthEps<TDbCtx>
                         Email = req.Email.ToLower()
                     };
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
-                    var db = ctx.Get<TDbCtx>();
-                    // start db tx
-                    await using var tx = await db.Database.BeginTransactionAsync();
-                    try
-                    {
-                        var auth = await db.Auths.SingleOrDefaultAsync(
-                            x =>
-                                x.Email.Equals(req.Email)
-                                || (x.NewEmail != null && x.NewEmail.Equals(req.Email))
-                        );
-                        ctx.ErrorIf(auth == null, S.NoMatchingRecord);
-                        ctx.ErrorIf(
-                            auth.NotNull().VerifyEmailCode != req.Code,
-                            S.AuthInvalidEmailCode
-                        );
-                        if (!auth.NewEmail.IsNullOrEmpty() && auth.NewEmail == req.Email)
+                    return await ctx.DbTx<TDbCtx, Nothing>(
+                        async (db, ses) =>
                         {
-                            // verifying new email
-                            auth.Email = auth.NewEmail;
-                            auth.NewEmail = string.Empty;
-                        }
-                        else
-                        {
-                            // first account activation
-                            auth.ActivatedOn = DateTime.UtcNow;
-                        }
+                            var auth = await db.Auths.SingleOrDefaultAsync(
+                                x =>
+                                    x.Email.Equals(req.Email)
+                                    || (x.NewEmail != null && x.NewEmail.Equals(req.Email))
+                            );
+                            ctx.ErrorIf(auth == null, S.NoMatchingRecord);
+                            ctx.ErrorIf(
+                                auth.NotNull().VerifyEmailCode != req.Code,
+                                S.AuthInvalidEmailCode
+                            );
+                            if (!auth.NewEmail.IsNullOrEmpty() && auth.NewEmail == req.Email)
+                            {
+                                // verifying new email
+                                auth.Email = auth.NewEmail;
+                                auth.NewEmail = string.Empty;
+                            }
+                            else
+                            {
+                                // first account activation
+                                auth.ActivatedOn = DateTime.UtcNow;
+                            }
 
-                        auth.VerifyEmailCodeCreatedOn = DateTimeExts.Zero();
-                        auth.VerifyEmailCode = string.Empty;
-                        await db.SaveChangesAsync();
-                        await tx.CommitAsync();
-                    }
-                    catch
-                    {
-                        await tx.RollbackAsync();
-                        throw;
-                    }
-
-                    return Nothing.Inst;
+                            auth.VerifyEmailCodeCreatedOn = DateTimeExts.Zero();
+                            auth.VerifyEmailCode = string.Empty;
+                            return Nothing.Inst;
+                        },
+                        false
+                    );
                 }
             ),
             new RpcEndpoint<SendResetPwdEmail, Nothing>(
@@ -178,47 +156,43 @@ public static class AuthEps<TDbCtx>
                     // !!! ToLower all emails in all Auth_ api endpoints
                     req = new SendResetPwdEmail(req.Email.ToLower());
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
-                    var db = ctx.Get<TDbCtx>();
-                    // start db tx
-                    await using var tx = await db.Database.BeginTransactionAsync();
-                    try
-                    {
-                        var existing = await db.Auths.SingleOrDefaultAsync(
-                            x => x.Email.Equals(req.Email)
-                        );
-                        if (existing == null || existing.ResetPwdCodeCreatedOn.MinutesSince() < 10)
-                            // if email is not associated with an account or
-                            // a reset pwd was sent within the last 10 minutes
-                            // dont do anything
-                            return Nothing.Inst;
-
-                        existing.ResetPwdCodeCreatedOn = DateTime.UtcNow;
-                        existing.ResetPwdCode = Crypto.String(32);
-                        await db.SaveChangesAsync();
-                        var config = ctx.Get<IConfig>();
-                        var model = new
+                    return await ctx.DbTx<TDbCtx, Nothing>(
+                        async (db, ses) =>
                         {
-                            BaseHref = config.Server.Listen,
-                            existing.Email,
-                            Code = existing.ResetPwdCode
-                        };
-                        var emailClient = ctx.Get<IEmailClient>();
-                        await emailClient.SendEmailAsync(
-                            ctx.String(S.AuthResetPwdSubject),
-                            ctx.String(S.AuthResetPwdHtml, model),
-                            ctx.String(S.AuthResetPwdText, model),
-                            config.Email.NoReplyAddress,
-                            new List<string> { req.Email }
-                        );
-                        await tx.CommitAsync();
-                    }
-                    catch
-                    {
-                        await tx.RollbackAsync();
-                        throw;
-                    }
+                            var existing = await db.Auths.SingleOrDefaultAsync(
+                                x => x.Email.Equals(req.Email)
+                            );
+                            if (
+                                existing == null
+                                || existing.ResetPwdCodeCreatedOn.MinutesSince() < 10
+                            )
+                                // if email is not associated with an account or
+                                // a reset pwd was sent within the last 10 minutes
+                                // dont do anything
+                                return Nothing.Inst;
 
-                    return Nothing.Inst;
+                            existing.ResetPwdCodeCreatedOn = DateTime.UtcNow;
+                            existing.ResetPwdCode = Crypto.String(32);
+                            await db.SaveChangesAsync();
+                            var config = ctx.Get<IConfig>();
+                            var model = new
+                            {
+                                BaseHref = config.Server.Listen,
+                                existing.Email,
+                                Code = existing.ResetPwdCode
+                            };
+                            var emailClient = ctx.Get<IEmailClient>();
+                            await emailClient.SendEmailAsync(
+                                ctx.String(S.AuthResetPwdSubject),
+                                ctx.String(S.AuthResetPwdHtml, model),
+                                ctx.String(S.AuthResetPwdText, model),
+                                config.Email.NoReplyAddress,
+                                new List<string> { req.Email }
+                            );
+                            return Nothing.Inst;
+                        },
+                        false
+                    );
                 }
             ),
             new RpcEndpoint<ResetPwd, Nothing>(
@@ -232,36 +206,28 @@ public static class AuthEps<TDbCtx>
                     };
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
                     ctx.ErrorFromValidationResult(AuthValidator.Pwd(req.NewPwd));
-                    var db = ctx.Get<TDbCtx>();
-                    // start db tx
-                    await using var tx = await db.Database.BeginTransactionAsync();
-                    try
-                    {
-                        var auth = await db.Auths.SingleOrDefaultAsync(
-                            x => x.Email.Equals(req.Email)
-                        );
-                        ctx.ErrorIf(auth == null, S.NoMatchingRecord);
-                        ctx.ErrorIf(
-                            auth.NotNull().ResetPwdCode != req.Code,
-                            S.AuthInvalidResetPwdCode
-                        );
-                        var pwd = Crypto.HashPwd(req.NewPwd);
-                        auth.ResetPwdCodeCreatedOn = DateTimeExts.Zero();
-                        auth.ResetPwdCode = string.Empty;
-                        auth.PwdVersion = pwd.PwdVersion;
-                        auth.PwdSalt = pwd.PwdSalt;
-                        auth.PwdHash = pwd.PwdHash;
-                        auth.PwdIters = pwd.PwdIters;
-                        await db.SaveChangesAsync();
-                        await tx.CommitAsync();
-                    }
-                    catch
-                    {
-                        await tx.RollbackAsync();
-                        throw;
-                    }
-
-                    return Nothing.Inst;
+                    return await ctx.DbTx<TDbCtx, Nothing>(
+                        async (db, ses) =>
+                        {
+                            var auth = await db.Auths.FirstOrDefaultAsync(
+                                x => x.Email.Equals(req.Email)
+                            );
+                            ctx.ErrorIf(auth == null, S.NoMatchingRecord);
+                            ctx.ErrorIf(
+                                auth.NotNull().ResetPwdCode != req.Code,
+                                S.AuthInvalidResetPwdCode
+                            );
+                            var pwd = Crypto.HashPwd(req.NewPwd);
+                            auth.ResetPwdCodeCreatedOn = DateTimeExts.Zero();
+                            auth.ResetPwdCode = string.Empty;
+                            auth.PwdVersion = pwd.PwdVersion;
+                            auth.PwdSalt = pwd.PwdSalt;
+                            auth.PwdHash = pwd.PwdHash;
+                            auth.PwdIters = pwd.PwdIters;
+                            return Nothing.Inst;
+                        },
+                        false
+                    );
                 }
             ),
             new RpcEndpoint<SignIn, ApiSession>(
@@ -276,43 +242,37 @@ public static class AuthEps<TDbCtx>
                         Email = req.Email.ToLower()
                     };
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
-                    var db = ctx.Get<TDbCtx>();
-                    // start db tx
-                    await using var tx = await db.Database.BeginTransactionAsync();
-                    try
-                    {
-                        var auth = await db.Auths.SingleOrDefaultAsync(
-                            x => x.Email.Equals(req.Email)
-                        );
-                        ctx.ErrorIf(auth == null, S.NoMatchingRecord);
-                        ctx.ErrorIf(auth.NotNull().ActivatedOn.IsZero(), S.AuthAccountNotVerified);
-                        RateLimitAuthAttempts(ctx, auth.NotNull());
-                        auth.LastSignInAttemptOn = DateTime.UtcNow;
-                        var pwdIsValid = Crypto.PwdIsValid(req.Pwd, auth);
-                        ctx.ErrorIf(!pwdIsValid, S.NoMatchingRecord);
-                        if (pwdIsValid)
+                    return await ctx.DbTx<TDbCtx, ApiSession>(
+                        async (db, ses) =>
                         {
-                            auth.LastSignedInOn = DateTime.UtcNow;
-                            ses = ctx.CreateSession(
-                                auth.Id,
-                                true,
-                                req.RememberMe,
-                                auth.Lang,
-                                auth.DateFmt,
-                                auth.TimeFmt
+                            var auth = await db.Auths.SingleOrDefaultAsync(
+                                x => x.Email.Equals(req.Email)
                             );
-                        }
-
-                        await db.SaveChangesAsync();
-                        await tx.CommitAsync();
-                    }
-                    catch
-                    {
-                        await tx.RollbackAsync();
-                        throw;
-                    }
-
-                    return ses.ToApiSession();
+                            ctx.ErrorIf(auth == null, S.NoMatchingRecord);
+                            ctx.ErrorIf(
+                                auth.NotNull().ActivatedOn.IsZero(),
+                                S.AuthAccountNotVerified
+                            );
+                            RateLimitAuthAttempts(ctx, auth.NotNull());
+                            auth.LastSignInAttemptOn = DateTime.UtcNow;
+                            var pwdIsValid = Crypto.PwdIsValid(req.Pwd, auth);
+                            ctx.ErrorIf(!pwdIsValid, S.NoMatchingRecord);
+                            if (pwdIsValid)
+                            {
+                                auth.LastSignedInOn = DateTime.UtcNow;
+                                ses = ctx.CreateSession(
+                                    auth.Id,
+                                    true,
+                                    req.RememberMe,
+                                    auth.Lang,
+                                    auth.DateFmt,
+                                    auth.TimeFmt
+                                );
+                            }
+                            return ses.ToApiSession();
+                        },
+                        false
+                    );
                 }
             ),
             new RpcEndpoint<Nothing, ApiSession>(
@@ -349,29 +309,21 @@ public static class AuthEps<TDbCtx>
                     );
                     if (ses.IsAuthed)
                     {
-                        var db = ctx.Get<TDbCtx>();
-                        await using var tx = await db.Database.BeginTransactionAsync();
-                        try
-                        {
-                            var auth = await db.Auths.SingleOrDefaultAsync(
-                                x => x.Id.Equals(ses.Id)
-                            );
-                            ctx.ErrorIf(auth == null, S.NoMatchingRecord);
-                            ctx.ErrorIf(
-                                auth.NotNull().ActivatedOn.IsZero(),
-                                S.AuthAccountNotVerified
-                            );
-                            auth.Lang = ses.Lang;
-                            auth.DateFmt = ses.DateFmt;
-                            auth.TimeFmt = ses.TimeFmt;
-                            await db.SaveChangesAsync();
-                            await tx.CommitAsync();
-                        }
-                        catch
-                        {
-                            await tx.RollbackAsync();
-                            throw;
-                        }
+                        await ctx.DbTx<TDbCtx, Nothing>(
+                            async (db, _) =>
+                            {
+                                var auth = await db.Auths.SingleOrDefaultAsync(x => x.Id == ses.Id);
+                                ctx.ErrorIf(auth == null, S.NoMatchingRecord);
+                                ctx.ErrorIf(
+                                    auth.NotNull().ActivatedOn.IsZero(),
+                                    S.AuthAccountNotVerified
+                                );
+                                auth.Lang = ses.Lang;
+                                auth.DateFmt = ses.DateFmt;
+                                auth.TimeFmt = ses.TimeFmt;
+                                return Nothing.Inst;
+                            }
+                        );
                     }
 
                     return ses.ToApiSession();

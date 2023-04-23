@@ -17,7 +17,7 @@ public class AuthRpcTests : IDisposable
     }
 
     [Fact]
-    public async Task BasicRegistrationFlowSuccess()
+    public async Task FullRegistrationAndSignInFlow_Success()
     {
         var (ali, _, _) = await NewApi("ali");
         var ses = await ali.GetSession();
@@ -39,21 +39,6 @@ public class AuthRpcTests : IDisposable
     }
 
     [Fact]
-    public async Task BasicResetPwdSuccess()
-    {
-        var (ali, email, _) = await NewApi("ali");
-        await ali.SignOut();
-        await ali.SendResetPwdEmail(new(email));
-        await using var db = _rpcTestRig.GetDb();
-        var pwdCode = (await db.Auths.FirstAsync(x => x.Email == email)).ResetPwdCode;
-        var newPwd = "asdASD123@=";
-        await ali.ResetPwd(new(email, pwdCode, newPwd));
-        await Task.Delay(5000);
-        var ses = await ali.SignIn(new(email, newPwd, false));
-        Assert.True(ses.IsAuthed);
-    }
-
-    [Fact]
     public async Task Register_ThrowsOnInvalidPwd()
     {
         var (api, _, _) = await NewApi();
@@ -68,6 +53,31 @@ public class AuthRpcTests : IDisposable
                 ex.Message
             );
         }
+    }
+
+    [Fact]
+    public async Task FullResetPwdFlow_Success()
+    {
+        var (ali, email, _) = await NewApi("ali");
+        await ali.SignOut();
+        await ali.SendResetPwdEmail(new(email));
+        await using var db = _rpcTestRig.GetDb();
+        var pwdCode = (await db.Auths.FirstAsync(x => x.Email == email)).ResetPwdCode;
+        var newPwd = "asdASD123@=";
+        await ali.ResetPwd(new(email, pwdCode, newPwd));
+        await Task.Delay(5000);
+        var ses = await ali.SignIn(new(email, newPwd, false));
+        Assert.True(ses.IsAuthed);
+    }
+
+    [Fact]
+    public async Task SetL10n_Success()
+    {
+        var (ali, _, _) = await NewApi("ali");
+        var ses = await ali.SetL10n(new("es", "MM-dd-yyyy", "h:mmtt"));
+        Assert.Equal("es", ses.Lang);
+        Assert.Equal("MM-dd-yyyy", ses.DateFmt);
+        Assert.Equal("h:mmtt", ses.TimeFmt);
     }
 
     public async Task<(IAuthApi, string Email, string Pwd)> NewApi(string? name = null) =>

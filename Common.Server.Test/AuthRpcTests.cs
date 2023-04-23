@@ -6,7 +6,7 @@ using Common.Shared.Auth;
 
 namespace Common.Server.Test;
 
-public class AuthRpcTests: IAsyncDisposable
+public class AuthRpcTests : IAsyncDisposable
 {
     private readonly RpcTestRig<CommonTestDb> _rpcTestRig;
 
@@ -37,8 +37,8 @@ public class AuthRpcTests: IAsyncDisposable
         }
     }
 
-    public async Task<IAuthApi> NewApi(string? name = null)
-        => await _rpcTestRig.NewApi(rpcClient => new AuthApi(rpcClient), name);
+    public async Task<IAuthApi> NewApi(string? name = null) =>
+        await _rpcTestRig.NewApi(rpcClient => new AuthApi(rpcClient), name);
 
     public async ValueTask DisposeAsync()
     {

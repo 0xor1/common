@@ -52,7 +52,6 @@ public interface S
     public const string AuthResetPwdHtml = "auth_reset_pwd_html";
     public const string AuthResetPwdText = "auth_reset_pwd_text";
     public const string ApiError = "api_error";
-    public static readonly FluidParser Parser = new();
 
     public string DefaultLang { get; }
     public string DefaultDateFmt { get; }

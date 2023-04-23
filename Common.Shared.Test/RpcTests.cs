@@ -9,5 +9,5 @@ public class RpcTests
         Assert.Equal("yolo", res.Value);
     }
 
-    public record Test(string? Value);
+    private record Test(string? Value);
 }

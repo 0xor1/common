@@ -18,7 +18,6 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
     private readonly S _s;
     private readonly Func<IRpcClient, TApi> _apiFactory;
     private readonly IReadOnlyDictionary<string, IRpcEndpoint> _eps;
-    private readonly List<TApi> _apis = new();
 
     public RpcTestRig(S s, IReadOnlyList<IRpcEndpoint> eps, Func<IRpcClient, TApi> apiFactory)
     {
@@ -66,19 +65,18 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         return (rpcCtx.Session.NotNull(), rpcCtx.Res.NotNull());
     }
 
-    private IRpcClient NewClient() => new RpcTestClient(Exe);
+    private IRpcClient NewClient(Session? session = null) => new RpcTestClient(Exe, session);
 
-    private List<string> _registeredEmails = new();
+    private HashSet<string> _registeredEmails = new();
 
     public async Task<(TApi, string Email, string Pwd)> NewApi(string? name = null)
     {
         var api = _apiFactory(NewClient());
-        _apis.Add(api);
         var email = "";
         var pwd = "";
         if (!name.IsNullOrWhiteSpace())
         {
-            email = $"0xor1.common.server.test.{name}@{Id}.{name}";
+            email = $"{name}@{Id}.{name}".ToLowerInvariant();
             pwd = "asdASD123@";
             await api.Auth.Register(new(email, "asdASD123@"));
             var code = RunDb((db) => db.Auths.Single(x => x.Email == email).VerifyEmailCode);
@@ -89,17 +87,27 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         return (api, email, pwd);
     }
 
-    public IReadOnlyList<TApi> GetAllCreatedApis() => _apis.ToList();
-
     public void Dispose()
     {
-        RunDb<Nothing>(
-            (db) =>
+        var ids = RunDb<List<string>>(db =>
+        {
+            return db.Auths
+                .Where(x => _registeredEmails.Contains(x.Email))
+                .Select(x => x.Id)
+                .ToList();
+        });
+
+        foreach (var id in ids)
+        {
+            var t = _apiFactory(
+                NewClient(new Session() { Id = id, IsAuthed = true })
+            ).Auth.Delete();
+            t.Wait();
+            if (t.Exception != null)
             {
-                db.Auths.Where(x => _registeredEmails.Contains(x.Email)).ExecuteDelete();
-                return Nothing.Inst;
+                throw t.Exception;
             }
-        );
+        }
     }
 }
 
@@ -108,9 +116,13 @@ public class RpcTestClient : IRpcClient
     private Session? _session;
     private Func<string, Session?, object, Task<(Session, object)>> _exe;
 
-    public RpcTestClient(Func<string, Session?, object, Task<(Session, object)>> exe)
+    public RpcTestClient(
+        Func<string, Session?, object, Task<(Session, object)>> exe,
+        Session? session = null
+    )
     {
         _exe = exe;
+        _session = session;
     }
 
     public async Task<TRes> Do<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)

@@ -12,7 +12,7 @@ public class AuthRpcTests : IDisposable
     {
         _rpcTestRig = new RpcTestRig<CommonTestDb, Api>(
             S.Inst,
-            AuthEps<CommonTestDb>.Eps,
+            new AuthEps<CommonTestDb>(0, (s) => Task.CompletedTask).Eps,
             client => new Api(client)
         );
     }

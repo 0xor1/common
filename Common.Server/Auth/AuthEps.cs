@@ -11,17 +11,21 @@ public interface IAuthDb
     DbSet<Auth> Auths { get; }
 }
 
-public static class AuthEps<TDbCtx>
+public class AuthEps<TDbCtx>
     where TDbCtx : DbContext, IAuthDb
 {
-    private const int AuthAttemptsRateLimit = 5;
+    private readonly int _maxAuthAttemptsPerSecond;
+    private readonly Func<Session, Task> _onDelete;
 
-    public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
-        new List<IRpcEndpoint>
+    public AuthEps(int maxAuthAttemptsPerSecond, Func<Session, Task> onDelete)
+    {
+        _maxAuthAttemptsPerSecond = maxAuthAttemptsPerSecond;
+        _onDelete = onDelete;
+        Eps = new List<IRpcEndpoint>
         {
             new RpcEndpoint<Nothing, ApiSession>(
                 AuthRpcs.GetSession,
-                (ctx, req) => ctx.GetSession().ToApiSession().AsTask()
+                (ctx, _) => ctx.GetSession().ToApiSession().AsTask()
             ),
             new RpcEndpoint<Register, Nothing>(
                 AuthRpcs.Register,
@@ -278,7 +282,7 @@ public static class AuthEps<TDbCtx>
             ),
             new RpcEndpoint<Nothing, ApiSession>(
                 AuthRpcs.SignOut,
-                (ctx, req) =>
+                (ctx, _) =>
                 {
                     // basic validation
                     var ses = ctx.GetSession();
@@ -286,6 +290,19 @@ public static class AuthEps<TDbCtx>
                         ses = ctx.ClearSession();
                     return ses.ToApiSession().AsTask();
                 }
+            ),
+            new RpcEndpoint<Nothing, ApiSession>(
+                AuthRpcs.Delete,
+                async (ctx, _) =>
+                    await ctx.DbTx<TDbCtx, ApiSession>(
+                        async (db, ses) =>
+                        {
+                            await _onDelete(ses);
+                            await db.Auths.Where(x => x.Id == ses.Id).ExecuteDeleteAsync();
+                            ses = ctx.ClearSession();
+                            return ses.ToApiSession();
+                        }
+                    )
             ),
             new RpcEndpoint<SetL10n, ApiSession>(
                 AuthRpcs.SetL10n,
@@ -331,16 +348,14 @@ public static class AuthEps<TDbCtx>
                 }
             )
         };
+    }
 
-    private static void RateLimitAuthAttempts(IRpcCtx ctx, Auth auth)
+    public IReadOnlyList<IRpcEndpoint> Eps { get; }
+
+    private void RateLimitAuthAttempts(IRpcCtx ctx, Auth auth)
     {
-        if (ctx is RpcTestCtx)
-        {
-            // dont rate limit when running automated tests
-            return;
-        }
         ctx.ErrorIf(
-            auth.LastSignInAttemptOn.SecondsSince() < AuthAttemptsRateLimit,
+            auth.LastSignInAttemptOn.SecondsSince() < _maxAuthAttemptsPerSecond,
             S.AuthAttemptRateLimit
         );
     }

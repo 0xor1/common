@@ -16,6 +16,7 @@ public interface IAuthApi
     Task ResetPwd(ResetPwd arg);
     Task<Session> SignIn(SignIn arg);
     Task<Session> SignOut();
+    Task<Session> Delete();
     Task<Session> SetL10n(SetL10n arg);
 }
 
@@ -53,6 +54,8 @@ public class AuthApi : IAuthApi
 
     public Task<Session> SignOut() => _client.Do(AuthRpcs.SignOut, Nothing.Inst);
 
+    public Task<Session> Delete() => _client.Do(AuthRpcs.Delete, Nothing.Inst);
+
     public Task<Session> SetL10n(SetL10n arg) => _client.Do(AuthRpcs.SetL10n, arg);
 }
 
@@ -66,6 +69,7 @@ public static class AuthRpcs
     public static readonly Rpc<ResetPwd, Nothing> ResetPwd = new("/auth/reset_pwd");
     public static readonly Rpc<SignIn, Session> SignIn = new("/auth/sign_in");
     public static readonly Rpc<Nothing, Session> SignOut = new("/auth/sign_out");
+    public static readonly Rpc<Nothing, Session> Delete = new("/auth/delete");
     public static readonly Rpc<SetL10n, Session> SetL10n = new("/auth/set_l10n");
 }
 

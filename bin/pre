@@ -15,6 +15,7 @@ docker-compose -f docker/docker-compose.yml up -d
 dotnet build
 dotnet test --collect:"XPlat Code Coverage"
 dotnet tool install -g dotnet-reportgenerator-globaltool
+rm -r test_coverage
 reportgenerator -reports:"*\TestResults\*\coverage.cobertura.xml " -targetdir:"test_coverage" -reporttypes:Html
 rm -r */TestResults
 

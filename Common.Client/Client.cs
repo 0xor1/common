@@ -27,7 +27,7 @@ public static class Client
         builder.Services.AddSingleton(httpClient);
         builder.Services.AddSingleton<IRpcClient>(rpcClient);
         builder.Services.AddSingleton(s);
-        builder.Services.AddSingleton(l);
+        builder.Services.AddSingleton<L>(l);
         builder.Services.AddSingleton(apiFactory(rpcClient));
         builder.Services.AddSingleton<IAuthService, AuthService<TApi>>();
         builder.Services.AddSingleton(ns);

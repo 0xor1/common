@@ -56,21 +56,21 @@ public interface IRpcHttpSessionManager
     internal Session Clear(HttpContext ctx);
 }
 
+[MessagePackObject]
+public record SignedSession
+{
+    [Key(0)]
+    public byte[] Session { get; init; }
+
+    [Key(1)]
+    public byte[] Signature { get; init; }
+}
+
 internal record RpcHttpSessionManager : IRpcHttpSessionManager
 {
     private const string SessionKey = "s";
     private readonly byte[][] SignatureKeys;
     private readonly S _s;
-
-    [MessagePackObject]
-    private record SignedSession
-    {
-        [Key(0)]
-        public byte[] Session { get; init; }
-
-        [Key(1)]
-        public byte[] Signature { get; init; }
-    }
 
     public RpcHttpSessionManager(IReadOnlyList<string> signatureKeys, S s)
     {

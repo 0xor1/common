@@ -38,7 +38,7 @@ public interface IRpcCtxInternal : IRpcCtx
         where T : class;
     Task WriteResp<T>(T val)
         where T : class;
-    Task HandleException(Exception ex, string path);
+    Task HandleException(string message, int code);
 }
 
 public class RpcHttpCtx : IRpcCtxInternal
@@ -139,21 +139,8 @@ public class RpcHttpCtx : IRpcCtxInternal
         await res.ExecuteAsync(_ctx);
     }
 
-    public async Task HandleException(Exception ex, string path)
+    public async Task HandleException(string message, int code)
     {
-        var code = 500;
-        var message = S.UnexpectedError;
-        if (ex is RpcException)
-        {
-            var re = (ex as RpcException).NotNull();
-            code = re.Code;
-            message = re.Message;
-        }
-        else
-        {
-            Get<ILogger<IRpcCtx>>().LogError(ex, $"Error thrown by {path}");
-        }
-
         _ctx.Response.StatusCode = code;
         await Results.Text(content: message, statusCode: code).ExecuteAsync(_ctx);
     }
@@ -176,7 +163,19 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, T
         }
         catch (Exception ex)
         {
-            await ctx.HandleException(ex, Def.Path);
+            var code = 500;
+            var message = ctx.String(S.UnexpectedError);
+            if (ex is RpcException)
+            {
+                var re = (ex as RpcException).NotNull();
+                code = re.Code;
+                message = re.Message;
+            }
+            else
+            {
+                ctx.Get<ILogger<IRpcCtx>>().LogError(ex, $"Error thrown by {Def.Path}");
+            }
+            await ctx.HandleException(message, code);
         }
     }
 }

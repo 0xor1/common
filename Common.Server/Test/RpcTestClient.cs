@@ -185,9 +185,9 @@ public record RpcTestCtx : IRpcCtxInternal
         return Task.CompletedTask;
     }
 
-    public Task HandleException(Exception ex, string path)
+    public Task HandleException(string message, int code)
     {
-        Exception = ex;
+        Exception = new RpcException(message, code);
         return Task.CompletedTask;
     }
 }

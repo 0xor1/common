@@ -1,5 +1,4 @@
-﻿using Common.Client;
-using Common.Shared;
+﻿using Common.Shared;
 using Common.Shared.Auth;
 
 namespace Common.Client;

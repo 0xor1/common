@@ -20,7 +20,7 @@ public class AuthRpcTests : IDisposable
     public async Task FullRegistrationAndSignInFlow_Success()
     {
         var (ali, _, _) = await NewApi("ali");
-        var ses = await ali.GetSession();
+        var ses = await ali.Auth.GetSession();
         Assert.True(ses.IsAuthed);
     }
 
@@ -30,7 +30,7 @@ public class AuthRpcTests : IDisposable
         var (api, _, _) = await NewApi();
         try
         {
-            await api.Register(new("invalid_email", "asdASD123@"));
+            await api.Auth.Register(new("invalid_email", "asdASD123@"));
         }
         catch (RpcException ex)
         {
@@ -44,7 +44,7 @@ public class AuthRpcTests : IDisposable
         var (api, _, _) = await NewApi();
         try
         {
-            await api.Register(new("ali@ali.ali", "abc123@="));
+            await api.Auth.Register(new("ali@ali.ali", "abc123@="));
         }
         catch (RpcException ex)
         {
@@ -59,14 +59,14 @@ public class AuthRpcTests : IDisposable
     public async Task FullResetPwdFlow_Success()
     {
         var (ali, email, _) = await NewApi("ali");
-        await ali.SignOut();
-        await ali.SendResetPwdEmail(new(email));
+        await ali.Auth.SignOut();
+        await ali.Auth.SendResetPwdEmail(new(email));
         await using var db = _rpcTestRig.GetDb();
         var pwdCode = (await db.Auths.FirstAsync(x => x.Email == email)).ResetPwdCode;
         var newPwd = "asdASD123@=";
-        await ali.ResetPwd(new(email, pwdCode, newPwd));
+        await ali.Auth.ResetPwd(new(email, pwdCode, newPwd));
         await Task.Delay(5000);
-        var ses = await ali.SignIn(new(email, newPwd, false));
+        var ses = await ali.Auth.SignIn(new(email, newPwd, false));
         Assert.True(ses.IsAuthed);
     }
 
@@ -74,14 +74,14 @@ public class AuthRpcTests : IDisposable
     public async Task SetL10n_Success()
     {
         var (ali, _, _) = await NewApi("ali");
-        var ses = await ali.SetL10n(new("es", "MM-dd-yyyy", "h:mmtt"));
+        var ses = await ali.Auth.SetL10n(new("es", "MM-dd-yyyy", "h:mmtt"));
         Assert.Equal("es", ses.Lang);
         Assert.Equal("MM-dd-yyyy", ses.DateFmt);
         Assert.Equal("h:mmtt", ses.TimeFmt);
     }
 
-    public async Task<(IAuthApi, string Email, string Pwd)> NewApi(string? name = null) =>
-        await _rpcTestRig.NewApi(rpcClient => new AuthApi(rpcClient), name);
+    public async Task<(IApi, string Email, string Pwd)> NewApi(string? name = null) =>
+        await _rpcTestRig.NewApi(rpcClient => new Api(rpcClient), name);
 
     public void Dispose()
     {

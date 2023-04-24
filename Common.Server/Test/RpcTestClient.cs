@@ -69,7 +69,7 @@ public class RpcTestRig<TDbCtx> : IDisposable
         Func<IRpcClient, T> cnstr,
         string? name = null
     )
-        where T : IAuthApi
+        where T : IApi
     {
         var api = cnstr(NewClient());
         var email = "";
@@ -78,11 +78,11 @@ public class RpcTestRig<TDbCtx> : IDisposable
         {
             email = $"0xor1.common.server.test.{name}@{Id}.{name}";
             pwd = "asdASD123@";
-            await api.Register(new(email, "asdASD123@"));
+            await api.Auth.Register(new(email, "asdASD123@"));
             await using var db = GetDb();
             var code = db.Auths.Single(x => x.Email == email).VerifyEmailCode;
-            await api.VerifyEmail(new(email, code));
-            await api.SignIn(new(email, pwd, false));
+            await api.Auth.VerifyEmail(new(email, code));
+            await api.Auth.SignIn(new(email, pwd, false));
             _registeredEmails.Add(email);
         }
         return (api, email, pwd);

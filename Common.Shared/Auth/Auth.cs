@@ -19,6 +19,16 @@ public interface IAuthApi
     Task<Session> SetL10n(SetL10n arg);
 }
 
+public class Api : IApi
+{
+    public Api(IRpcClient client)
+    {
+        Auth = new AuthApi(client);
+    }
+
+    public IAuthApi Auth { get; }
+}
+
 public class AuthApi : IAuthApi
 {
     private readonly IRpcClient _client;

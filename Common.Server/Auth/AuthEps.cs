@@ -15,9 +15,9 @@ public class AuthEps<TDbCtx>
     where TDbCtx : DbContext, IAuthDb
 {
     private readonly int _maxAuthAttemptsPerSecond;
-    private readonly Func<Session, Task> _onDelete;
+    private readonly Func<TDbCtx, Session, Task> _onDelete;
 
-    public AuthEps(int maxAuthAttemptsPerSecond, Func<Session, Task> onDelete)
+    public AuthEps(int maxAuthAttemptsPerSecond, Func<TDbCtx, Session, Task> onDelete)
     {
         _maxAuthAttemptsPerSecond = maxAuthAttemptsPerSecond;
         _onDelete = onDelete;
@@ -297,7 +297,7 @@ public class AuthEps<TDbCtx>
                     await ctx.DbTx<TDbCtx, ApiSession>(
                         async (db, ses) =>
                         {
-                            await _onDelete(ses);
+                            await _onDelete(db, ses);
                             await db.Auths.Where(x => x.Id == ses.Id).ExecuteDeleteAsync();
                             ses = ctx.ClearSession();
                             return ses.ToApiSession();

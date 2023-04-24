@@ -1,3 +1,4 @@
+using Common.Server.Test;
 using Common.Shared;
 using Common.Shared.Auth;
 using Microsoft.EntityFrameworkCore;
@@ -333,6 +334,11 @@ public static class AuthEps<TDbCtx>
 
     private static void RateLimitAuthAttempts(IRpcCtx ctx, Auth auth)
     {
+        if (ctx is RpcTestCtx)
+        {
+            // dont rate limit when running automated tests
+            return;
+        }
         ctx.ErrorIf(
             auth.LastSignInAttemptOn.SecondsSince() < AuthAttemptsRateLimit,
             S.AuthAttemptRateLimit

@@ -38,9 +38,11 @@ public class RpcTestRig<TDbCtx> : IDisposable
         _eps = eps.ToDictionary(x => x.Path).AsReadOnly();
     }
 
-    public TDbCtx GetDb()
+    public T RunDb<T>(Func<TDbCtx, T> fn)
     {
-        return _services.CreateScope().ServiceProvider.GetRequiredService<TDbCtx>();
+        using var scope = _services.CreateScope();
+        using var db = scope.ServiceProvider.GetRequiredService<TDbCtx>();
+        return fn(db);
     }
 
     private async Task<(Session, object)> Exe(string path, Session? session, object arg)
@@ -79,8 +81,7 @@ public class RpcTestRig<TDbCtx> : IDisposable
             email = $"0xor1.common.server.test.{name}@{Id}.{name}";
             pwd = "asdASD123@";
             await api.Auth.Register(new(email, "asdASD123@"));
-            await using var db = GetDb();
-            var code = db.Auths.Single(x => x.Email == email).VerifyEmailCode;
+            var code = RunDb((db) => db.Auths.Single(x => x.Email == email).VerifyEmailCode);
             await api.Auth.VerifyEmail(new(email, code));
             await api.Auth.SignIn(new(email, pwd, false));
             _registeredEmails.Add(email);
@@ -90,8 +91,13 @@ public class RpcTestRig<TDbCtx> : IDisposable
 
     public void Dispose()
     {
-        using var db = GetDb();
-        db.Auths.Where(x => _registeredEmails.Contains(x.Email)).ExecuteDelete();
+        RunDb<Nothing>(
+            (db) =>
+            {
+                db.Auths.Where(x => _registeredEmails.Contains(x.Email)).ExecuteDelete();
+                return Nothing.Inst;
+            }
+        );
     }
 }
 

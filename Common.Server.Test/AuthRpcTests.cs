@@ -61,11 +61,11 @@ public class AuthRpcTests : IDisposable
         var (ali, email, _) = await NewApi("ali");
         await ali.Auth.SignOut();
         await ali.Auth.SendResetPwdEmail(new(email));
-        await using var db = _rpcTestRig.GetDb();
-        var pwdCode = (await db.Auths.FirstAsync(x => x.Email == email)).ResetPwdCode;
+        var pwdCode = _rpcTestRig.RunDb(
+            (db) => db.Auths.Single(x => x.Email == email).ResetPwdCode
+        );
         var newPwd = "asdASD123@=";
         await ali.Auth.ResetPwd(new(email, pwdCode, newPwd));
-        await Task.Delay(5000);
         var ses = await ali.Auth.SignIn(new(email, newPwd, false));
         Assert.True(ses.IsAuthed);
     }

@@ -6,17 +6,21 @@ namespace Common.Server.Test;
 
 public class AuthRpcTests : IDisposable
 {
-    private readonly RpcTestRig<CommonTestDb> _rpcTestRig;
+    private readonly RpcTestRig<CommonTestDb, Api> _rpcTestRig;
 
     public AuthRpcTests()
     {
-        _rpcTestRig = new RpcTestRig<CommonTestDb>(S.Inst, AuthEps<CommonTestDb>.Eps);
+        _rpcTestRig = new RpcTestRig<CommonTestDb, Api>(
+            S.Inst,
+            AuthEps<CommonTestDb>.Eps,
+            client => new Api(client)
+        );
     }
 
     [Fact]
     public async Task FullRegistrationAndSignInFlow_Success()
     {
-        var (ali, _, _) = await NewApi("ali");
+        var (ali, _, _) = await _rpcTestRig.NewApi("ali");
         var ses = await ali.Auth.GetSession();
         Assert.True(ses.IsAuthed);
     }
@@ -24,7 +28,7 @@ public class AuthRpcTests : IDisposable
     [Fact]
     public async Task Register_ThrowsOnInvalidEmail()
     {
-        var (api, _, _) = await NewApi();
+        var (api, _, _) = await _rpcTestRig.NewApi();
         try
         {
             await api.Auth.Register(new("invalid_email", "asdASD123@"));
@@ -38,7 +42,7 @@ public class AuthRpcTests : IDisposable
     [Fact]
     public async Task Register_ThrowsOnInvalidPwd()
     {
-        var (api, _, _) = await NewApi();
+        var (api, _, _) = await _rpcTestRig.NewApi();
         try
         {
             await api.Auth.Register(new("ali@ali.ali", "abc123@="));
@@ -55,7 +59,7 @@ public class AuthRpcTests : IDisposable
     [Fact]
     public async Task FullResetPwdFlow_Success()
     {
-        var (ali, email, _) = await NewApi("ali");
+        var (ali, email, _) = await _rpcTestRig.NewApi("ali");
         await ali.Auth.SignOut();
         await ali.Auth.SendResetPwdEmail(new(email));
         var pwdCode = _rpcTestRig.RunDb(
@@ -70,15 +74,12 @@ public class AuthRpcTests : IDisposable
     [Fact]
     public async Task SetL10n_Success()
     {
-        var (ali, _, _) = await NewApi("ali");
+        var (ali, _, _) = await _rpcTestRig.NewApi("ali");
         var ses = await ali.Auth.SetL10n(new("es", "MM-dd-yyyy", "h:mmtt"));
         Assert.Equal("es", ses.Lang);
         Assert.Equal("MM-dd-yyyy", ses.DateFmt);
         Assert.Equal("h:mmtt", ses.TimeFmt);
     }
-
-    public async Task<(IApi, string Email, string Pwd)> NewApi(string? name = null) =>
-        await _rpcTestRig.NewApi(rpcClient => new Api(rpcClient), name);
 
     public void Dispose()
     {

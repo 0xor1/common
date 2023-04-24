@@ -8,16 +8,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Server.Test;
 
-public class RpcTestRig<TDbCtx> : IDisposable
+public class RpcTestRig<TDbCtx, TApi> : IDisposable
     where TDbCtx : DbContext, IAuthDb
+    where TApi : IApi
 {
     private readonly string Id = Shared.Id.New();
     private readonly IServiceProvider _services;
     private readonly IConfig _config;
     private readonly S _s;
+    private readonly Func<IRpcClient, TApi> _apiFactory;
     private readonly IReadOnlyDictionary<string, IRpcEndpoint> _eps;
+    private readonly List<TApi> _apis = new();
 
-    public RpcTestRig(S s, IReadOnlyList<IRpcEndpoint> eps)
+    public RpcTestRig(S s, IReadOnlyList<IRpcEndpoint> eps, Func<IRpcClient, TApi> apiFactory)
     {
         var ass = Assembly.GetCallingAssembly();
         var configName = ass.GetManifestResourceNames().Single(x => x.EndsWith("config.json"));
@@ -26,6 +29,7 @@ public class RpcTestRig<TDbCtx> : IDisposable
         var configStr = streamReader.ReadToEnd();
         _config = Config.FromJson(configStr);
         _s = s;
+        _apiFactory = apiFactory;
         var services = new ServiceCollection();
         services.AddApiServices<TDbCtx>(_config, s);
         _services = services.BuildServiceProvider();
@@ -66,13 +70,10 @@ public class RpcTestRig<TDbCtx> : IDisposable
 
     private List<string> _registeredEmails = new();
 
-    public async Task<(T, string Email, string Pwd)> NewApi<T>(
-        Func<IRpcClient, T> cnstr,
-        string? name = null
-    )
-        where T : IApi
+    public async Task<(TApi, string Email, string Pwd)> NewApi(string? name = null)
     {
-        var api = cnstr(NewClient());
+        var api = _apiFactory(NewClient());
+        _apis.Add(api);
         var email = "";
         var pwd = "";
         if (!name.IsNullOrWhiteSpace())
@@ -87,6 +88,8 @@ public class RpcTestRig<TDbCtx> : IDisposable
         }
         return (api, email, pwd);
     }
+
+    public IReadOnlyList<TApi> GetAllCreatedApis() => _apis.ToList();
 
     public void Dispose()
     {

@@ -14,7 +14,7 @@ public class RpcTestException : Exception
     public RpcException Rpc { get; }
 
     public RpcTestException(Exception original, RpcException rpc)
-        : base(rpc.Message)
+        : base($"Original: {original.Message}, Rpc: {rpc.Message}")
     {
         Original = original;
         Rpc = rpc;

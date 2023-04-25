@@ -8,6 +8,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Server.Test;
 
+public class RpcTestException : Exception
+{
+    public Exception Original { get; }
+    public RpcException Rpc { get; }
+
+    public RpcTestException(Exception original, RpcException rpc)
+        : base(rpc.Message)
+    {
+        Original = original;
+        Rpc = rpc;
+    }
+};
+
 public class RpcTestRig<TDbCtx, TApi> : IDisposable
     where TDbCtx : DbContext, IAuthDb
     where TApi : IApi
@@ -150,7 +163,7 @@ public record RpcTestCtx : IRpcCtxInternal
     public Session Session { get; set; }
     public object Arg { get; set; }
     public object? Res { get; set; }
-    public Exception? Exception { get; set; }
+    public RpcTestException? Exception { get; set; }
 
     public RpcTestCtx(IServiceProvider services, Session? session, S s, object arg)
     {
@@ -214,9 +227,9 @@ public record RpcTestCtx : IRpcCtxInternal
         return Task.CompletedTask;
     }
 
-    public Task HandleException(string message, int code)
+    public Task HandleException(Exception ex, string message, int code)
     {
-        Exception = new RpcException(message, code);
+        Exception = new RpcTestException(ex, new RpcException(message, code));
         return Task.CompletedTask;
     }
 }

@@ -38,7 +38,7 @@ public interface IRpcCtxInternal : IRpcCtx
         where T : class;
     Task WriteResp<T>(T val)
         where T : class;
-    Task HandleException(string message, int code);
+    Task HandleException(Exception ex, string message, int code);
 }
 
 public class RpcHttpCtx : IRpcCtxInternal
@@ -139,7 +139,7 @@ public class RpcHttpCtx : IRpcCtxInternal
         await res.ExecuteAsync(_ctx);
     }
 
-    public async Task HandleException(string message, int code)
+    public async Task HandleException(Exception ex, string message, int code)
     {
         _ctx.Response.StatusCode = code;
         await Results.Text(content: message, statusCode: code).ExecuteAsync(_ctx);
@@ -175,7 +175,7 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, T
             {
                 ctx.Get<ILogger<IRpcCtx>>().LogError(ex, $"Error thrown by {Def.Path}");
             }
-            await ctx.HandleException(message, code);
+            await ctx.HandleException(ex, message, code);
         }
     }
 }

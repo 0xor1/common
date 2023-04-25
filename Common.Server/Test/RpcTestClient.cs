@@ -100,7 +100,16 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         foreach (var id in ids)
         {
             var t = _apiFactory(
-                NewClient(new Session() { Id = id, IsAuthed = true })
+                NewClient(
+                    new Session()
+                    {
+                        Id = id,
+                        IsAuthed = true,
+                        Lang = _s.DefaultLang,
+                        DateFmt = _s.DefaultDateFmt,
+                        TimeFmt = _s.DefaultTimeFmt
+                    }
+                )
             ).Auth.Delete();
             t.Wait();
             if (t.Exception != null)

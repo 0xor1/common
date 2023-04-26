@@ -140,10 +140,10 @@ public class AuthEps<TDbCtx>
                             else
                             {
                                 // first account activation
-                                auth.ActivatedOn = DateTime.UtcNow;
+                                auth.ActivatedOn = DateTimeExt.UtcNowMilli();
                             }
 
-                            auth.VerifyEmailCodeCreatedOn = DateTimeExts.Zero();
+                            auth.VerifyEmailCodeCreatedOn = DateTimeExt.Zero();
                             auth.VerifyEmailCode = string.Empty;
                             return Nothing.Inst;
                         },
@@ -176,7 +176,7 @@ public class AuthEps<TDbCtx>
                                 // dont do anything
                                 return Nothing.Inst;
 
-                            existing.ResetPwdCodeCreatedOn = DateTime.UtcNow;
+                            existing.ResetPwdCodeCreatedOn = DateTimeExt.UtcNowMilli();
                             existing.ResetPwdCode = Crypto.String(32);
                             await db.SaveChangesAsync();
                             var config = ctx.Get<IConfig>();
@@ -223,7 +223,7 @@ public class AuthEps<TDbCtx>
                                 S.AuthInvalidResetPwdCode
                             );
                             var pwd = Crypto.HashPwd(req.NewPwd);
-                            auth.ResetPwdCodeCreatedOn = DateTimeExts.Zero();
+                            auth.ResetPwdCodeCreatedOn = DateTimeExt.Zero();
                             auth.ResetPwdCode = string.Empty;
                             auth.PwdVersion = pwd.PwdVersion;
                             auth.PwdSalt = pwd.PwdSalt;
@@ -259,12 +259,12 @@ public class AuthEps<TDbCtx>
                                 S.AuthAccountNotVerified
                             );
                             RateLimitAuthAttempts(ctx, auth.NotNull());
-                            auth.LastSignInAttemptOn = DateTime.UtcNow;
+                            auth.LastSignInAttemptOn = DateTimeExt.UtcNowMilli();
                             var pwdIsValid = Crypto.PwdIsValid(req.Pwd, auth);
                             ctx.ErrorIf(!pwdIsValid, S.NoMatchingRecord);
                             if (pwdIsValid)
                             {
-                                auth.LastSignedInOn = DateTime.UtcNow;
+                                auth.LastSignedInOn = DateTimeExt.UtcNowMilli();
                                 ses = ctx.CreateSession(
                                     auth.Id,
                                     true,

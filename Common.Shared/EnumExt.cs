@@ -2,7 +2,7 @@
 
 namespace Common.Shared;
 
-public static class EnumExts
+public static class EnumExt
 {
     public static Key ToKey(this Enum input)
     {

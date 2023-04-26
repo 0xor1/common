@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Common.Shared;
 
-public static class StringAndBytesExts
+public static class StringAndBytesExt
 {
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
     {

@@ -1,6 +1,6 @@
 namespace Common.Shared;
 
-public static class IEnumerableExts
+public static class IEnumerableExt
 {
     public static IEnumerable<T> GetDuplicates<T>(this IEnumerable<T> strs)
     {

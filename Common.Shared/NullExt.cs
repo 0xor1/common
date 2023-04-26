@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Common.Shared;
 
-public static class NullExts
+public static class NullExt
 {
     public static T NotNull<T>(
         [NotNull] this T? obj,

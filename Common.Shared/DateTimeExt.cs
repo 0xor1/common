@@ -1,7 +1,15 @@
 ﻿namespace Common.Shared;
 
-public static class DateTimeExts
+public static class DateTimeExt
 {
+    private static readonly long Millis = TimeSpan.FromMilliseconds(1).Ticks;
+
+    public static DateTime UtcNowMilli()
+    {
+        var dt = DateTime.UtcNow;
+        return dt.AddTicks(-(dt.Ticks % Millis));
+    }
+
     public static DateTime Zero()
     {
         return new(1, 1, 1, 0, 0, 0);

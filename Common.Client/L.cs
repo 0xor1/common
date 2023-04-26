@@ -24,7 +24,6 @@ internal class Localizer : L
     private string _lang;
     private string _timeFmt;
 
-
     public Localizer(S s)
     {
         _s = s;

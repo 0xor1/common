@@ -33,8 +33,7 @@ public class AuthService<TApi> : IAuthService
         _refreshUI = a;
     }
 
-    public async Task<ISession> GetSession() =>
-        Session ??= await _api.Auth.GetSession();
+    public async Task<ISession> GetSession() => Session ??= await _api.Auth.GetSession();
 
     public async Task Register(string email, string pwd)
     {

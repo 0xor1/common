@@ -11,7 +11,8 @@ namespace Common.Client;
 public static class Client
 {
     public static async Task Run<TApp, TApi>(string[] args, S s, Func<IRpcClient, TApi> apiFactory)
-        where TApp : IComponent where  TApi : class, IApi
+        where TApp : IComponent
+        where TApi : class, IApi
     {
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
         builder.RootComponents.Add<TApp>("#app");
@@ -20,10 +21,13 @@ public static class Client
         var httpClient = new HttpClient();
         var l = new Localizer(s);
         var ns = new NotificationService();
-        var rpcClient = new RpcHttpClient(builder.HostEnvironment.BaseAddress, httpClient, (message) => 
-            ns.Notify(NotificationSeverity.Error, l.S(S.ApiError), message, duration: 10000D));
+        var rpcClient = new RpcHttpClient(
+            builder.HostEnvironment.BaseAddress,
+            httpClient,
+            (message) =>
+                ns.Notify(NotificationSeverity.Error, l.S(S.ApiError), message, duration: 10000D)
+        );
 
-        
         builder.Services.AddSingleton(httpClient);
         builder.Services.AddSingleton<IRpcClient>(rpcClient);
         builder.Services.AddSingleton(s);

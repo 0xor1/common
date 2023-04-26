@@ -8,13 +8,16 @@ namespace Common.Client;
 
 public class RadzenCustomValidator : ValidatorBase
 {
-    [Inject] private L L { get; set; } = default!;
+    [Inject]
+    private L L { get; set; } = default!;
     public override string Text { get; set; } = S.Invalid;
     public Message Message { get; set; } = new(S.Invalid);
 
     private List<Message> SubMessages { get; set; } = new();
 
-    [Parameter] [EditorRequired] public Func<IRadzenFormComponent, ValidationResult> Validator { get; set; } = default!;
+    [Parameter]
+    [EditorRequired]
+    public Func<IRadzenFormComponent, ValidationResult> Validator { get; set; } = default!;
 
     protected override bool Validate(IRadzenFormComponent component)
     {
@@ -32,7 +35,8 @@ public class RadzenCustomValidator : ValidatorBase
         builder.AddAttribute(1, "style", Style);
         builder.AddAttribute(2, "class", GetCssClass());
         builder.AddMultipleAttributes(3, Attributes);
-        if (!Text.IsNullOrWhiteSpace()) builder.AddContent(4, L.S(Message.Key, Message.Model));
+        if (!Text.IsNullOrWhiteSpace())
+            builder.AddContent(4, L.S(Message.Key, Message.Model));
         if (SubMessages.Any())
         {
             builder.OpenElement(5, "ul");

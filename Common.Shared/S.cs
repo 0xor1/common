@@ -52,6 +52,8 @@ public interface S
     public const string AuthResetPwdHtml = "auth_reset_pwd_html";
     public const string AuthResetPwdText = "auth_reset_pwd_text";
     public const string ApiError = "api_error";
+    public const string MinMaxNullArgs = "min_max_null_args";
+    public const string MinMaxReversedArgs = "min_max_reversed_args";
 
     public string DefaultLang { get; }
     public string DefaultDateFmt { get; }

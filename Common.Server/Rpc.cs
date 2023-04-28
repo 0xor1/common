@@ -165,11 +165,20 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, T
         {
             var code = 500;
             var message = ctx.String(S.UnexpectedError);
-            if (ex is RpcException)
+            if (ex is ArgumentValidationException avex)
             {
-                var re = (ex as RpcException).NotNull();
-                code = re.Code;
-                message = re.Message;
+                code = (int)HttpStatusCode.BadRequest;
+                message = avex switch
+                {
+                    NullMinMaxValuesException _ => ctx.String(S.MinMaxNullArgs),
+                    ReversedMinMaxValuesException rmmve
+                        => ctx.String(S.MinMaxReversedArgs, new { rmmve.Min, rmmve.Max }),
+                };
+            }
+            else if (ex is RpcException rex)
+            {
+                code = rex.Code;
+                message = rex.Message;
             }
             else
             {

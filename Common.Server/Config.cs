@@ -55,6 +55,7 @@ public record EmailConfig
 public record StoreConfig
 {
     public string Region { get; init; }
+    public string Endpoint { get; init; }
     public string Key { get; init; }
     public string Secret { get; init; }
 

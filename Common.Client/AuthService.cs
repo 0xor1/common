@@ -59,6 +59,16 @@ public class AuthService<TApi> : IAuthService
         return Session = await _api.Auth.SignOut();
     }
 
+    public async Task<ISession> Delete()
+    {
+        var ses = await GetSession();
+        if (!ses.IsAuthed)
+        {
+            return ses;
+        }
+        return Session = await _api.Auth.Delete();
+    }
+
     public async Task<ISession> SetL10n(string lang, string dateFmt, string timeFmt) =>
         Session = await _api.Auth.SetL10n(new(lang, dateFmt, timeFmt));
 }

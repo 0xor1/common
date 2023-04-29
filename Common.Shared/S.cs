@@ -31,7 +31,14 @@ public interface S
     public const string Invalid = "invalid";
     public const string RpcUnknownEndpoint = "rpc_unknown_endpoint";
     public const string UnexpectedError = "unexpected_error";
-    public const string NoMatchingRecord = "no_matching_record";
+    public const string EntityNotFound = "entity_not_found";
+    public const string InsufficientPermission = "insufficient_permission";
+    public const string ApiError = "api_error";
+    public const string MinMaxNullArgs = "min_max_null_args";
+    public const string MinMaxReversedArgs = "min_max_reversed_args";
+    public const string BadRequest = "bad_request";
+
+    // auth specific
     public const string AuthInvalidEmail = "auth_invalid_email";
     public const string AuthInvalidPwd = "auth_invalid_pwd";
     public const string AuthLessThan8Chars = "auth_less_than_8_chars";
@@ -51,9 +58,6 @@ public interface S
     public const string AuthResetPwdSubject = "auth_reset_pwd_subject";
     public const string AuthResetPwdHtml = "auth_reset_pwd_html";
     public const string AuthResetPwdText = "auth_reset_pwd_text";
-    public const string ApiError = "api_error";
-    public const string MinMaxNullArgs = "min_max_null_args";
-    public const string MinMaxReversedArgs = "min_max_reversed_args";
 
     public string DefaultLang { get; }
     public string DefaultDateFmt { get; }

@@ -126,7 +126,7 @@ public class AuthEps<TDbCtx>
                                     x.Email.Equals(req.Email)
                                     || (x.NewEmail != null && x.NewEmail.Equals(req.Email))
                             );
-                            ctx.ErrorIf(auth == null, S.NoMatchingRecord);
+                            ctx.NotFoundIf(auth == null);
                             ctx.ErrorIf(
                                 auth.NotNull().VerifyEmailCode != req.Code,
                                 S.AuthInvalidEmailCode
@@ -217,7 +217,7 @@ public class AuthEps<TDbCtx>
                             var auth = await db.Auths.FirstOrDefaultAsync(
                                 x => x.Email.Equals(req.Email)
                             );
-                            ctx.ErrorIf(auth == null, S.NoMatchingRecord);
+                            ctx.NotFoundIf(auth == null);
                             ctx.ErrorIf(
                                 auth.NotNull().ResetPwdCode != req.Code,
                                 S.AuthInvalidResetPwdCode
@@ -253,7 +253,7 @@ public class AuthEps<TDbCtx>
                             var auth = await db.Auths.SingleOrDefaultAsync(
                                 x => x.Email.Equals(req.Email)
                             );
-                            ctx.ErrorIf(auth == null, S.NoMatchingRecord);
+                            ctx.NotFoundIf(auth == null);
                             ctx.ErrorIf(
                                 auth.NotNull().ActivatedOn.IsZero(),
                                 S.AuthAccountNotVerified
@@ -261,7 +261,7 @@ public class AuthEps<TDbCtx>
                             RateLimitAuthAttempts(ctx, auth.NotNull());
                             auth.LastSignInAttemptOn = DateTimeExt.UtcNowMilli();
                             var pwdIsValid = Crypto.PwdIsValid(req.Pwd, auth);
-                            ctx.ErrorIf(!pwdIsValid, S.NoMatchingRecord);
+                            ctx.NotFoundIf(!pwdIsValid);
                             if (pwdIsValid)
                             {
                                 auth.LastSignedInOn = DateTimeExt.UtcNowMilli();
@@ -331,7 +331,7 @@ public class AuthEps<TDbCtx>
                             async (db, _) =>
                             {
                                 var auth = await db.Auths.SingleOrDefaultAsync(x => x.Id == ses.Id);
-                                ctx.ErrorIf(auth == null, S.NoMatchingRecord);
+                                ctx.NotFoundIf(auth == null);
                                 ctx.ErrorIf(
                                     auth.NotNull().ActivatedOn.IsZero(),
                                     S.AuthAccountNotVerified

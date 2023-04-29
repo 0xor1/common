@@ -273,6 +273,21 @@ public static class RpcCtxExts
         Throw.If(condition, () => new RpcException(ctx.String(key, model), (int)code));
     }
 
+    public static void NotFoundIf(this IRpcCtx ctx, bool condition)
+    {
+        ctx.ErrorIf(condition, S.EntityNotFound, null, HttpStatusCode.NotFound);
+    }
+
+    public static void InsufficientPermissionsIf(this IRpcCtx ctx, bool condition)
+    {
+        ctx.ErrorIf(condition, S.InsufficientPermission, null, HttpStatusCode.Forbidden);
+    }
+
+    public static void BadRequestIf(this IRpcCtx ctx, bool condition)
+    {
+        ctx.ErrorIf(condition, S.BadRequest, null, HttpStatusCode.BadRequest);
+    }
+
     public static void ErrorFromValidationResult(
         this IRpcCtx ctx,
         ValidationResult res,

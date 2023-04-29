@@ -3,14 +3,14 @@ namespace Common.Shared.Test;
 public class TaskExtTests
 {
     [Fact]
-    public async void AsTask_WrapsValueInTask()
+    public void AsTask_WrapsValueInTask()
     {
         var t = 1.AsTask();
         Assert.Equal(1, t.Result);
     }
 
     [Fact]
-    public async void WhenAll_ExceptionContainsAllSubExceptions()
+    public async Task WhenAll_ExceptionContainsAllSubExceptions()
     {
         var taskCompletionSourceA = new TaskCompletionSource<int>();
         taskCompletionSourceA.TrySetException(new List<Exception>() { new("a") });

@@ -3,7 +3,6 @@ using System.Runtime.Serialization;
 using Amazon;
 using Common.Shared;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Common.Server;
 
@@ -55,12 +54,16 @@ public record EmailConfig
 public record StoreConfig
 {
     public string Region { get; init; }
-    public string Endpoint { get; init; }
     public string Key { get; init; }
     public string Secret { get; init; }
 
     [JsonIgnore]
     public RegionEndpoint RegionEndpoint => Region.GetRegionEndpoint();
+}
+
+public record FcmConfig
+{
+    public string ServiceAccountKeyFile { get; init; }
 }
 
 public static class AwsStringExts
@@ -84,22 +87,9 @@ public record Config : IConfig
     public SessionConfig Session { get; init; }
     public EmailConfig Email { get; init; }
     public StoreConfig Store { get; init; }
+    public FcmConfig Fcm { get; init; }
 
-    public static Config FromJson(string json) =>
-        JsonConvert.DeserializeObject<Config>(json, SerializerSettings).NotNull();
-
-    private static readonly JsonSerializerSettings SerializerSettings =
-        new()
-        {
-            Formatting = Formatting.None,
-            MissingMemberHandling = MissingMemberHandling.Error,
-            NullValueHandling = NullValueHandling.Ignore,
-            Converters = new List<JsonConverter>()
-            {
-                new StringEnumConverter(),
-                new StrTrimConverter()
-            }
-        };
+    public static Config FromJson(string s) => Json.To<Config>(s);
 }
 
 public interface IConfig

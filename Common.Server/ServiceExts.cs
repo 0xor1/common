@@ -23,6 +23,18 @@ public static class ServiceExts
         if (config.Env == Env.Lcl)
         {
             services.AddScoped<IEmailClient, LogEmailClient>();
+            services.AddScoped<AmazonS3Client>(
+                sp =>
+                    new AmazonS3Client(
+                        new BasicAWSCredentials(config.Store.Key, config.Store.Secret),
+                        // this is needed to work with minio locally
+                        new AmazonS3Config()
+                        {
+                            ServiceURL = config.Store.Region,
+                            ForcePathStyle = true
+                        }
+                    )
+            );
         }
         else
         {
@@ -34,15 +46,15 @@ public static class ServiceExts
                     )
             );
             services.AddScoped<IEmailClient, SesEmailClient>();
+            services.AddScoped<AmazonS3Client>(
+                sp =>
+                    // this is for running in prod against actual aws s3
+                    new AmazonS3Client(
+                        new BasicAWSCredentials(config.Store.Key, config.Store.Secret),
+                        config.Store.RegionEndpoint
+                    )
+            );
         }
-
-        services.AddScoped<AmazonS3Client>(
-            sp =>
-                new AmazonS3Client(
-                    new BasicAWSCredentials(config.Store.Key, config.Store.Secret),
-                    config.Store.RegionEndpoint
-                )
-        );
         services.AddScoped<IStoreClient, S3StoreClient>();
 
         services.AddDbContext<TDbCtx>(dbContextOptions =>

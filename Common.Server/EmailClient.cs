@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Common.Server;
 
-public interface IEmailClient
+public interface IEmailClient : IDisposable
 {
     public Task SendEmailAsync(
         string subject,
@@ -40,6 +40,8 @@ public class LogEmailClient : IEmailClient
             $"Sending Email:\nsubject: {subject}\nbodyHtml: {bodyHtml}\nbodyText: {bodyText}\nsenderAddress: {senderAddress}\ntoAddress: {string.Join(", ", toAddresses)}\nccAddress: {string.Join(", ", ccAddresses ?? new List<string>())}\nbccAddress: {string.Join(", ", bccAddresses ?? new List<string>())}"
         );
     }
+
+    public void Dispose() { }
 }
 
 public class SesEmailClient : IEmailClient
@@ -82,5 +84,10 @@ public class SesEmailClient : IEmailClient
                 Source = senderAddress
             }
         );
+    }
+
+    public void Dispose()
+    {
+        _awsSes.Dispose();
     }
 }

@@ -3,7 +3,7 @@ using Amazon.S3.Model;
 
 namespace Common.Server;
 
-public interface IStoreClient
+public interface IStoreClient : IDisposable
 {
     public Task CreateBucket(string bucket, S3CannedACL acl);
     public Task Move(string srcBucket, string dstBucket, string key);
@@ -24,7 +24,20 @@ public class S3StoreClient : IStoreClient
 
     public async Task CreateBucket(string bucket, S3CannedACL acl)
     {
-        await _awsS3.PutBucketAsync(new PutBucketRequest { BucketName = bucket, CannedACL = acl });
+        try
+        {
+            await _awsS3.PutBucketAsync(
+                new PutBucketRequest { BucketName = bucket, CannedACL = acl }
+            );
+        }
+        catch (Exception ex)
+        {
+            if (
+                ex.Message
+                != "Your previous request to create the named bucket succeeded and you already own it."
+            )
+                throw;
+        }
     }
 
     public async Task Move(string srcBucket, string dstBucket, string key)
@@ -95,5 +108,10 @@ public class S3StoreClient : IStoreClient
                 new ListObjectsV2Request { BucketName = bucket, Prefix = prefix }
             );
         }
+    }
+
+    public void Dispose()
+    {
+        _awsS3.Dispose();
     }
 }

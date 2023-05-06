@@ -19,9 +19,11 @@
     "noReplyAddress": "noreply@yolo.solo"
   },
   "store": {
-    "region": "eu-west-1",
-    "endpoint": "http://localhost:9000",
+    "region": "http://localhost:9000",
     "key": "localtest",
     "secret": "localtest"
+  },
+  "fcm": {
+    "serviceAccountKeyFile": "C:\\Users\\danie\\code\\dotnet\\Common\\Common.Server.Test\\fcm_service_account_key.json"
   }
 }

@@ -55,6 +55,9 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         _eps = eps.ToDictionary(x => x.Path).AsReadOnly();
     }
 
+    public T Get<T>()
+        where T : notnull => _services.GetRequiredService<T>();
+
     public T RunDb<T>(Func<TDbCtx, T> fn)
     {
         using var scope = _services.CreateScope();

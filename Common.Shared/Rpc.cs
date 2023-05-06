@@ -125,46 +125,11 @@ public static class RpcHttp
     public const string ContentTypeHeader = "Content-Type";
     public const string ContentLengthHeader = "Content-Length";
     public const string ContentDispositionHeader = "Content-Disposition";
-    private static readonly JsonSerializerSettings SerializerSettings =
-        new()
-        {
-            Formatting = Formatting.None,
-            MissingMemberHandling = MissingMemberHandling.Error,
-            NullValueHandling = NullValueHandling.Ignore,
-            Converters = new List<JsonConverter>()
-            {
-                new StringEnumConverter(),
-                new StrTrimConverter()
-            }
-        };
 
-    public static byte[] Serialize(object? v) =>
-        JsonConvert.SerializeObject(v, SerializerSettings).ToUtf8Bytes();
+    public static byte[] Serialize(object v) => Json.From(v).ToUtf8Bytes();
 
     public static T Deserialize<T>(byte[] bs)
-        where T : class =>
-        JsonConvert.DeserializeObject<T>(bs.FromUtf8Bytes(), SerializerSettings).NotNull();
+        where T : class => Json.To<T>(bs.FromUtf8Bytes());
 
     public static bool HasStream<T>() => typeof(T).IsAssignableTo(typeof(HasStream));
-}
-
-public class StrTrimConverter : JsonConverter
-{
-    public override bool CanRead => true;
-    public override bool CanWrite => true;
-
-    public override bool CanConvert(Type objectType) => objectType == typeof(string);
-
-    public override object? ReadJson(
-        JsonReader reader,
-        Type objectType,
-        object? existingValue,
-        JsonSerializer serializer
-    ) => ((string?)reader.Value)?.Trim();
-
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
-    {
-        value = ((string?)value)?.Trim();
-        writer.WriteValue(value);
-    }
 }

@@ -16,7 +16,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-<!--        <PackageReference Include="0xor1.Common.Shared" Version="2.1.16" />-->
+        <PackageReference Include="0xor1.Common.Shared" Version="2.1.16" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
         <PackageReference Include="Radzen.Blazor" Version="4.6.5" />
@@ -24,9 +24,6 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Common.Shared\Common.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -8,3 +8,4 @@ riderModule.iml
 /_ReSharper.Caches/
 *.css
 fcm_service_account_key.json
+*.sln.DotSettings.user

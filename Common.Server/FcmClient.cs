@@ -21,7 +21,7 @@ public class FcmClient : IFcmClient
 
     public async Task<IBatchResponse> Send(MulticastMessage msg)
     {
-        if (!msg.Tokens.Any())
+        if (!(msg.Tokens?.Any() ?? false))
         {
             return new NopBatchResponse(new List<SendResponse>(), 0);
         }

@@ -24,12 +24,20 @@ public class FcmClientTests : IDisposable
         var res = await c.Send(
             new MulticastMessage()
             {
+                Tokens = new List<string>() { },
+                Data = new Dictionary<string, string>() { { "yolo", "solo" } }
+            }
+        );
+        Assert.Equal(0, res.SuccessCount + res.FailureCount);
+        res = await c.Send(
+            new MulticastMessage()
+            {
                 Tokens = new List<string>() { "a", "b" },
                 Data = new Dictionary<string, string>() { { "yolo", "solo" } }
             }
         );
         // todo figure out how to get actual reg token to send data
-        Assert.Equal(0, res.SuccessCount + res.FailureCount);
+        Assert.Equal(2, res.SuccessCount + res.FailureCount);
     }
 
     public void Dispose()

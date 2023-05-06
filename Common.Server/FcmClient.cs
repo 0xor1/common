@@ -10,13 +10,38 @@ public interface IFcmClient
 public class FcmClient : IFcmClient
 {
     private readonly FirebaseMessaging _client;
+
+    // fcm multicast message endpoint has a max of 500 token limit
+    private const int _batchSize = 500;
+
     public FcmClient(FirebaseMessaging client)
     {
         _client = client;
     }
 
     public async Task<IBatchResponse> Send(MulticastMessage msg)
-        => new BatchResponseWrapper(await _client.SendMulticastAsync(msg));
+    {
+        if (!msg.Tokens.Any())
+        {
+            return new NopBatchResponse(new List<SendResponse>(), 0);
+        }
+
+        var allTokens = msg.Tokens.ToList();
+        var i = 0;
+        var successCount = 0;
+        var responses = new List<SendResponse>();
+        while (i < allTokens.Count)
+        {
+            var batch = allTokens.GetRange(i, Math.Min(i + _batchSize, allTokens.Count));
+            msg.Tokens = batch;
+            var res = await _client.SendMulticastAsync(msg);
+            responses.AddRange(res.Responses);
+            successCount += res.SuccessCount;
+            i += _batchSize;
+        }
+
+        return new BatchResponseWrapper(responses, successCount);
+    }
 }
 
 public class FcmNopClient : IFcmClient
@@ -39,14 +64,17 @@ public interface IBatchResponse
 
 public class BatchResponseWrapper : IBatchResponse
 {
-    private readonly BatchResponse _br;
+    private readonly List<SendResponse> _responses;
+    private readonly int _successCount;
 
-    internal BatchResponseWrapper(BatchResponse br)
+    internal BatchResponseWrapper(List<SendResponse> responses, int successCount)
     {
-        _br = br;
+        _responses = responses;
+        _successCount = successCount;
     }
-    public IReadOnlyList<SendResponse> Responses => _br.Responses;
-    public int SuccessCount => _br.SuccessCount;
+
+    public IReadOnlyList<SendResponse> Responses => _responses;
+    public int SuccessCount => _successCount;
 }
 
 public class NopBatchResponse : IBatchResponse
@@ -56,7 +84,7 @@ public class NopBatchResponse : IBatchResponse
         Responses = responses;
         SuccessCount = successCount;
     }
-    
+
     public IReadOnlyList<SendResponse> Responses { get; }
-    public int SuccessCount { get; } 
+    public int SuccessCount { get; }
 }

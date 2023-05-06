@@ -100,4 +100,5 @@ public interface IConfig
     public SessionConfig Session { get; }
     public EmailConfig Email { get; }
     public StoreConfig Store { get; }
+    public FcmConfig Fcm { get; }
 }

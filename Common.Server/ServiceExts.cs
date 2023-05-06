@@ -3,14 +3,21 @@ using Amazon.S3;
 using Amazon.SimpleEmail;
 using Common.Server.Auth;
 using Common.Shared;
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MySqlConnector;
 
 namespace Common.Server;
 
 public static class ServiceExts
 {
+    private static SemaphoreSlim _ss = new(1, 1);
+    private static FirebaseMessaging? fbm = null;
+
     public static void AddApiServices<TDbCtx>(this IServiceCollection services, IConfig config, S s)
         where TDbCtx : DbContext, IAuthDb
     {
@@ -57,6 +64,22 @@ public static class ServiceExts
         }
         services.AddScoped<IStoreClient, S3StoreClient>();
 
+        if (
+            !config.Fcm.ServiceAccountKeyFile.IsNullOrWhiteSpace()
+            && File.Exists(config.Fcm.ServiceAccountKeyFile)
+        )
+        {
+            // if an fcm service account key file is specified then use it
+            InitFirebaseMessaging(config);
+            services.AddSingleton(fbm.NotNull());
+            services.AddSingleton<IFcmClient, FcmClient>();
+        }
+        else
+        {
+            // otherwise use nop
+            services.AddSingleton<IFcmClient, FcmNopClient>();
+        }
+
         services.AddDbContext<TDbCtx>(dbContextOptions =>
         {
             var cnnStrBldr = new MySqlConnectionStringBuilder(config.Db.Connection);
@@ -73,5 +96,25 @@ public static class ServiceExts
                 }
             );
         });
+    }
+
+    private static void InitFirebaseMessaging(IConfig config)
+    {
+        if (fbm == null)
+        {
+            _ss.Wait();
+            if (fbm == null)
+            {
+                fbm = FirebaseMessaging.GetMessaging(
+                    FirebaseApp.Create(
+                        new AppOptions()
+                        {
+                            Credential = GoogleCredential.FromFile(config.Fcm.ServiceAccountKeyFile)
+                        }
+                    )
+                );
+            }
+            _ss.Release();
+        }
     }
 }

@@ -11,4 +11,5 @@ public interface IAuthService
     Task<ISession> SignOut();
     Task<ISession> Delete();
     Task<ISession> SetL10n(string lang, string dateFmt, string timeFmt);
+    Task<ISession> FcmEnabled(bool enabled);
 }

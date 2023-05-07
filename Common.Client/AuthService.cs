@@ -71,4 +71,7 @@ public class AuthService<TApi> : IAuthService
 
     public async Task<ISession> SetL10n(string lang, string dateFmt, string timeFmt) =>
         Session = await _api.Auth.SetL10n(new(lang, dateFmt, timeFmt));
+
+    public async Task<ISession> FcmEnabled(bool enabled) =>
+        Session = await _api.Auth.FcmEnabled(new(enabled));
 }

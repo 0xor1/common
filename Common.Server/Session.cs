@@ -30,12 +30,15 @@ public record Session
     [Key(6)]
     public string TimeFmt { get; init; }
 
+    [Key(7)]
+    public bool FcmEnabled { get; init; }
+
     [IgnoreMember]
     public bool IsAnon => !IsAuthed;
 
-    public Shared.Auth.Session ToApiSession()
+    public Shared.Auth.Session ToApi()
     {
-        return new(Id, IsAuthed, StartedOn, RememberMe, Lang, DateFmt, TimeFmt);
+        return new(Id, IsAuthed, StartedOn, RememberMe, Lang, DateFmt, TimeFmt, FcmEnabled);
     }
 }
 
@@ -50,7 +53,8 @@ public interface IRpcHttpSessionManager
         bool rememberMe,
         string lang,
         string dateFmt,
-        string timeFmt
+        string timeFmt,
+        bool fcmEnabled
     );
 
     internal Session Clear(HttpContext ctx);
@@ -110,7 +114,8 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
         bool rememberMe,
         string lang,
         string dateFmt,
-        string timeFmt
+        string timeFmt,
+        bool fcmEnabled
     )
     {
         var ses = new Session
@@ -121,7 +126,8 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
             RememberMe = rememberMe,
             Lang = lang,
             DateFmt = dateFmt,
-            TimeFmt = timeFmt
+            TimeFmt = timeFmt,
+            FcmEnabled = fcmEnabled
         };
         ctx.Items[SessionKey] = ses;
         SetCookie(ctx, ses);
@@ -144,7 +150,8 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
             false,
             _s.BestLang(ctx.Request.Headers.AcceptLanguage.ToArray().FirstOrDefault() ?? ""),
             _s.DefaultDateFmt,
-            _s.DefaultTimeFmt
+            _s.DefaultTimeFmt,
+            false
         );
     }
 

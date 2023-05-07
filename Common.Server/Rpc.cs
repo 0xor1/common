@@ -27,9 +27,12 @@ public interface IRpcCtx
         bool rememberMe,
         string lang,
         string dateFmt,
-        string timeFmt
+        string timeFmt,
+        bool fcmEnabled
     );
     public Session ClearSession();
+
+    public string? GetHeader(string name);
 }
 
 public interface IRpcCtxInternal : IRpcCtx
@@ -61,10 +64,24 @@ public class RpcHttpCtx : IRpcCtxInternal
         bool rememberMe,
         string lang,
         string dateFmt,
-        string timeFmt
-    ) => _sessionManager.Create(_ctx, userId, isAuthed, rememberMe, lang, dateFmt, timeFmt);
+        string timeFmt,
+        bool fcmEnabled
+    ) =>
+        _sessionManager.Create(
+            _ctx,
+            userId,
+            isAuthed,
+            rememberMe,
+            lang,
+            dateFmt,
+            timeFmt,
+            fcmEnabled
+        );
 
     public Session ClearSession() => _sessionManager.Clear(_ctx);
+
+    public string? GetHeader(string name) =>
+        _ctx.Request.Headers.ContainsKey(name) ? _ctx.Request.Headers[name].ToString() : null;
 
     public T Get<T>()
         where T : notnull

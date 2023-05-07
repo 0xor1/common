@@ -1,5 +1,4 @@
 using Common.Server.Auth;
-using Common.Shared;
 using Common.Shared.Auth;
 
 namespace Common.Server.Test;
@@ -12,7 +11,11 @@ public class AuthRpcTests : IDisposable
     {
         _rpcTestRig = new RpcTestRig<CommonTestDb, Api>(
             S.Inst,
-            new AuthEps<CommonTestDb>(0, (db, s) => Task.CompletedTask).Eps,
+            new AuthEps<CommonTestDb>(
+                0,
+                (_, _, _) => Task.CompletedTask,
+                (_, _, _, _) => Task.CompletedTask
+            ).Eps,
             client => new Api(client)
         );
     }
@@ -82,6 +85,55 @@ public class AuthRpcTests : IDisposable
         Assert.Equal("es", ses.Lang);
         Assert.Equal("MM-dd-yyyy", ses.DateFmt);
         Assert.Equal("h:mmtt", ses.TimeFmt);
+    }
+
+    [Fact]
+    public async Task FcmEnabled_Success()
+    {
+        var (ali, _, _) = await _rpcTestRig.NewApi("ali");
+        var ses = await ali.Auth.FcmEnabled(new(true));
+        Assert.True(ses.FcmEnabled);
+        // same no change
+        ses = await ali.Auth.FcmEnabled(new(true));
+        Assert.True(ses.FcmEnabled);
+        ses = await ali.Auth.FcmEnabled(new(false));
+        Assert.False(ses.FcmEnabled);
+    }
+
+    [Fact]
+    public async Task FcmRegister_Success()
+    {
+        var (ali, _, _) = await _rpcTestRig.NewApi("ali");
+        var ses = await ali.Auth.FcmEnabled(new(true));
+        var res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a", null));
+        Assert.NotEmpty(res.Client);
+    }
+
+    [Fact]
+    public async Task FcmRegister_6_Times_Success()
+    {
+        var (ali, _, _) = await _rpcTestRig.NewApi("ali");
+        var ses = await ali.Auth.FcmEnabled(new(true));
+        var res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a", "b", "c" }, "b", res.Client));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "c", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "d", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "e", null));
+        res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a", "b", "c" }, "b", res.Client));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "c", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "d", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "e", null));
+        Assert.NotEmpty(res.Client);
+    }
+
+    [Fact]
+    public async Task FcmUnregister_Success()
+    {
+        var (ali, _, _) = await _rpcTestRig.NewApi("ali");
+        var ses = await ali.Auth.FcmEnabled(new(true));
+        var res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a", null));
+        await ali.Auth.FcmUnregister(new(res.Client));
     }
 
     public void Dispose()

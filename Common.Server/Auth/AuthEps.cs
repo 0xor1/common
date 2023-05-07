@@ -1,4 +1,3 @@
-using Common.Server.Test;
 using Common.Shared;
 using Common.Shared.Auth;
 using Microsoft.EntityFrameworkCore;
@@ -9,23 +8,30 @@ namespace Common.Server.Auth;
 public interface IAuthDb
 {
     DbSet<Auth> Auths { get; }
+    DbSet<FcmReg> FcmRegs { get; }
 }
 
 public class AuthEps<TDbCtx>
     where TDbCtx : DbContext, IAuthDb
 {
     private readonly int _maxAuthAttemptsPerSecond;
-    private readonly Func<TDbCtx, Session, Task> _onDelete;
+    private readonly Func<IRpcCtx, TDbCtx, Session, Task> _onDelete;
+    private readonly Func<IRpcCtx, TDbCtx, Session, IReadOnlyList<string>, Task> _validateFcmTopic;
 
-    public AuthEps(int maxAuthAttemptsPerSecond, Func<TDbCtx, Session, Task> onDelete)
+    public AuthEps(
+        int maxAuthAttemptsPerSecond,
+        Func<IRpcCtx, TDbCtx, Session, Task> onDelete,
+        Func<IRpcCtx, TDbCtx, Session, IReadOnlyList<string>, Task> validateFcmTopic
+    )
     {
         _maxAuthAttemptsPerSecond = maxAuthAttemptsPerSecond;
         _onDelete = onDelete;
+        _validateFcmTopic = validateFcmTopic;
         Eps = new List<IRpcEndpoint>
         {
             new RpcEndpoint<Nothing, ApiSession>(
                 AuthRpcs.GetSession,
-                (ctx, _) => ctx.GetSession().ToApiSession().AsTask()
+                (ctx, _) => ctx.GetSession().ToApi().AsTask()
             ),
             new RpcEndpoint<Register, Nothing>(
                 AuthRpcs.Register,
@@ -271,10 +277,11 @@ public class AuthEps<TDbCtx>
                                     req.RememberMe,
                                     auth.Lang,
                                     auth.DateFmt,
-                                    auth.TimeFmt
+                                    auth.TimeFmt,
+                                    auth.FcmEnabled
                                 );
                             }
-                            return ses.ToApiSession();
+                            return ses.ToApi();
                         },
                         false
                     );
@@ -282,13 +289,24 @@ public class AuthEps<TDbCtx>
             ),
             new RpcEndpoint<Nothing, ApiSession>(
                 AuthRpcs.SignOut,
-                (ctx, _) =>
+                async (ctx, _) =>
                 {
                     // basic validation
                     var ses = ctx.GetSession();
                     if (ses.IsAuthed)
+                    {
+                        var db = ctx.Get<TDbCtx>();
+                        var fcm = ctx.Get<IFcmClient>();
+                        var tokens = await db.FcmRegs
+                            .Where(x => x.User == ses.Id)
+                            .Select(x => x.Token)
+                            .Distinct()
+                            .ToListAsync();
+                        await fcm.SendRaw(ctx, FcmType.SignOut, tokens, null);
                         ses = ctx.ClearSession();
-                    return ses.ToApiSession().AsTask();
+                    }
+
+                    return ses.ToApi();
                 }
             ),
             new RpcEndpoint<Nothing, ApiSession>(
@@ -297,10 +315,11 @@ public class AuthEps<TDbCtx>
                     await ctx.DbTx<TDbCtx, ApiSession>(
                         async (db, ses) =>
                         {
-                            await _onDelete(db, ses);
+                            await _onDelete(ctx, db, ses);
                             await db.Auths.Where(x => x.Id == ses.Id).ExecuteDeleteAsync();
+                            await db.FcmRegs.Where(x => x.User == ses.Id).ExecuteDeleteAsync();
                             ses = ctx.ClearSession();
-                            return ses.ToApiSession();
+                            return ses.ToApi();
                         }
                     )
             ),
@@ -314,7 +333,9 @@ public class AuthEps<TDbCtx>
                         && (req.DateFmt.IsNullOrWhiteSpace() || ses.DateFmt == req.DateFmt)
                         && (req.TimeFmt.IsNullOrWhiteSpace() || ses.TimeFmt == req.TimeFmt)
                     )
-                        return ses.ToApiSession();
+                    {
+                        return ses.ToApi();
+                    }
 
                     var s = ctx.Get<S>();
                     ses = ctx.CreateSession(
@@ -323,7 +344,8 @@ public class AuthEps<TDbCtx>
                         ses.RememberMe,
                         s.BestLang(req.Lang),
                         req.DateFmt,
-                        req.TimeFmt
+                        req.TimeFmt,
+                        ses.FcmEnabled
                     );
                     if (ses.IsAuthed)
                     {
@@ -344,8 +366,125 @@ public class AuthEps<TDbCtx>
                         );
                     }
 
-                    return ses.ToApiSession();
+                    return ses.ToApi();
                 }
+            ),
+            new RpcEndpoint<FcmEnabled, ApiSession>(
+                AuthRpcs.FcmEnabled,
+                async (ctx, req) =>
+                    await ctx.DbTx<TDbCtx, ApiSession>(
+                        async (db, ses) =>
+                        {
+                            if (ses.FcmEnabled == req.Val)
+                            {
+                                // not changing anything
+                                return ses.ToApi();
+                            }
+                            ses = ctx.CreateSession(
+                                ses.Id,
+                                ses.IsAuthed,
+                                ses.RememberMe,
+                                ses.Lang,
+                                ses.DateFmt,
+                                ses.TimeFmt,
+                                req.Val
+                            );
+
+                            var auth = await db.Auths.SingleOrDefaultAsync(x => x.Id == ses.Id);
+                            ctx.NotFoundIf(auth == null);
+                            ctx.ErrorIf(
+                                auth.NotNull().ActivatedOn.IsZero(),
+                                S.AuthAccountNotVerified
+                            );
+                            auth.FcmEnabled = req.Val;
+                            await db.FcmRegs
+                                .Where(x => x.User == ses.Id)
+                                .ExecuteUpdateAsync(
+                                    x => x.SetProperty(x => x.FcmEnabled, _ => req.Val)
+                                );
+                            var fcm = ctx.Get<IFcmClient>();
+                            var tokens = await db.FcmRegs
+                                .Where(x => x.User == ses.Id)
+                                .Select(x => x.Token)
+                                .Distinct()
+                                .ToListAsync();
+                            await fcm.SendRaw(
+                                ctx,
+                                req.Val ? FcmType.Enabled : FcmType.Disabled,
+                                tokens,
+                                null
+                            );
+                            return ses.ToApi();
+                        }
+                    )
+            ),
+            new RpcEndpoint<FcmRegister, FcmRegisterRes>(
+                AuthRpcs.FcmRegister,
+                async (ctx, req) =>
+                    await ctx.DbTx<TDbCtx, FcmRegisterRes>(
+                        async (db, ses) =>
+                        {
+                            ctx.BadRequestIf(
+                                req.Topic.Count < 1 || req.Topic.Count > 5,
+                                S.AuthFcmTopicInvalid,
+                                new { Min = 1, Max = 5 }
+                            );
+                            ctx.BadRequestIf(req.Token.IsNullOrWhiteSpace(), S.AuthFcmTokenInvalid);
+                            ctx.BadRequestIf(!ses.FcmEnabled, S.AuthFcmNotEnabled);
+                            await _validateFcmTopic(ctx, db, ses, req.Topic);
+                            var client = req.Client ?? Id.New();
+                            var fcmRegs = await db.FcmRegs
+                                .Where(x => x.User == ses.Id)
+                                .OrderByDescending(x => x.CreatedOn)
+                                .ToListAsync();
+
+                            var topic = string.Join(":", req.Topic);
+                            var existing = fcmRegs.SingleOrDefault(
+                                x => x.User == ses.Id && x.Client == client
+                            );
+                            if (existing != null)
+                            {
+                                // already exists so just refresh the createdOn datetime and update the client
+                                existing.CreatedOn = DateTimeExt.UtcNowMilli();
+                                existing.Topic = topic;
+                                existing.Token = req.Token;
+                            }
+                            else
+                            {
+                                if (fcmRegs.Count > 4)
+                                {
+                                    // only allow a user to have 5 fcm tokens registered at any one time
+                                    db.FcmRegs.RemoveRange(fcmRegs.GetRange(4, fcmRegs.Count - 4));
+                                }
+                                await db.FcmRegs.AddAsync(
+                                    new FcmReg()
+                                    {
+                                        Topic = topic,
+                                        Token = req.Token,
+                                        User = ses.Id,
+                                        Client = client,
+                                        CreatedOn = DateTimeExt.UtcNowMilli(),
+                                        FcmEnabled = true
+                                    }
+                                );
+                            }
+
+                            return new FcmRegisterRes(client);
+                        }
+                    )
+            ),
+            new RpcEndpoint<FcmUnregister, Nothing>(
+                AuthRpcs.FcmUnregister,
+                async (ctx, req) =>
+                    await ctx.DbTx<TDbCtx, Nothing>(
+                        async (db, ses) =>
+                        {
+                            await db.FcmRegs
+                                .Where(x => x.User == ses.Id && x.Client == req.Client)
+                                .ExecuteDeleteAsync();
+                            return Nothing.Inst;
+                        }
+                    )
             )
         };
     }

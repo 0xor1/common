@@ -22,4 +22,17 @@ public class Auth : Pwd
     public string Lang { get; set; }
     public string DateFmt { get; set; }
     public string TimeFmt { get; set; }
+    public bool FcmEnabled { get; set; }
+}
+
+[PrimaryKey(nameof(User), nameof(Client))]
+public class FcmReg
+{
+    public string Topic { get; set; }
+    public string Token { get; set; }
+    public string User { get; set; }
+    public string Client { get; set; }
+    public DateTime CreatedOn { get; set; }
+
+    public bool FcmEnabled { get; set; }
 }

@@ -58,6 +58,9 @@ public interface S
     public const string AuthResetPwdSubject = "auth_reset_pwd_subject";
     public const string AuthResetPwdHtml = "auth_reset_pwd_html";
     public const string AuthResetPwdText = "auth_reset_pwd_text";
+    public const string AuthFcmTopicInvalid = "auth_fcm_topic_invalid";
+    public const string AuthFcmTokenInvalid = "auth_fcm_token_invalid";
+    public const string AuthFcmNotEnabled = "auth_fcm_not_enabled";
 
     public string DefaultLang { get; }
     public string DefaultDateFmt { get; }

@@ -189,7 +189,8 @@ public record RpcTestCtx : IRpcCtxInternal
         bool rememberMe,
         string lang,
         string dateFmt,
-        string timeFmt
+        string timeFmt,
+        bool fcmEnabled
     )
     {
         Session = new Session()
@@ -200,7 +201,8 @@ public record RpcTestCtx : IRpcCtxInternal
             RememberMe = rememberMe,
             Lang = lang,
             DateFmt = dateFmt,
-            TimeFmt = timeFmt
+            TimeFmt = timeFmt,
+            FcmEnabled = fcmEnabled
         };
         return Session;
     }
@@ -218,6 +220,8 @@ public record RpcTestCtx : IRpcCtxInternal
         };
         return Session;
     }
+
+    public string? GetHeader(string name) => null;
 
     public Task<T> GetArg<T>()
         where T : class

@@ -1,10 +1,23 @@
-﻿using FirebaseAdmin.Messaging;
+﻿using Common.Server.Auth;
+using Common.Shared;
+using Common.Shared.Auth;
+using FirebaseAdmin.Messaging;
+using Microsoft.EntityFrameworkCore;
 
 namespace Common.Server;
 
 public interface IFcmClient
 {
     Task<IBatchResponse> Send(MulticastMessage msg);
+    Task SendTopic<TDbCtx>(
+        IRpcCtx ctx,
+        TDbCtx db,
+        Session ses,
+        IReadOnlyList<string> topic,
+        object? data
+    )
+        where TDbCtx : IAuthDb;
+    Task SendRaw(IRpcCtx ctx, FcmType type, IReadOnlyList<string> tokens, object? data);
 }
 
 public class FcmClient : IFcmClient
@@ -42,6 +55,42 @@ public class FcmClient : IFcmClient
 
         return new BatchResponseWrapper(responses, successCount);
     }
+
+    public async Task SendTopic<TDbCtx>(
+        IRpcCtx ctx,
+        TDbCtx db,
+        Session ses,
+        IReadOnlyList<string> topic,
+        object? data
+    )
+        where TDbCtx : IAuthDb
+    {
+        ctx.BadRequestIf(
+            topic.Count < 1 || topic.Count > 5,
+            S.AuthFcmTopicInvalid,
+            new { Min = 1, Max = 5 }
+        );
+        var topicStr = string.Join(":", topic);
+        var tokens = await db.FcmRegs
+            .Where(x => x.Topic == topicStr && x.FcmEnabled)
+            .Select(x => x.Token)
+            .ToListAsync();
+        await SendRaw(ctx, FcmType.Data, tokens, data);
+    }
+
+    public async Task SendRaw(IRpcCtx ctx, FcmType type, IReadOnlyList<string> tokens, object? data)
+    {
+        var dic = new Dictionary<string, string>()
+        {
+            { Fcm.TypeName, type.ToString() },
+            { Fcm.ClientHeaderName, ctx.GetHeader(Fcm.ClientHeaderName) ?? "" }
+        };
+        if (data != null)
+        {
+            dic.Add(Fcm.Data, Json.From(data));
+        }
+        await Send(new() { Tokens = tokens, Data = dic });
+    }
 }
 
 public class FcmNopClient : IFcmClient
@@ -52,6 +101,23 @@ public class FcmNopClient : IFcmClient
     {
         await Task.CompletedTask;
         return new NopBatchResponse(new List<SendResponse>(msg.Tokens.Count), msg.Tokens.Count);
+    }
+
+    public async Task SendTopic<TDbCtx>(
+        IRpcCtx ctx,
+        TDbCtx db,
+        Session ses,
+        IReadOnlyList<string> topic,
+        object data
+    )
+        where TDbCtx : IAuthDb
+    {
+        await Task.CompletedTask;
+    }
+
+    public async Task SendRaw(IRpcCtx ctx, FcmType type, IReadOnlyList<string> tokens, object data)
+    {
+        await Task.CompletedTask;
     }
 }
 

@@ -10,7 +10,7 @@ docker-compose -f docker/docker-compose.yml up -d
 
 ./bin/wait-for-it -t 5 127.0.0.1:6379 -- echo "redis ready"
 ./bin/wait-for-it -t 5 127.0.0.1:9000 -- echo "minio ready"
-./bin/wait-for-it -t 60 127.0.0.1:3306 -- echo "mariadb ready"
+./bin/wait-for-it -t 5 127.0.0.1:3306 -- echo "mariadb ready"
 
 dotnet build
 dotnet test --collect:"XPlat Code Coverage"

@@ -5,6 +5,17 @@ namespace Common.Shared;
 
 public static class StringAndBytesExt
 {
+    public static string? Ellipsis(this string? str, int max)
+    {
+        Throw.OpIf(max <= 3, "max must be greater than 3");
+        if (str == null || str.Length <= max)
+        {
+            return str;
+        }
+
+        return $"{str.Substring(0, max - 3)}...";
+    }
+
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
     {
         return string.IsNullOrEmpty(str);

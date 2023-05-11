@@ -43,6 +43,39 @@ public class StoreClientTests : IDisposable
         Assert.Equal(test, res);
     }
 
+    [Fact]
+    public async Task Delete_Success()
+    {
+        var sc = _rpcTestRig.Get<IStoreClient>();
+        var bucket = "common-test";
+        await sc.CreateBucket(bucket, S3CannedACL.Private);
+        // test calling create bucket doesnt throw on duplication.
+        await sc.CreateBucket(bucket, S3CannedACL.Private);
+
+        var test = "yolo baby!";
+        using var us = new MemoryStream(Encoding.UTF8.GetBytes(test));
+        var key = Id.New();
+        await sc.Upload(bucket, key, us);
+        await sc.Delete(bucket, key);
+    }
+
+    [Fact]
+    public async Task DeletePrefix_Success()
+    {
+        var sc = _rpcTestRig.Get<IStoreClient>();
+        var bucket = "common-test";
+        await sc.CreateBucket(bucket, S3CannedACL.Private);
+        // test calling create bucket doesnt throw on duplication.
+        await sc.CreateBucket(bucket, S3CannedACL.Private);
+
+        var test = "yolo baby!";
+        using var us = new MemoryStream(Encoding.UTF8.GetBytes(test));
+        var keyA = Id.New();
+        var keyB = Id.New();
+        await sc.Upload(bucket, string.Join("/", keyA, keyB), us);
+        await sc.DeletePrefix(bucket, keyA);
+    }
+
     public void Dispose()
     {
         _rpcTestRig.Dispose();

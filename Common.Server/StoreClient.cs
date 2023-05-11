@@ -92,7 +92,7 @@ public class S3StoreClient : IStoreClient
         var res = await _awsS3.ListObjectsV2Async(
             new ListObjectsV2Request { BucketName = bucket, Prefix = prefix }
         );
-        while (res.MaxKeys > 0)
+        while (res.S3Objects.Count > 0)
         {
             var req = new DeleteObjectsRequest
             {

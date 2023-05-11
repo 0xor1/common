@@ -34,7 +34,12 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
     private readonly Func<IRpcClient, TApi> _apiFactory;
     private readonly IReadOnlyDictionary<string, IRpcEndpoint> _eps;
 
-    public RpcTestRig(S s, IReadOnlyList<IRpcEndpoint> eps, Func<IRpcClient, TApi> apiFactory)
+    public RpcTestRig(
+        S s,
+        IReadOnlyList<IRpcEndpoint> eps,
+        Func<IRpcClient, TApi> apiFactory,
+        Func<IServiceProvider, Task>? initApp = null
+    )
     {
         var ass = Assembly.GetCallingAssembly();
         var configName = ass.GetManifestResourceNames().Single(x => x.EndsWith("config.json"));
@@ -45,7 +50,7 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         _s = s;
         _apiFactory = apiFactory;
         var services = new ServiceCollection();
-        services.AddApiServices<TDbCtx>(_config, s);
+        services.AddApiServices<TDbCtx>(_config, s, initApp);
         _services = services.BuildServiceProvider();
         var dupedPaths = eps.Select(x => x.Path).GetDuplicates().ToList();
         Throw.SetupIf(

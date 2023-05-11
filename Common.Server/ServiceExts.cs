@@ -17,7 +17,12 @@ public static class ServiceExts
     private static SemaphoreSlim _ss = new(1, 1);
     private static FirebaseMessaging? fbm = null;
 
-    public static void AddApiServices<TDbCtx>(this IServiceCollection services, IConfig config, S s)
+    public static void AddApiServices<TDbCtx>(
+        this IServiceCollection services,
+        IConfig config,
+        S s,
+        Func<IServiceProvider, Task>? initApp = null
+    )
         where TDbCtx : DbContext, IAuthDb
     {
         services.AddLogging();
@@ -95,6 +100,17 @@ public static class ServiceExts
                 }
             );
         });
+
+        if (initApp != null)
+        {
+            using var sp = services.BuildServiceProvider();
+            var t = initApp(sp);
+            t.Wait();
+            if (t.Exception != null)
+            {
+                throw t.Exception;
+            }
+        }
     }
 
     private static void InitFirebaseMessaging(IConfig config)

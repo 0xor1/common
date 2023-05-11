@@ -8,14 +8,19 @@ namespace Common.Server;
 
 public static class Server
 {
-    public static void Run<TDbCtx>(string[] args, S s, IReadOnlyList<IRpcEndpoint> eps)
+    public static void Run<TDbCtx>(
+        string[] args,
+        S s,
+        IReadOnlyList<IRpcEndpoint> eps,
+        Func<IServiceProvider, Task>? initApp = null
+    )
         where TDbCtx : DbContext, IAuthDb
     {
         var config = Config.FromJson(
             File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
         );
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddApiServices<TDbCtx>(config, s);
+        builder.Services.AddApiServices<TDbCtx>(config, s, initApp);
 
         var app = builder.Build();
         if (app.Environment.IsDevelopment())

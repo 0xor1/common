@@ -16,7 +16,8 @@ public class AuthRpcTests : IDisposable
                 (_, _, _) => Task.CompletedTask,
                 (_, _, _, _) => Task.CompletedTask
             ).Eps,
-            client => new Api(client)
+            client => new Api(client),
+            (sp) => Task.CompletedTask
         );
     }
 

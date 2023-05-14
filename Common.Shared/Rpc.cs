@@ -15,15 +15,16 @@ public record Rpc<TArg, TRes>
     }
 }
 
-public record RpcStream(Stream Data, string Name, string Type, bool IsDownload, ulong Size) :IDisposable, IAsyncDisposable
+public record RpcStream(Stream Data, string Name, string Type, bool IsDownload, ulong Size)
+    : IDisposable,
+        IAsyncDisposable
 {
     public void Dispose()
     {
         Data.Dispose();
     }
 
-    public ValueTask DisposeAsync()
-        => Data.DisposeAsync();
+    public ValueTask DisposeAsync() => Data.DisposeAsync();
 }
 
 public record HasStream : IDisposable, IAsyncDisposable
@@ -31,11 +32,9 @@ public record HasStream : IDisposable, IAsyncDisposable
     [JsonIgnore]
     public RpcStream Stream { get; set; }
 
-    public void Dispose()
-        => Stream.Dispose();
+    public void Dispose() => Stream.Dispose();
 
-    public ValueTask DisposeAsync()
-        => Stream.DisposeAsync();
+    public ValueTask DisposeAsync() => Stream.DisposeAsync();
 }
 
 public record Nothing

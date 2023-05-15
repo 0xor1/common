@@ -483,7 +483,7 @@ public class AuthEps<TDbCtx>
                             var client = ctx.GetHeader(Fcm.ClientHeaderName);
                             if (!client.IsNullOrEmpty())
                             {
-                                qry.Where(x => x.Client == client);
+                                qry = qry.Where(x => x.Client == client);
                             }
                             await qry.ExecuteDeleteAsync();
                             return Nothing.Inst;

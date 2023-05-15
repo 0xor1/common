@@ -70,10 +70,15 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         return fn(db);
     }
 
-    private async Task<(Session, object)> Exe(string path, Session? session, object arg)
+    private async Task<(Session, object)> Exe(
+        string path,
+        Session? session,
+        Dictionary<string, string> headers,
+        object arg
+    )
     {
         using var scope = _services.CreateScope();
-        var rpcCtx = new RpcTestCtx(scope.ServiceProvider, session, _s, arg);
+        var rpcCtx = new RpcTestCtx(scope.ServiceProvider, session, _s, headers, arg);
         rpcCtx.ErrorIf(
             !_eps.TryGetValue(path, out var ep),
             S.RpcUnknownEndpoint,
@@ -146,10 +151,17 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
 public class RpcTestClient : IRpcClient
 {
     private Session? _session;
-    private Func<string, Session?, object, Task<(Session, object)>> _exe;
+    private Dictionary<string, string> _headers = new();
+    private Func<
+        string,
+        Session?,
+        Dictionary<string, string>,
+        object,
+        Task<(Session, object)>
+    > _exe;
 
     public RpcTestClient(
-        Func<string, Session?, object, Task<(Session, object)>> exe,
+        Func<string, Session?, Dictionary<string, string>, object, Task<(Session, object)>> exe,
         Session? session = null
     )
     {
@@ -161,7 +173,7 @@ public class RpcTestClient : IRpcClient
         where TArg : class
         where TRes : class
     {
-        (_session, var res) = await _exe(rpc.Path, _session, arg);
+        (_session, var res) = await _exe(rpc.Path, _session, _headers, arg);
         return (TRes)res;
     }
 }
@@ -175,11 +187,20 @@ public record RpcTestCtx : IRpcCtxInternal
     public object? Res { get; set; }
     public RpcTestException? Exception { get; set; }
 
-    public RpcTestCtx(IServiceProvider services, Session? session, S s, object arg)
+    public Dictionary<string, string> Headers { get; set; }
+
+    public RpcTestCtx(
+        IServiceProvider services,
+        Session? session,
+        S s,
+        Dictionary<string, string> headers,
+        object arg
+    )
     {
         _services = services;
         _s = s;
         Session = session ?? ClearSession();
+        Headers = headers;
         Arg = arg;
     }
 
@@ -226,7 +247,7 @@ public record RpcTestCtx : IRpcCtxInternal
         return Session;
     }
 
-    public string? GetHeader(string name) => null;
+    public string? GetHeader(string name) => Headers.ContainsKey(name) ? Headers[name] : null;
 
     public Task<T> GetArg<T>()
         where T : class
@@ -238,6 +259,11 @@ public record RpcTestCtx : IRpcCtxInternal
         where T : class
     {
         Res = val;
+        if (val is FcmRegisterRes regRes)
+        {
+            Headers.Remove(Fcm.ClientHeaderName);
+            Headers.Add(Fcm.ClientHeaderName, regRes.Client);
+        }
         return Task.CompletedTask;
     }
 

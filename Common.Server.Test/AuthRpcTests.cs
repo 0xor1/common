@@ -134,7 +134,7 @@ public class AuthRpcTests : IDisposable
         var (ali, _, _) = await _rpcTestRig.NewApi("ali");
         var ses = await ali.Auth.FcmEnabled(new(true));
         var res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a", null));
-        await ali.Auth.FcmUnregister(new(res.Client));
+        await ali.Auth.FcmUnregister();
     }
 
     public void Dispose()

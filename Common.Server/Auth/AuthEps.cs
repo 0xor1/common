@@ -432,7 +432,7 @@ public class AuthEps<TDbCtx>
                             ctx.BadRequestIf(req.Token.IsNullOrWhiteSpace(), S.AuthFcmTokenInvalid);
                             ctx.BadRequestIf(!ses.FcmEnabled, S.AuthFcmNotEnabled);
                             await _validateFcmTopic(ctx, db, ses, req.Topic);
-                            var client = req.Client ?? Id.New();
+                            var client = ctx.GetHeader(Fcm.ClientHeaderName) ?? Id.New();
                             var fcmRegs = await db.FcmRegs
                                 .Where(x => x.User == ses.Id)
                                 .OrderByDescending(x => x.CreatedOn)

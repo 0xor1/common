@@ -138,7 +138,7 @@ public record SetL10n(string Lang, string DateFmt, string TimeFmt);
 
 public record FcmEnabled(bool Val);
 
-public record FcmRegister(IReadOnlyList<string> Topic, string Token, string? Client);
+public record FcmRegister(IReadOnlyList<string> Topic, string Token);
 
 public record FcmRegisterRes(string Client);
 

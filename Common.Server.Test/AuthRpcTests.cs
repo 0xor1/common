@@ -106,7 +106,7 @@ public class AuthRpcTests : IDisposable
     {
         var (ali, _, _) = await _rpcTestRig.NewApi("ali");
         var ses = await ali.Auth.FcmEnabled(new(true));
-        var res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a"));
+        var res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a", null));
         Assert.NotEmpty(res.Client);
     }
 
@@ -115,16 +115,16 @@ public class AuthRpcTests : IDisposable
     {
         var (ali, _, _) = await _rpcTestRig.NewApi("ali");
         var ses = await ali.Auth.FcmEnabled(new(true));
-        var res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a"));
-        await ali.Auth.FcmRegister(new(new List<string>() { "a", "b", "c" }, "b"));
-        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "c"));
-        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "d"));
-        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "e"));
-        res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a"));
-        await ali.Auth.FcmRegister(new(new List<string>() { "a", "b", "c" }, "b"));
-        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "c"));
-        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "d"));
-        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "e"));
+        var res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a", "b", "c" }, "b", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "c", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "d", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "e", null));
+        res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a", "b", "c" }, "b", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "c", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "d", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "e", null));
         Assert.NotEmpty(res.Client);
     }
 
@@ -133,8 +133,8 @@ public class AuthRpcTests : IDisposable
     {
         var (ali, _, _) = await _rpcTestRig.NewApi("ali");
         var ses = await ali.Auth.FcmEnabled(new(true));
-        var res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a"));
-        await ali.Auth.FcmUnregister();
+        var res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a", null));
+        await ali.Auth.FcmUnregister(new(res.Client));
     }
 
     public void Dispose()

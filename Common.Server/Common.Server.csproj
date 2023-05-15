@@ -16,7 +16,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="0xor1.Common.Shared" Version="2.1.25" />
+<!--        <PackageReference Include="0xor1.Common.Shared" Version="2.1.25" />-->
         <PackageReference Include="AWSSDK.S3" Version="3.7.103.31" />
         <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.100.93" />
         <PackageReference Include="CSharpier.MsBuild" Version="0.22.1">
@@ -32,6 +32,9 @@
     </ItemGroup>
     <ItemGroup>
         <None Include="..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Common.Shared\Common.Shared.csproj" />
     </ItemGroup>
     
 </Project>

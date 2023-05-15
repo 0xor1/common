@@ -1,13 +1,23 @@
 ﻿using Common.Shared;
 using Common.Shared.Auth;
+using Microsoft.JSInterop;
 
 namespace Common.Client;
 
 public class AuthService<TApi> : IAuthService
     where TApi : class, IApi
 {
+    private readonly IJSRuntime _js;
+    private bool _fcmEnabled = false;
+    private string? _fcmToken = null;
+    private string? _fcmClient = null;
     private readonly L L;
     private Session? _ses;
+
+    public AuthService(IJSRuntime js)
+    {
+        _js = js;
+    }
     private Session? Session
     {
         get => _ses;
@@ -56,6 +66,7 @@ public class AuthService<TApi> : IAuthService
         {
             return ses;
         }
+
         return Session = await _api.Auth.SignOut();
     }
 
@@ -66,12 +77,33 @@ public class AuthService<TApi> : IAuthService
         {
             return ses;
         }
+
         return Session = await _api.Auth.Delete();
     }
 
     public async Task<ISession> SetL10n(string lang, string dateFmt, string timeFmt) =>
         Session = await _api.Auth.SetL10n(new(lang, dateFmt, timeFmt));
 
-    public async Task<ISession> FcmEnabled(bool enabled) =>
+    public async Task<ISession> FcmEnabled(bool enabled)
+    {
+        // todo call jsinterop to ask for notification permission and get a fcm token
         Session = await _api.Auth.FcmEnabled(new(enabled));
+        return Session;
+    }
+
+    public async Task FcmRegister(List<string> topic)
+    {
+        if (_fcmEnabled && !_fcmClient.IsNullOrEmpty() && !_fcmToken.IsNullOrEmpty())
+        {
+            _fcmClient = (await _api.Auth.FcmRegister(new(topic, _fcmToken, _fcmClient))).Client;
+        }
+    }
+
+    public async Task FcmUnregister()
+    {
+        if (!_fcmClient.IsNullOrEmpty())
+        {
+            await _api.Auth.FcmUnregister(new(_fcmClient));
+        }
+    }
 }

@@ -106,6 +106,10 @@ public record RpcHttpClient : IRpcClient
 
         if (!RpcHttp.HasStream<TRes>())
         {
+            if (arg is FcmUnregister)
+            {
+                _client.DefaultRequestHeaders.Remove(Fcm.ClientHeaderName);
+            }
             if (typeof(TRes) == Nothing.Type)
             {
                 return (Nothing.Inst as TRes).NotNull();
@@ -119,6 +123,8 @@ public record RpcHttpClient : IRpcClient
                 _client.DefaultRequestHeaders.Remove(Fcm.ClientHeaderName);
                 _client.DefaultRequestHeaders.Add(Fcm.ClientHeaderName, regRes.Client);
             }
+
+            return tRes;
         }
 
         var resBs = resp.Headers.GetValues(RpcHttp.DataHeader).First().FromB64();

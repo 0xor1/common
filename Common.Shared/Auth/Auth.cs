@@ -29,7 +29,7 @@ public interface IAuthApi
     Task<Session> SetL10n(SetL10n arg);
     public Task<Session> FcmEnabled(FcmEnabled arg);
     public Task<FcmRegisterRes> FcmRegister(FcmRegister arg);
-    public Task FcmUnregister(FcmUnregister arg);
+    public Task FcmUnregister();
 }
 
 public class Api : IApi
@@ -75,7 +75,7 @@ public class AuthApi : IAuthApi
     public Task<FcmRegisterRes> FcmRegister(FcmRegister arg) =>
         _client.Do(AuthRpcs.FcmRegister, arg);
 
-    public Task FcmUnregister(FcmUnregister arg) => _client.Do(AuthRpcs.FcmUnregister, arg);
+    public Task FcmUnregister() => _client.Do(AuthRpcs.FcmUnregister, Nothing.Inst);
 }
 
 public static class AuthRpcs
@@ -92,7 +92,7 @@ public static class AuthRpcs
     public static readonly Rpc<SetL10n, Session> SetL10n = new("/auth/set_l10n");
     public static readonly Rpc<FcmEnabled, Session> FcmEnabled = new("/auth/fcm_enabled");
     public static readonly Rpc<FcmRegister, FcmRegisterRes> FcmRegister = new("/auth/fcm_register");
-    public static readonly Rpc<FcmUnregister, Nothing> FcmUnregister = new("/auth/fcm_unregister");
+    public static readonly Rpc<Nothing, Nothing> FcmUnregister = new("/auth/fcm_unregister");
 }
 
 public interface ISession
@@ -139,8 +139,6 @@ public record SetL10n(string Lang, string DateFmt, string TimeFmt);
 public record FcmEnabled(bool Val);
 
 public record FcmRegister(IReadOnlyList<string> Topic, string Token, string? Client);
-
-public record FcmUnregister(string Client);
 
 public record FcmRegisterRes(string Client);
 

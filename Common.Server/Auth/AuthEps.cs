@@ -473,15 +473,19 @@ public class AuthEps<TDbCtx>
                         }
                     )
             ),
-            new RpcEndpoint<FcmUnregister, Nothing>(
+            new RpcEndpoint<Nothing, Nothing>(
                 AuthRpcs.FcmUnregister,
-                async (ctx, req) =>
+                async (ctx, _) =>
                     await ctx.DbTx<TDbCtx, Nothing>(
                         async (db, ses) =>
                         {
-                            await db.FcmRegs
-                                .Where(x => x.User == ses.Id && x.Client == req.Client)
-                                .ExecuteDeleteAsync();
+                            var qry = db.FcmRegs.Where(x => x.User == ses.Id);
+                            var client = ctx.GetHeader(Fcm.ClientHeaderName);
+                            if (!client.IsNullOrEmpty())
+                            {
+                                qry.Where(x => x.Client == client);
+                            }
+                            await qry.ExecuteDeleteAsync();
                             return Nothing.Inst;
                         }
                     )

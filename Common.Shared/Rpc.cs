@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using Common.Shared.Auth;
 using Newtonsoft.Json;
 
 namespace Common.Shared;
@@ -110,7 +111,14 @@ public record RpcHttpClient : IRpcClient
                 return (Nothing.Inst as TRes).NotNull();
             }
             var bs = await resp.Content.ReadAsByteArrayAsync();
-            return RpcHttp.Deserialize<TRes>(bs).NotNull();
+            var tRes = RpcHttp.Deserialize<TRes>(bs).NotNull();
+            if (tRes is FcmRegisterRes regRes)
+            {
+                // if we've registered to an fcm topic, we should always be making requests
+                // with fcm client header
+                _client.DefaultRequestHeaders.Remove(Fcm.ClientHeaderName);
+                _client.DefaultRequestHeaders.Add(Fcm.ClientHeaderName, regRes.Client);
+            }
         }
 
         var resBs = resp.Headers.GetValues(RpcHttp.DataHeader).First().FromB64();

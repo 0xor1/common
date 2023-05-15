@@ -12,7 +12,7 @@ public interface IAuthService
     Task<ISession> Delete();
     Task<ISession> SetL10n(string lang, string dateFmt, string timeFmt);
     Task<ISession> FcmEnabled(bool enabled);
-    
+
     public Task FcmRegister(List<string> topic);
 
     public Task FcmUnregister();

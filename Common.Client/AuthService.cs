@@ -14,10 +14,6 @@ public class AuthService<TApi> : IAuthService
     private readonly L L;
     private Session? _ses;
 
-    public AuthService(IJSRuntime js)
-    {
-        _js = js;
-    }
     private Session? Session
     {
         get => _ses;
@@ -32,9 +28,10 @@ public class AuthService<TApi> : IAuthService
     private readonly TApi _api;
     private Action<ISession>? _refreshUI;
 
-    public AuthService(TApi api, L l)
+    public AuthService(TApi api, L l, IJSRuntime js)
     {
         _api = api;
+        _js = js;
         L = l;
     }
 

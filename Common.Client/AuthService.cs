@@ -4,15 +4,15 @@ using Microsoft.JSInterop;
 
 namespace Common.Client;
 
-public class AuthService<TApi> : IAuthService
+public class AuthService<TApi> : IAuthService, IDisposable
     where TApi : class, IApi
 {
     private readonly IJSRuntime _js;
-    private bool _fcmEnabled = false;
     private string? _fcmToken = null;
     private string? _fcmClient = null;
     private readonly L L;
     private Session? _ses;
+    private readonly DotNetObjectReference<AuthService<TApi>> _dnObj;
 
     private Session? Session
     {
@@ -33,6 +33,7 @@ public class AuthService<TApi> : IAuthService
         _api = api;
         _js = js;
         L = l;
+        _dnObj = DotNetObjectReference.Create(this);
     }
 
     public void RegisterRefreshUi(Action<ISession> a)
@@ -40,7 +41,21 @@ public class AuthService<TApi> : IAuthService
         _refreshUI = a;
     }
 
-    public async Task<ISession> GetSession() => Session ??= await _api.Auth.GetSession();
+    public async Task<ISession> GetSession()
+    {
+        if (Session == null)
+        {
+            Session = await _api.Auth.GetSession();
+            // if session was null this is the first time we're getting it
+            // so if fcm is supposed to be enabled then trigger getting the token
+            if (Session.FcmEnabled)
+            {
+                await FcmEnabled(true);
+            }
+        }
+
+        return Session;
+    }
 
     public async Task Register(string email, string pwd)
     {
@@ -81,16 +96,40 @@ public class AuthService<TApi> : IAuthService
     public async Task<ISession> SetL10n(string lang, string dateFmt, string timeFmt) =>
         Session = await _api.Auth.SetL10n(new(lang, dateFmt, timeFmt));
 
-    public async Task<ISession> FcmEnabled(bool enabled)
+    public async Task FcmEnabled(bool enabled)
     {
-        // todo call jsinterop to ask for notification permission and get a fcm token
-        Session = await _api.Auth.FcmEnabled(new(enabled));
-        return Session;
+        if (enabled)
+        {
+            // if enabling go through js to ensure notification permission
+            // has been granted
+            await _js.InvokeVoidAsync("fcmEnable", _dnObj, "FcmEnabledCallback");
+        }
+        else
+        {
+            // if turning off, just turn off
+            Session = await _api.Auth.FcmEnabled(new(false));
+        }
+    }
+
+    [JSInvokable]
+    public async Task FcmEnabledCallback(string? token)
+    {
+        _fcmToken = token;
+        var ses = await GetSession();
+        var setEnabled = !token.IsNullOrEmpty();
+        if (setEnabled != ses.FcmEnabled)
+        {
+            Session = await _api.Auth.FcmEnabled(new(setEnabled));
+        }
     }
 
     public async Task FcmRegister(List<string> topic)
     {
-        if (_fcmEnabled && !_fcmClient.IsNullOrEmpty() && !_fcmToken.IsNullOrEmpty())
+        if (
+            (await GetSession()).FcmEnabled
+            && !_fcmClient.IsNullOrEmpty()
+            && !_fcmToken.IsNullOrEmpty()
+        )
         {
             _fcmClient = (await _api.Auth.FcmRegister(new(topic, _fcmToken, _fcmClient))).Client;
         }
@@ -102,5 +141,10 @@ public class AuthService<TApi> : IAuthService
         {
             await _api.Auth.FcmUnregister(new(_fcmClient));
         }
+    }
+
+    public void Dispose()
+    {
+        _dnObj.Dispose();
     }
 }

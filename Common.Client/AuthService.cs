@@ -8,8 +8,8 @@ public class AuthService<TApi> : IAuthService, IDisposable
     where TApi : class, IApi
 {
     private readonly IJSRuntime _js;
-    private string? _fcmToken = null;
-    private string? _fcmClient = null;
+    private string? _fcmToken;
+    private string? _fcmClient;
     private readonly L L;
     private Session? _ses;
     private readonly DotNetObjectReference<AuthService<TApi>> _dnObj;
@@ -98,35 +98,26 @@ public class AuthService<TApi> : IAuthService, IDisposable
 
     public async Task FcmEnabled(bool enabled)
     {
-        if (enabled)
+        var ses = await GetSession();
+        if (ses.IsAuthed && enabled)
         {
             // if enabling go through js to ensure notification permission
             // has been granted
-            await _js.InvokeVoidAsync("fcmEnable", _dnObj, "FcmEnabledCallback");
+            await _js.InvokeVoidAsync("fcmGetToken", _dnObj);
         }
-        else
+        else if (ses.FcmEnabled)
         {
             // if turning off, just turn off
             Session = await _api.Auth.FcmEnabled(new(false));
         }
     }
 
-    [JSInvokable]
-    public async Task FcmEnabledCallback(string? token)
-    {
-        _fcmToken = token;
-        var ses = await GetSession();
-        var setEnabled = !token.IsNullOrEmpty();
-        if (setEnabled != ses.FcmEnabled)
-        {
-            Session = await _api.Auth.FcmEnabled(new(setEnabled));
-        }
-    }
-
     public async Task FcmRegister(List<string> topic)
     {
+        var ses = await GetSession();
         if (
-            (await GetSession()).FcmEnabled
+            ses.IsAuthed
+            && ses.FcmEnabled
             && !_fcmClient.IsNullOrEmpty()
             && !_fcmToken.IsNullOrEmpty()
         )
@@ -140,6 +131,30 @@ public class AuthService<TApi> : IAuthService, IDisposable
         if (!_fcmClient.IsNullOrEmpty())
         {
             await _api.Auth.FcmUnregister(new(_fcmClient));
+        }
+    }
+
+    [JSInvokable]
+    public async Task FcmTokenCallback(string? token)
+    {
+        _fcmToken = token;
+        var ses = await GetSession();
+        var setEnabled = !token.IsNullOrEmpty();
+        if (setEnabled != ses.FcmEnabled)
+        {
+            Session = await _api.Auth.FcmEnabled(new(setEnabled));
+        }
+    }
+
+    [JSInvokable]
+    public async Task FcmNotificationPermissionRemoved()
+    {
+        var ses = await GetSession();
+        if (ses.FcmEnabled)
+        {
+            // user has switched off their notifications on this site
+            // so disable fcm
+            Session = await _api.Auth.FcmEnabled(new(false));
         }
     }
 

@@ -132,7 +132,7 @@ public class AuthEps<TDbCtx>
                                     x.Email.Equals(req.Email)
                                     || (x.NewEmail != null && x.NewEmail.Equals(req.Email))
                             );
-                            ctx.NotFoundIf(auth == null);
+                            ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
                                 auth.NotNull().VerifyEmailCode != req.Code,
                                 S.AuthInvalidEmailCode
@@ -223,7 +223,7 @@ public class AuthEps<TDbCtx>
                             var auth = await db.Auths.FirstOrDefaultAsync(
                                 x => x.Email.Equals(req.Email)
                             );
-                            ctx.NotFoundIf(auth == null);
+                            ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
                                 auth.NotNull().ResetPwdCode != req.Code,
                                 S.AuthInvalidResetPwdCode
@@ -259,7 +259,7 @@ public class AuthEps<TDbCtx>
                             var auth = await db.Auths.SingleOrDefaultAsync(
                                 x => x.Email.Equals(req.Email)
                             );
-                            ctx.NotFoundIf(auth == null);
+                            ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
                                 auth.NotNull().ActivatedOn.IsZero(),
                                 S.AuthAccountNotVerified
@@ -267,7 +267,7 @@ public class AuthEps<TDbCtx>
                             RateLimitAuthAttempts(ctx, auth.NotNull());
                             auth.LastSignInAttemptOn = DateTimeExt.UtcNowMilli();
                             var pwdIsValid = Crypto.PwdIsValid(req.Pwd, auth);
-                            ctx.NotFoundIf(!pwdIsValid);
+                            ctx.NotFoundIf(!pwdIsValid, model: new { Name = "Auth" });
                             if (pwdIsValid)
                             {
                                 auth.LastSignedInOn = DateTimeExt.UtcNowMilli();
@@ -291,7 +291,6 @@ public class AuthEps<TDbCtx>
                 AuthRpcs.SignOut,
                 async (ctx, _) =>
                 {
-                    // basic validation
                     var ses = ctx.GetSession();
                     if (ses.IsAuthed)
                     {
@@ -302,7 +301,7 @@ public class AuthEps<TDbCtx>
                             .Select(x => x.Token)
                             .Distinct()
                             .ToListAsync();
-                        await fcm.SendRaw(ctx, FcmType.SignOut, tokens, null);
+                        await fcm.SendRaw(ctx, FcmType.SignOut, tokens, "", null);
                         ses = ctx.ClearSession();
                     }
 
@@ -353,7 +352,7 @@ public class AuthEps<TDbCtx>
                             async (db, _) =>
                             {
                                 var auth = await db.Auths.SingleOrDefaultAsync(x => x.Id == ses.Id);
-                                ctx.NotFoundIf(auth == null);
+                                ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                                 ctx.ErrorIf(
                                     auth.NotNull().ActivatedOn.IsZero(),
                                     S.AuthAccountNotVerified
@@ -391,7 +390,7 @@ public class AuthEps<TDbCtx>
                             );
 
                             var auth = await db.Auths.SingleOrDefaultAsync(x => x.Id == ses.Id);
-                            ctx.NotFoundIf(auth == null);
+                            ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
                                 auth.NotNull().ActivatedOn.IsZero(),
                                 S.AuthAccountNotVerified
@@ -412,6 +411,7 @@ public class AuthEps<TDbCtx>
                                 ctx,
                                 req.Val ? FcmType.Enabled : FcmType.Disabled,
                                 tokens,
+                                "",
                                 null
                             );
                             return ses.ToApi();
@@ -432,22 +432,33 @@ public class AuthEps<TDbCtx>
                             ctx.BadRequestIf(req.Token.IsNullOrWhiteSpace(), S.AuthFcmTokenInvalid);
                             ctx.BadRequestIf(!ses.FcmEnabled, S.AuthFcmNotEnabled);
                             await _validateFcmTopic(ctx, db, ses, req.Topic);
-                            var client = ctx.GetHeader(Fcm.ClientHeaderName) ?? Id.New();
+                            var client = req.Client ?? Id.New();
                             var fcmRegs = await db.FcmRegs
                                 .Where(x => x.User == ses.Id)
                                 .OrderByDescending(x => x.CreatedOn)
                                 .ToListAsync();
 
-                            var topic = string.Join(":", req.Topic);
+                            var topic = Fcm.TopicString(req.Topic);
                             var existing = fcmRegs.SingleOrDefault(
-                                x => x.User == ses.Id && x.Client == client
+                                x =>
+                                    (x.Topic == topic && x.Token == req.Token)
+                                    || (x.Client == req.Client)
                             );
                             if (existing != null)
                             {
-                                // already exists so just refresh the createdOn datetime and update the client
-                                existing.CreatedOn = DateTimeExt.UtcNowMilli();
-                                existing.Topic = topic;
-                                existing.Token = req.Token;
+                                db.FcmRegs.Remove(existing);
+                                await db.SaveChangesAsync();
+                                await db.FcmRegs.AddAsync(
+                                    new FcmReg()
+                                    {
+                                        Topic = topic,
+                                        Token = req.Token,
+                                        Client = client,
+                                        CreatedOn = DateTimeExt.UtcNowMilli(),
+                                        FcmEnabled = true,
+                                        User = ses.Id
+                                    }
+                                );
                             }
                             else
                             {

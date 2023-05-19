@@ -61,6 +61,7 @@ public interface S
     public const string AuthFcmTopicInvalid = "auth_fcm_topic_invalid";
     public const string AuthFcmTokenInvalid = "auth_fcm_token_invalid";
     public const string AuthFcmNotEnabled = "auth_fcm_not_enabled";
+    public const string AuthFcmMessageInvalid = "auth_fcm_message_invalid";
 
     public string DefaultLang { get; }
     public string DefaultDateFmt { get; }

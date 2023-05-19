@@ -25,7 +25,7 @@ public class Auth : Pwd
     public bool FcmEnabled { get; set; }
 }
 
-[PrimaryKey(nameof(User), nameof(Client))]
+[PrimaryKey(nameof(Topic), nameof(Token))]
 public class FcmReg
 {
     public string Topic { get; set; }

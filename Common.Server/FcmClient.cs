@@ -17,7 +17,13 @@ public interface IFcmClient
         object? data
     )
         where TDbCtx : IAuthDb;
-    Task SendRaw(IRpcCtx ctx, FcmType type, IReadOnlyList<string> tokens, object? data);
+    Task SendRaw(
+        IRpcCtx ctx,
+        FcmType type,
+        IReadOnlyList<string> tokens,
+        string topic,
+        object? data
+    );
 }
 
 public class FcmClient : IFcmClient
@@ -70,19 +76,26 @@ public class FcmClient : IFcmClient
             S.AuthFcmTopicInvalid,
             new { Min = 1, Max = 5 }
         );
-        var topicStr = string.Join(":", topic);
+        var topicStr = Fcm.TopicString(topic);
         var tokens = await db.FcmRegs
             .Where(x => x.Topic == topicStr && x.FcmEnabled)
             .Select(x => x.Token)
             .ToListAsync();
-        await SendRaw(ctx, FcmType.Data, tokens, data);
+        await SendRaw(ctx, FcmType.Data, tokens, topicStr, data);
     }
 
-    public async Task SendRaw(IRpcCtx ctx, FcmType type, IReadOnlyList<string> tokens, object? data)
+    public async Task SendRaw(
+        IRpcCtx ctx,
+        FcmType type,
+        IReadOnlyList<string> tokens,
+        string topic,
+        object? data
+    )
     {
         var dic = new Dictionary<string, string>()
         {
             { Fcm.TypeName, type.ToString() },
+            { Fcm.Topic, topic },
             { Fcm.ClientHeaderName, ctx.GetHeader(Fcm.ClientHeaderName) ?? "" }
         };
         if (data != null)
@@ -115,7 +128,13 @@ public class FcmNopClient : IFcmClient
         await Task.CompletedTask;
     }
 
-    public async Task SendRaw(IRpcCtx ctx, FcmType type, IReadOnlyList<string> tokens, object data)
+    public async Task SendRaw(
+        IRpcCtx ctx,
+        FcmType type,
+        IReadOnlyList<string> tokens,
+        string topic,
+        object data
+    )
     {
         await Task.CompletedTask;
     }

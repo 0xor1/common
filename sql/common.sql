@@ -43,16 +43,17 @@ DO DELETE FROM Auths WHERE ActivatedOn=CAST('0001-01-01 00:00:00.000' AS DATETIM
 
 DROP TABLE IF EXISTS FcmRegs;
 CREATE TABLE FcmRegs (
-    Topic VARCHAR(255) NOT NULL,
-    Token VARCHAR(255) NOT NULL,
-    User VARCHAR(22) NOT NULL,
-    Client VARCHAR(22) NOT NULL,
-    CreatedOn DATETIME(3) NOT NULL,
-    FcmEnabled BOOLEAN NOT NULL,
-    Primary KEY (User, Client),
-    UNIQUE INDEX (Client),
-    INDEX(Topic, FcmEnabled, Token),
-    INDEX(CreatedOn)
+     Topic VARCHAR(255) NOT NULL,
+     Token VARCHAR(255) NOT NULL,
+     User VARCHAR(22) NOT NULL,
+     Client VARCHAR(22) NOT NULL,
+     CreatedOn DATETIME(3) NOT NULL,
+     FcmEnabled BOOLEAN NOT NULL,
+     Primary KEY (Topic, Token),
+     UNIQUE INDEX (Client),
+     INDEX (User, CreatedOn),
+     INDEX(Topic, FcmEnabled, Token),
+     INDEX(CreatedOn)
 );
 
 # cleanup old fcm tokens that were createdOn over 2 days ago

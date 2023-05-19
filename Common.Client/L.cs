@@ -1,4 +1,5 @@
 ﻿using Common.Shared;
+using Microsoft.AspNetCore.Components;
 
 namespace Common.Client;
 
@@ -9,6 +10,9 @@ public interface L
 
     // S for String
     public string S(string key, object? model = null);
+
+    // H for Html
+    public MarkupString H(string key, object? model = null);
 
     // D for Date
     public string D(DateTime dt);
@@ -40,20 +44,15 @@ internal class Localizer : L
     }
 
     // S for String
-    public string S(string key, object? model = null)
-    {
-        return _s.GetOrAddress(_lang, key, model);
-    }
+    public string S(string key, object? model = null) => _s.GetOrAddress(_lang, key, model);
+
+    // H for Html
+    public MarkupString H(string key, object? model = null) =>
+        new(_s.GetOrAddress(_lang, key, model));
 
     // D for Date
-    public string D(DateTime dt)
-    {
-        return dt.ToLocalTime().ToString(_dateFmt);
-    }
+    public string D(DateTime dt) => dt.ToLocalTime().ToString(_dateFmt);
 
     // T for Time
-    public string T(DateTime dt)
-    {
-        return dt.ToLocalTime().ToString(_timeFmt);
-    }
+    public string T(DateTime dt) => dt.ToLocalTime().ToString(_timeFmt);
 }

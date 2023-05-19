@@ -76,9 +76,10 @@ public class FcmClient : IFcmClient
             S.AuthFcmTopicInvalid,
             new { Min = 1, Max = 5 }
         );
+        var client = ctx.GetHeader(Fcm.ClientHeaderName) ?? "";
         var topicStr = Fcm.TopicString(topic);
         var tokens = await db.FcmRegs
-            .Where(x => x.Topic == topicStr && x.FcmEnabled)
+            .Where(x => x.Topic == topicStr && x.FcmEnabled && x.Client != client)
             .Select(x => x.Token)
             .ToListAsync();
         await SendRaw(ctx, FcmType.Data, tokens, topicStr, data);
@@ -92,6 +93,10 @@ public class FcmClient : IFcmClient
         object? data
     )
     {
+        if (!(tokens?.Any() ?? false))
+        {
+            return;
+        }
         var dic = new Dictionary<string, string>()
         {
             { Fcm.TypeName, type.ToString() },

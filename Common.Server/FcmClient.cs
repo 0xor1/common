@@ -14,7 +14,8 @@ public interface IFcmClient
         TDbCtx db,
         Session ses,
         IReadOnlyList<string> topic,
-        object? data
+        object? data,
+        bool fnf = true
     )
         where TDbCtx : IAuthDb;
     Task SendRaw(
@@ -22,7 +23,8 @@ public interface IFcmClient
         FcmType type,
         IReadOnlyList<string> tokens,
         string topic,
-        object? data
+        object? data,
+        bool fnf = true
     );
 }
 
@@ -67,7 +69,8 @@ public class FcmClient : IFcmClient
         TDbCtx db,
         Session ses,
         IReadOnlyList<string> topic,
-        object? data
+        object? data,
+        bool fnf = true
     )
         where TDbCtx : IAuthDb
     {
@@ -82,7 +85,7 @@ public class FcmClient : IFcmClient
             .Where(x => x.Topic == topicStr && x.FcmEnabled && x.Client != client)
             .Select(x => x.Token)
             .ToListAsync();
-        await SendRaw(ctx, FcmType.Data, tokens, topicStr, data);
+        await SendRaw(ctx, FcmType.Data, tokens, topicStr, data, fnf);
     }
 
     public async Task SendRaw(
@@ -90,7 +93,8 @@ public class FcmClient : IFcmClient
         FcmType type,
         IReadOnlyList<string> tokens,
         string topic,
-        object? data
+        object? data,
+        bool fnf = true
     )
     {
         if (!(tokens?.Any() ?? false))
@@ -107,7 +111,15 @@ public class FcmClient : IFcmClient
         {
             dic.Add(Fcm.Data, Json.From(data));
         }
-        await Send(new() { Tokens = tokens, Data = dic });
+        var t = Send(new() { Tokens = tokens, Data = dic });
+        if (fnf)
+        {
+            t.FnF();
+        }
+        else
+        {
+            await t;
+        }
     }
 }
 
@@ -126,7 +138,8 @@ public class FcmNopClient : IFcmClient
         TDbCtx db,
         Session ses,
         IReadOnlyList<string> topic,
-        object data
+        object? data,
+        bool fnf = true
     )
         where TDbCtx : IAuthDb
     {
@@ -138,7 +151,8 @@ public class FcmNopClient : IFcmClient
         FcmType type,
         IReadOnlyList<string> tokens,
         string topic,
-        object data
+        object? data,
+        bool fnf = true
     )
     {
         await Task.CompletedTask;

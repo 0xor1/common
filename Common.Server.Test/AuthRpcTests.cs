@@ -125,6 +125,8 @@ public class AuthRpcTests : IDisposable
         await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "c", null));
         await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "d", null));
         await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "e", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "f", null));
+        await ali.Auth.FcmRegister(new(new List<string>() { "a" }, "g", res.Client));
         Assert.NotEmpty(res.Client);
     }
 

@@ -439,14 +439,16 @@ public class AuthEps<TDbCtx>
                                 .ToListAsync();
 
                             var topic = Fcm.TopicString(req.Topic);
-                            var existing = fcmRegs.SingleOrDefault(
-                                x =>
-                                    (x.Topic == topic && x.Token == req.Token)
-                                    || (x.Client == req.Client)
-                            );
-                            if (existing != null)
+                            var existing = fcmRegs
+                                .Where(
+                                    x =>
+                                        (x.Topic == topic && x.Token == req.Token)
+                                        || (x.Client == req.Client)
+                                )
+                                .ToList();
+                            if (existing.Any())
                             {
-                                db.FcmRegs.Remove(existing);
+                                db.FcmRegs.RemoveRange(existing);
                                 await db.SaveChangesAsync();
                                 await db.FcmRegs.AddAsync(
                                     new FcmReg()

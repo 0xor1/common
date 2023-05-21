@@ -21,4 +21,17 @@ public static class TaskExt
             throw allTasks.Exception.NotNull();
         }
     }
+
+    // Fire and Forget
+    static async void FnF(this Task task)
+    {
+        try
+        {
+            await task;
+        }
+        catch (Exception e)
+        {
+            // log errors
+        }
+    }
 }

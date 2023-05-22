@@ -35,6 +35,7 @@ public static class Client
         builder.Services.AddSingleton(apiFactory(rpcClient));
         builder.Services.AddSingleton<IAuthService, AuthService<TApi>>();
         builder.Services.AddSingleton(ns);
+        builder.Services.AddSingleton<DialogService>();
         await builder.Build().RunAsync();
     }
 }

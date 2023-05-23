@@ -6,7 +6,7 @@ using Radzen.Blazor;
 
 namespace Common.Client;
 
-public class RadzenCustomValidator : ValidatorBase
+public class CommonCustomValidator : ValidatorBase
 {
     [Inject]
     private L L { get; set; } = default!;

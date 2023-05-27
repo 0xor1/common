@@ -10,7 +10,12 @@ namespace Common.Client;
 
 public static class Client
 {
-    public static async Task Run<TApp, TApi>(string[] args, S s, Func<IRpcClient, TApi> apiFactory)
+    public static async Task Run<TApp, TApi>(
+        string[] args,
+        S s,
+        Func<IRpcClient, TApi> apiFactory,
+        Action<IServiceCollection>? registerDiTypes = null
+    )
         where TApp : IComponent
         where TApi : class, IApi
     {
@@ -25,7 +30,7 @@ public static class Client
             builder.HostEnvironment.BaseAddress,
             httpClient,
             (message) =>
-                ns.Notify(NotificationSeverity.Error, l.S(S.ApiError), message, duration: 10000D)
+                ns.Notify(NotificationSeverity.Error, l.S(S.ApiError), message, duration: 6000D)
         );
 
         builder.Services.AddSingleton(httpClient);
@@ -36,6 +41,7 @@ public static class Client
         builder.Services.AddSingleton<IAuthService, AuthService<TApi>>();
         builder.Services.AddSingleton(ns);
         builder.Services.AddSingleton<DialogService>();
+        registerDiTypes?.Invoke(builder.Services);
         await builder.Build().RunAsync();
     }
 }

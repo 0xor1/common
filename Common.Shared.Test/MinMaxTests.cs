@@ -2,17 +2,12 @@ namespace Common.Shared.Test;
 
 public class MinMaxTests
 {
-    public record Val(int I) : IComparable<Val>
-    {
-        public int CompareTo(Val? other) => I.CompareTo(other?.I ?? 0);
-    }
-
     [Fact]
     public void MinMax_Success()
     {
-        var mm = new MinMax<Val>(new(1), new(2));
-        Assert.Equal(1, mm.Min.NotNull().I);
-        Assert.Equal(2, mm.Max.NotNull().I);
+        var mm = new MinMax<int>(1, 2);
+        Assert.Equal(1, mm.Min.NotNull());
+        Assert.Equal(2, mm.Max.NotNull());
     }
 
     [Fact]
@@ -20,7 +15,7 @@ public class MinMaxTests
     {
         try
         {
-            var mm = new MinMax<Val>(null, null);
+            var mm = new MinMax<int>(null, null);
         }
         catch (NullMinMaxValuesException ex)
         {
@@ -33,7 +28,7 @@ public class MinMaxTests
     {
         try
         {
-            var mm = new MinMax<Val>(new Val(2), new Val(1));
+            var mm = new MinMax<int>(2, 1);
         }
         catch (ReversedMinMaxValuesException ex)
         {

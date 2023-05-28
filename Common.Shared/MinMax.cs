@@ -34,7 +34,7 @@ public class ReversedMinMaxValuesException : MinMaxBaseException
 }
 
 public record MinMax<T>
-    where T : IComparable<T>
+    where T : struct, IComparable<T>
 {
     public T? Min { get; }
     public T? Max { get; }
@@ -42,11 +42,11 @@ public record MinMax<T>
     [JsonConstructor]
     public MinMax(T? min, T? max)
     {
-        if (min == null && max == null)
+        if (!min.HasValue && !max.HasValue)
         {
             throw new NullMinMaxValuesException();
         }
-        if (min != null && max != null && min.CompareTo(max) > 0)
+        if (min.HasValue && max.HasValue && min.Value.CompareTo(max.Value) > 0)
         {
             throw new ReversedMinMaxValuesException(
                 min.ToString().NotNull(),

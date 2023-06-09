@@ -242,6 +242,82 @@ public static class RpcExts
         );
         return app;
     }
+
+    public static IApplicationBuilder UseRpcHost(this IApplicationBuilder app, string rpcHost)
+    {
+        var baseHref = rpcHost + "/api";
+        // validate all endpoints start /api/ and there are no duplicates
+        app.Map(
+            "/api",
+            app =>
+                app.Run(
+                    async (ctx) =>
+                    {
+                        var cl = ctx.RequestServices
+                            .GetRequiredService<IHttpClientFactory>()
+                            .CreateClient();
+                        var req = CreateProxyHttpRequest(ctx, baseHref);
+                        var res = await cl.SendAsync(req);
+                        await CopyProxyHttpResponse(ctx, res);
+                    }
+                )
+        );
+        return app;
+    }
+
+    private static HttpRequestMessage CreateProxyHttpRequest(
+        this HttpContext context,
+        string baseHref
+    )
+    {
+        var req = context.Request;
+
+        var reqMsg = new HttpRequestMessage();
+        var reqMethod = req.Method;
+        reqMsg.Method = new HttpMethod(reqMethod);
+        reqMsg.Content = new StreamContent(req.Body);
+
+        foreach (var header in req.Headers)
+        {
+            if (
+                !reqMsg.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray())
+                && reqMsg.Content != null
+            )
+            {
+                reqMsg.Content?.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+            }
+        }
+
+        reqMsg.RequestUri = new Uri($"{baseHref}{req.Path}?{req.QueryString}");
+        return reqMsg;
+    }
+
+    private static async Task CopyProxyHttpResponse(
+        this HttpContext context,
+        HttpResponseMessage respMsg
+    )
+    {
+        if (respMsg == null)
+        {
+            throw new ArgumentNullException(nameof(respMsg));
+        }
+
+        var resp = context.Response;
+
+        resp.StatusCode = (int)respMsg.StatusCode;
+        foreach (var header in respMsg.Headers)
+        {
+            resp.Headers[header.Key] = header.Value.ToArray();
+        }
+
+        foreach (var header in respMsg.Content.Headers)
+        {
+            resp.Headers[header.Key] = header.Value.ToArray();
+        }
+
+        await using var responseStream = await respMsg.Content.ReadAsStreamAsync();
+        await responseStream.CopyToAsync(resp.Body, context.RequestAborted);
+    }
 }
 
 public static class RpcCtxExts

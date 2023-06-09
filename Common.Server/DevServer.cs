@@ -2,36 +2,28 @@ using Common.Server.Auth;
 using Common.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Common.Server;
 
-public static class Server
+public static class DevServer
 {
-    public static void Run<TDbCtx>(
-        string[] args,
-        S s,
-        IReadOnlyList<IRpcEndpoint> eps,
-        Func<IServiceProvider, Task>? initApp = null
-    )
-        where TDbCtx : DbContext, IAuthDb
+    public static void Run(string[] args)
     {
-        var config = Config.FromJson(
+        var config = DevConfig.FromJson(
             File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
         );
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddApiServices<TDbCtx>(config, s, initApp);
+        builder.Services.AddHttpClient();
 
         var app = builder.Build();
-        if (config.Env == Env.Lcl)
-            app.UseWebAssemblyDebugging();
-        else
-            app.UseHsts();
+        app.UseWebAssemblyDebugging();
         app.UseHttpsRedirection();
         app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
-        app.UseRpcEndpoints(eps);
+        app.UseRpcHost(config.DevServer.RpcHost);
         app.MapFallbackToFile("index.html");
-        app.Run(config.Server.Listen);
+        app.Run(config.DevServer.Listen);
     }
 }

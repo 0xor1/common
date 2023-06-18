@@ -17,7 +17,7 @@ public class AuthService<TApi> : IAuthService, IDisposable
     private string? _fcmClient;
     private readonly L L;
     private readonly TApi _api;
-    private Action<ISession>? _refreshUI;
+    private Action<ISession>? _onSessionChanged;
     private string? _fcmTopicStr;
     private List<string>? _fcmTopic;
     private Action<string>? _fcmHandler;
@@ -31,7 +31,7 @@ public class AuthService<TApi> : IAuthService, IDisposable
         {
             _ses = value;
             L.Config(_ses.Lang, _ses.DateFmt, _ses.TimeFmt);
-            _refreshUI?.Invoke(_ses);
+            _onSessionChanged?.Invoke(_ses);
         }
     }
 
@@ -44,7 +44,7 @@ public class AuthService<TApi> : IAuthService, IDisposable
         _dnObj = DotNetObjectReference.Create(this);
     }
 
-    public void RegisterRefreshUi(Action<ISession> a) => _refreshUI = a;
+    public void OnSessionChanged(Action<ISession> a) => _onSessionChanged = a;
 
     public async Task<ISession> GetSession()
     {

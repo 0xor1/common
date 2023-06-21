@@ -88,8 +88,8 @@ public record RpcHttpClient : IRpcClient
             req.Content = new StreamContent(stream.Data);
             req.Headers.Add(RpcHttp.DataHeader, RpcHttp.Serialize(arg).ToB64());
             req.Headers.Add(RpcHttp.ContentNameHeader, stream.Name);
-            req.Headers.Add(RpcHttp.ContentTypeHeader, stream.Type);
-            req.Headers.Add(RpcHttp.ContentLengthHeader, stream.Size.ToString());
+            req.Content.Headers.Add(RpcHttp.ContentTypeHeader, stream.Type);
+            req.Content.Headers.Add(RpcHttp.ContentLengthHeader, stream.Size.ToString());
         }
         else if (typeof(TArg) != Nothing.Type)
         {

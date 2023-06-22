@@ -108,5 +108,6 @@ public class S3StoreClient : IStoreClient
     public void Dispose()
     {
         _awsS3.Dispose();
+        _transferUtil.Dispose();
     }
 }

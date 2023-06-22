@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using Amazon.S3.Transfer;
 
 namespace Common.Server;
 
@@ -16,9 +17,11 @@ public interface IStoreClient : IDisposable
 public class S3StoreClient : IStoreClient
 {
     private readonly AmazonS3Client _awsS3;
+    private readonly ITransferUtility _transferUtil;
 
     public S3StoreClient(AmazonS3Client awsS3)
     {
+        _transferUtil = new TransferUtility(awsS3);
         _awsS3 = awsS3;
     }
 
@@ -59,15 +62,7 @@ public class S3StoreClient : IStoreClient
 
     public async Task Upload(string bucket, string key, Stream body)
     {
-        await _awsS3.PutObjectAsync(
-            new PutObjectRequest
-            {
-                BucketName = bucket,
-                Key = key,
-                InputStream = body,
-                CannedACL = S3CannedACL.Private
-            }
-        );
+        await _transferUtil.UploadAsync(body, bucket, key);
         await body.DisposeAsync();
     }
 

@@ -18,12 +18,10 @@ public interface IStoreClient : IDisposable
 public class S3StoreClient : IStoreClient
 {
     private readonly AmazonS3Client _awsS3;
-    private readonly ITransferUtility _transferUtil;
     private readonly IMinioClient _minio;
 
     public S3StoreClient(AmazonS3Client awsS3, IMinioClient minio)
     {
-        _transferUtil = new TransferUtility(awsS3);
         _awsS3 = awsS3;
         _minio = minio;
     }
@@ -73,7 +71,6 @@ public class S3StoreClient : IStoreClient
                 .WithObjectSize((long)size)
                 .WithStreamData(stream)
         );
-        await _transferUtil.UploadAsync(stream, bucket, key);
         await stream.DisposeAsync();
     }
 
@@ -119,6 +116,6 @@ public class S3StoreClient : IStoreClient
     public void Dispose()
     {
         _awsS3.Dispose();
-        _transferUtil.Dispose();
+        _minio.Dispose();
     }
 }

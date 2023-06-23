@@ -8,6 +8,7 @@ using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Minio;
 using MySqlConnector;
 
 namespace Common.Server;
@@ -41,10 +42,17 @@ public static class ServiceExts
                         // this is needed to work with minio locally
                         new AmazonS3Config()
                         {
-                            ServiceURL = config.Store.Region,
+                            ServiceURL = $"http://{config.Store.Host}",
                             ForcePathStyle = true
                         }
                     )
+            );
+            services.AddScoped<IMinioClient>(
+                sp =>
+                    new MinioClient()
+                        .WithEndpoint(config.Store.Host)
+                        .WithCredentials(config.Store.Key, config.Store.Secret)
+                        .Build()
             );
         }
         else
@@ -64,6 +72,13 @@ public static class ServiceExts
                         new BasicAWSCredentials(config.Store.Key, config.Store.Secret),
                         config.Store.RegionEndpoint
                     )
+            );
+            services.AddScoped<IMinioClient>(
+                sp =>
+                    new MinioClient()
+                        .WithRegion(config.Store.Region)
+                        .WithCredentials(config.Store.Key, config.Store.Secret)
+                        .Build()
             );
         }
         services.AddScoped<IStoreClient, S3StoreClient>();

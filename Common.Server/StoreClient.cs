@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
+using Minio;
 
 namespace Common.Server;
 
@@ -8,7 +9,7 @@ public interface IStoreClient : IDisposable
 {
     public Task CreateBucket(string bucket, S3CannedACL acl);
     public Task Move(string srcBucket, string dstBucket, string key);
-    public Task Upload(string bucket, string key, Stream body);
+    public Task Upload(string bucket, string key, string type, ulong size, Stream body);
     public Task<Stream> Download(string bucket, string key);
     public Task Delete(string bucket, string key);
     public Task DeletePrefix(string bucket, string prefix);
@@ -18,11 +19,13 @@ public class S3StoreClient : IStoreClient
 {
     private readonly AmazonS3Client _awsS3;
     private readonly ITransferUtility _transferUtil;
+    private readonly IMinioClient _minio;
 
-    public S3StoreClient(AmazonS3Client awsS3)
+    public S3StoreClient(AmazonS3Client awsS3, IMinioClient minio)
     {
         _transferUtil = new TransferUtility(awsS3);
         _awsS3 = awsS3;
+        _minio = minio;
     }
 
     public async Task CreateBucket(string bucket, S3CannedACL acl)
@@ -60,10 +63,18 @@ public class S3StoreClient : IStoreClient
         );
     }
 
-    public async Task Upload(string bucket, string key, Stream body)
+    public async Task Upload(string bucket, string key, string type, ulong size, Stream stream)
     {
-        await _transferUtil.UploadAsync(body, bucket, key);
-        await body.DisposeAsync();
+        await _minio.PutObjectAsync(
+            new PutObjectArgs()
+                .WithBucket(bucket)
+                .WithObject(key)
+                .WithContentType(type)
+                .WithObjectSize((long)size)
+                .WithStreamData(stream)
+        );
+        await _transferUtil.UploadAsync(stream, bucket, key);
+        await stream.DisposeAsync();
     }
 
     public async Task<Stream> Download(string bucket, string key)

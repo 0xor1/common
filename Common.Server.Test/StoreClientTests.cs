@@ -36,7 +36,7 @@ public class StoreClientTests : IDisposable
         var test = "yolo baby!";
         using var us = new MemoryStream(Encoding.UTF8.GetBytes(test));
         var key = Id.New();
-        await sc.Upload(bucket, key, us);
+        await sc.Upload(bucket, key, "text/plain", (ulong)us.Length, us);
         await using var ds = await sc.Download(bucket, key);
         using var sr = new StreamReader(ds);
         var res = await sr.ReadToEndAsync();
@@ -55,7 +55,7 @@ public class StoreClientTests : IDisposable
         var test = "yolo baby!";
         using var us = new MemoryStream(Encoding.UTF8.GetBytes(test));
         var key = Id.New();
-        await sc.Upload(bucket, key, us);
+        await sc.Upload(bucket, key, "text/plain", (ulong)us.Length, us);
         await sc.Delete(bucket, key);
     }
 
@@ -72,7 +72,7 @@ public class StoreClientTests : IDisposable
         using var us = new MemoryStream(Encoding.UTF8.GetBytes(test));
         var keyA = Id.New();
         var keyB = Id.New();
-        await sc.Upload(bucket, string.Join("/", keyA, keyB), us);
+        await sc.Upload(bucket, string.Join("/", keyA, keyB), "text/plain", (ulong)us.Length, us);
         await sc.DeletePrefix(bucket, keyA);
     }
 

@@ -19,7 +19,7 @@
     "noReplyAddress": "noreply@yolo.solo"
   },
   "store": {
-    "region": "http://localhost:9000",
+    "host": "localhost:9000",
     "key": "localtest",
     "secret": "localtest"
   },

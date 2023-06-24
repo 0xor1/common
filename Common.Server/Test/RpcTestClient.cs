@@ -176,6 +176,14 @@ public class RpcTestClient : IRpcClient
         (_session, var res) = await _exe(rpc.Path, _session, _headers, arg);
         return (TRes)res;
     }
+
+    public string GetUrl<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)
+        where TArg : class
+        where TRes : class
+    {
+        Throw.OpIf(RpcHttp.HasStream<TArg>(), "can't generate get url for an rpc whose arg has a stream");
+        return $"test://test.test{rpc.Path}?{RpcHttp.QueryParam}={RpcHttp.Serialize(arg).ToB64()}";
+    }
 }
 
 public record RpcTestCtx : IRpcCtxInternal

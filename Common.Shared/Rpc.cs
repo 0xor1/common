@@ -62,6 +62,9 @@ public interface IRpcClient
     Task<TRes> Do<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)
         where TArg : class
         where TRes : class;
+    string GetUrl<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)
+        where TArg : class
+        where TRes : class;
 }
 
 public record RpcHttpClient : IRpcClient
@@ -141,6 +144,17 @@ public record RpcHttpClient : IRpcClient
             (ulong)cd.Size
         );
         return res;
+    }
+
+    public string GetUrl<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)
+        where TArg : class
+        where TRes : class
+    {
+        Throw.OpIf(
+            RpcHttp.HasStream<TArg>(),
+            "can't generate get url for an rpc whose arg has a stream"
+        );
+        return $"{_baseHref}{rpc.Path}?{RpcHttp.QueryParam}={RpcHttp.Serialize(arg).ToB64()}";
     }
 }
 

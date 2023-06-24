@@ -181,7 +181,10 @@ public class RpcTestClient : IRpcClient
         where TArg : class
         where TRes : class
     {
-        Throw.OpIf(RpcHttp.HasStream<TArg>(), "can't generate get url for an rpc whose arg has a stream");
+        Throw.OpIf(
+            RpcHttp.HasStream<TArg>(),
+            "can't generate get url for an rpc whose arg has a stream"
+        );
         return $"test://test.test{rpc.Path}?{RpcHttp.QueryParam}={RpcHttp.Serialize(arg).ToB64()}";
     }
 }

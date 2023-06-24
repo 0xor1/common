@@ -288,7 +288,7 @@ public static class RpcExts
             }
         }
 
-        reqMsg.RequestUri = new Uri($"{baseHref}{req.Path}?{req.QueryString}");
+        reqMsg.RequestUri = new Uri($"{baseHref}{req.Path}{req.QueryString}");
         return reqMsg;
     }
 

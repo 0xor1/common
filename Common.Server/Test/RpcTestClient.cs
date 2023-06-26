@@ -38,6 +38,7 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         S s,
         IReadOnlyList<IRpcEndpoint> eps,
         Func<IRpcClient, TApi> apiFactory,
+        Action<IServiceCollection>? addServices = null,
         Func<IServiceProvider, Task>? initApp = null
     )
     {
@@ -50,7 +51,7 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         _s = s;
         _apiFactory = apiFactory;
         var services = new ServiceCollection();
-        services.AddApiServices<TDbCtx>(_config, s, initApp);
+        services.AddApiServices<TDbCtx>(_config, s, addServices, initApp);
         _services = services.BuildServiceProvider();
         var dupedPaths = eps.Select(x => x.Path).GetDuplicates().ToList();
         Throw.SetupIf(

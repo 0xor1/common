@@ -2,6 +2,7 @@ using Common.Server.Auth;
 using Common.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Common.Server;
@@ -12,6 +13,7 @@ public static class Server
         string[] args,
         S s,
         IReadOnlyList<IRpcEndpoint> eps,
+        Action<IServiceCollection>? addServies = null,
         Func<IServiceProvider, Task>? initApp = null
     )
         where TDbCtx : DbContext, IAuthDb
@@ -20,7 +22,7 @@ public static class Server
             File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
         );
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddApiServices<TDbCtx>(config, s, initApp);
+        builder.Services.AddApiServices<TDbCtx>(config, s, addServies, initApp);
 
         var app = builder.Build();
         if (config.Env == Env.Lcl)

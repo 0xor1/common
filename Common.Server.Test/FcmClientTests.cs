@@ -18,6 +18,7 @@ public class FcmClientTests : IDisposable
                 (_, _, _, _) => Task.CompletedTask
             ).Eps,
             client => new Api(client),
+            (sc) => { },
             (sp) => Task.CompletedTask
         );
     }

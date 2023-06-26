@@ -14,7 +14,7 @@ public static class Client
         string[] args,
         S s,
         Func<IRpcClient, TApi> apiFactory,
-        Action<IServiceCollection>? registerDiTypes = null
+        Action<IServiceCollection>? addServices = null
     )
         where TApp : IComponent
         where TApi : class, IApi
@@ -41,7 +41,7 @@ public static class Client
         builder.Services.AddSingleton<IAuthService, AuthService<TApi>>();
         builder.Services.AddSingleton(ns);
         builder.Services.AddSingleton<DialogService>();
-        registerDiTypes?.Invoke(builder.Services);
+        addServices?.Invoke(builder.Services);
         await builder.Build().RunAsync();
     }
 }

@@ -22,6 +22,7 @@ public static class ServiceExts
         this IServiceCollection services,
         IConfig config,
         S s,
+        Action<IServiceCollection>? addServices = null,
         Func<IServiceProvider, Task>? initApp = null
     )
         where TDbCtx : DbContext, IAuthDb
@@ -115,6 +116,8 @@ public static class ServiceExts
                 }
             );
         });
+
+        addServices?.Invoke(services);
 
         if (initApp != null)
         {

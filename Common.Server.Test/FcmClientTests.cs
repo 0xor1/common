@@ -27,23 +27,13 @@ public class FcmClientTests : IDisposable
     public async Task Send_Success()
     {
         var c = _rpcTestRig.Get<IFcmClient>();
-        var res = await c.Send(
-            new MulticastMessage()
+        await c.Send(
+            new Message()
             {
-                Tokens = new List<string>() { },
+                Token = "a",
                 Data = new Dictionary<string, string>() { { "yolo", "solo" } }
             }
         );
-        Assert.Equal(0, res.SuccessCount + res.FailureCount);
-        res = await c.Send(
-            new MulticastMessage()
-            {
-                Tokens = new List<string>() { "a", "b" },
-                Data = new Dictionary<string, string>() { { "yolo", "solo" } }
-            }
-        );
-        // todo figure out how to get actual reg token to send data
-        Assert.Equal(2, res.SuccessCount + res.FailureCount);
     }
 
     public void Dispose()

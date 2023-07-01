@@ -3,12 +3,13 @@ using Common.Shared;
 using Common.Shared.Auth;
 using FirebaseAdmin.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Message = FirebaseAdmin.Messaging.Message;
 
 namespace Common.Server;
 
 public interface IFcmClient
 {
-    Task<IBatchResponse> Send(MulticastMessage msg);
+    Task Send(Message msg, bool fnf = true);
     Task SendTopic<TDbCtx>(
         IRpcCtx ctx,
         TDbCtx db,
@@ -40,28 +41,17 @@ public class FcmClient : IFcmClient
         _client = client;
     }
 
-    public async Task<IBatchResponse> Send(MulticastMessage msg)
+    public async Task Send(Message msg, bool fnf = true)
     {
-        if (!(msg.Tokens?.Any() ?? false))
+        var t = _client.SendAsync(msg);
+        if (fnf)
         {
-            return new NopBatchResponse(new List<SendResponse>(), 0);
+            t.FnF();
         }
-
-        var allTokens = msg.Tokens.ToList();
-        var i = 0;
-        var successCount = 0;
-        var responses = new List<SendResponse>();
-        while (i < allTokens.Count)
+        else
         {
-            var batch = allTokens.GetRange(i, Math.Min(i + _batchSize, allTokens.Count));
-            msg.Tokens = batch;
-            var res = await _client.SendMulticastAsync(msg);
-            responses.AddRange(res.Responses);
-            successCount += res.SuccessCount;
-            i += _batchSize;
+            await t;
         }
-
-        return new BatchResponseWrapper(responses, successCount);
     }
 
     public async Task SendTopic<TDbCtx>(
@@ -111,14 +101,10 @@ public class FcmClient : IFcmClient
         {
             dic.Add(Fcm.Data, Json.From(data));
         }
-        var t = Send(new() { Tokens = tokens, Data = dic });
-        if (fnf)
+
+        foreach (var t in tokens)
         {
-            t.FnF();
-        }
-        else
-        {
-            await t;
+            await Send(new() { Token = t, Data = dic }, fnf);
         }
     }
 }
@@ -127,10 +113,9 @@ public class FcmNopClient : IFcmClient
 {
     public FcmNopClient() { }
 
-    public async Task<IBatchResponse> Send(MulticastMessage msg)
+    public async Task Send(Message msg, bool fnf = true)
     {
         await Task.CompletedTask;
-        return new NopBatchResponse(new List<SendResponse>(msg.Tokens.Count), msg.Tokens.Count);
     }
 
     public async Task SendTopic<TDbCtx>(
@@ -157,38 +142,4 @@ public class FcmNopClient : IFcmClient
     {
         await Task.CompletedTask;
     }
-}
-
-public interface IBatchResponse
-{
-    public IReadOnlyList<SendResponse> Responses { get; }
-    public int SuccessCount { get; }
-    public int FailureCount => Responses.Count - SuccessCount;
-}
-
-public class BatchResponseWrapper : IBatchResponse
-{
-    private readonly List<SendResponse> _responses;
-    private readonly int _successCount;
-
-    internal BatchResponseWrapper(List<SendResponse> responses, int successCount)
-    {
-        _responses = responses;
-        _successCount = successCount;
-    }
-
-    public IReadOnlyList<SendResponse> Responses => _responses;
-    public int SuccessCount => _successCount;
-}
-
-public class NopBatchResponse : IBatchResponse
-{
-    public NopBatchResponse(IReadOnlyList<SendResponse> responses, int successCount)
-    {
-        Responses = responses;
-        SuccessCount = successCount;
-    }
-
-    public IReadOnlyList<SendResponse> Responses { get; }
-    public int SuccessCount { get; }
 }

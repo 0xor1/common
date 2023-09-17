@@ -23,4 +23,13 @@ public class IEnumerableExtsTests
                 .Single()
         );
     }
+
+    [Fact]
+    public void ForEach_Success()
+    {
+        var i = 0;
+        IEnumerable<Key> things = new List<Key> { new("one"), new("two"), new("three") };
+        things.ForEach(x => i++);
+        Assert.Equal(3, i);
+    }
 }

@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <PackageId>0xor1.Common.Client</PackageId>
-        <Version>2.1.45</Version>
+        <Version>2.1.46</Version>
         <Authors>Daniel Robinson</Authors>
         <Company>Personal</Company>
         <Product>Personal</Product>
@@ -16,7 +16,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="0xor1.Common.Shared" Version="2.1.45" />
+        <PackageReference Include="0xor1.Common.Shared" Version="2.1.46" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
         <PackageReference Include="Radzen.Blazor" Version="4.11.2" />

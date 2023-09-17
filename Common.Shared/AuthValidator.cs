@@ -4,16 +4,26 @@ namespace Common.Shared;
 
 public record ValidationResult
 {
-    public bool Valid { get; set; } = true;
-    public Message Message { get; set; } = new(S.Invalid);
-    public List<Message> SubMessages { get; } = new();
+    public ValidationResult(string msgKey = S.Invalid, object? msgModel = null)
+    {
+        Valid = true;
+        Message = new Message(msgKey, msgModel);
+        SubMessages = new List<Message>();
+    }
 
-    public void InvalidIf(bool condition, string msgKey, object? msgModel = null)
+    public bool Valid { get; private set; }
+    public Message Message { get; private set; }
+    public List<Message> SubMessages { get; }
+
+    public void InvalidIf(bool condition, string? msgKey = null, object? msgModel = null)
     {
         if (!condition)
             return;
         Valid = false;
-        SubMessages.Add(new(msgKey, msgModel));
+        if (!msgKey.IsNullOrEmpty())
+        {
+            SubMessages.Add(new(msgKey, msgModel));
+        }
     }
 }
 
@@ -33,45 +43,19 @@ public static partial class AuthValidator
 {
     public static ValidationResult Email(string str)
     {
-        var res = new ValidationResult { Message = new Message(S.AuthInvalidEmail) };
-        if (!EmailRegex().IsMatch(str))
-            res.Valid = false;
+        var res = new ValidationResult(S.AuthInvalidEmail);
+        res.InvalidIf(!EmailRegex().IsMatch(str));
         return res;
     }
 
     public static ValidationResult Pwd(string str)
     {
-        var res = new ValidationResult { Message = new Message(S.AuthInvalidPwd) };
-        if (!EightOrMoreCharsRegex().IsMatch(str))
-        {
-            res.Valid = false;
-            res.SubMessages.Add(new Message(S.AuthLessThan8Chars));
-        }
-
-        if (!LowerCaseRegex().IsMatch(str))
-        {
-            res.Valid = false;
-            res.SubMessages.Add(new Message(S.AuthNoLowerCaseChar));
-        }
-
-        if (!UpperCaseRegex().IsMatch(str))
-        {
-            res.Valid = false;
-            res.SubMessages.Add(new Message(S.AuthNoUpperCaseChar));
-        }
-
-        if (!DigitRegex().IsMatch(str))
-        {
-            res.Valid = false;
-            res.SubMessages.Add(new Message(S.AuthNoDigit));
-        }
-
-        if (!SpecialCharRegex().IsMatch(str))
-        {
-            res.Valid = false;
-            res.SubMessages.Add(new Message(S.AuthNoSpecialChar));
-        }
-
+        var res = new ValidationResult(S.AuthInvalidPwd);
+        res.InvalidIf(!EightOrMoreCharsRegex().IsMatch(str), S.AuthLessThan8Chars);
+        res.InvalidIf(!LowerCaseRegex().IsMatch(str), S.AuthNoLowerCaseChar);
+        res.InvalidIf(!UpperCaseRegex().IsMatch(str), S.AuthNoUpperCaseChar);
+        res.InvalidIf(!DigitRegex().IsMatch(str), S.AuthNoDigit);
+        res.InvalidIf(!SpecialCharRegex().IsMatch(str), S.AuthNoSpecialChar);
         return res;
     }
 

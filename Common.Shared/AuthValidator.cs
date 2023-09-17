@@ -7,6 +7,14 @@ public record ValidationResult
     public bool Valid { get; set; } = true;
     public Message Message { get; set; } = new(S.Invalid);
     public List<Message> SubMessages { get; } = new();
+
+    public void InvalidIf(bool condition, string msgKey, object? msgModel = null)
+    {
+        if (!condition)
+            return;
+        Valid = false;
+        SubMessages.Add(new(msgKey, msgModel));
+    }
 }
 
 public class Message

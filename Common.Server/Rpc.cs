@@ -33,6 +33,8 @@ public interface IRpcCtx
     public Session ClearSession();
 
     public string? GetHeader(string name);
+
+    public CancellationToken Ctkn { get; }
 }
 
 public interface IRpcCtxInternal : IRpcCtx
@@ -55,6 +57,8 @@ public class RpcHttpCtx : IRpcCtxInternal
         _ctx = ctx;
         _sessionManager = sessionManager;
     }
+
+    public CancellationToken Ctkn => _ctx.RequestAborted;
 
     public Session GetSession() => _sessionManager.Get(_ctx);
 
@@ -257,7 +261,7 @@ public static class RpcExts
                             .GetRequiredService<IHttpClientFactory>()
                             .CreateClient();
                         var req = CreateProxyHttpRequest(ctx, baseHref);
-                        var res = await cl.SendAsync(req);
+                        var res = await cl.SendAsync(req, ctx.RequestAborted);
                         await CopyProxyHttpResponse(ctx, res);
                     }
                 )
@@ -293,7 +297,7 @@ public static class RpcExts
     }
 
     private static async Task CopyProxyHttpResponse(
-        this HttpContext context,
+        this HttpContext ctx,
         HttpResponseMessage respMsg
     )
     {
@@ -302,7 +306,7 @@ public static class RpcExts
             throw new ArgumentNullException(nameof(respMsg));
         }
 
-        var resp = context.Response;
+        var resp = ctx.Response;
 
         resp.StatusCode = (int)respMsg.StatusCode;
         foreach (var header in respMsg.Headers)
@@ -316,7 +320,7 @@ public static class RpcExts
         }
 
         await using var responseStream = await respMsg.Content.ReadAsStreamAsync();
-        await responseStream.CopyToAsync(resp.Body, context.RequestAborted);
+        await responseStream.CopyToAsync(resp.Body, ctx.RequestAborted);
     }
 }
 
@@ -340,17 +344,17 @@ public static class RpcCtxExts
         where TDbCtx : DbContext
     {
         var db = ctx.Get<TDbCtx>();
-        var tx = await db.Database.BeginTransactionAsync();
+        var tx = await db.Database.BeginTransactionAsync(ctx.Ctkn);
         try
         {
             var res = await fn(db, mustBeAuthedSession ? ctx.GetAuthedSession() : ctx.GetSession());
-            await db.SaveChangesAsync();
-            await tx.CommitAsync();
+            await db.SaveChangesAsync(ctx.Ctkn);
+            await tx.CommitAsync(ctx.Ctkn);
             return res;
         }
         catch (Exception ex)
         {
-            await tx.RollbackAsync();
+            await tx.RollbackAsync(ctx.Ctkn);
             throw;
         }
     }

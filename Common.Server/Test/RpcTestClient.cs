@@ -216,6 +216,8 @@ public record RpcTestCtx : IRpcCtxInternal
         Arg = arg;
     }
 
+    public CancellationToken Ctkn => CancellationToken.None;
+
     public T Get<T>()
         where T : notnull => _services.GetRequiredService<T>();
 

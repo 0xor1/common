@@ -13,7 +13,8 @@ public interface IEmailClient : IDisposable
         string senderAddress,
         List<string> toAddresses,
         List<string>? ccAddresses = null,
-        List<string>? bccAddresses = null
+        List<string>? bccAddresses = null,
+        CancellationToken ctkn = default
     );
 }
 
@@ -33,7 +34,8 @@ public class LogEmailClient : IEmailClient
         string senderAddress,
         List<string> toAddresses,
         List<string>? ccAddresses = null,
-        List<string>? bccAddresses = null
+        List<string>? bccAddresses = null,
+        CancellationToken ctkn = default
     )
     {
         _log.LogInformation(
@@ -60,7 +62,8 @@ public class SesEmailClient : IEmailClient
         string senderAddress,
         List<string> toAddresses,
         List<string>? ccAddresses = null,
-        List<string>? bccAddresses = null
+        List<string>? bccAddresses = null,
+        CancellationToken ctkn = default
     )
     {
         var response = await _awsSes.SendEmailAsync(
@@ -82,7 +85,8 @@ public class SesEmailClient : IEmailClient
                     Subject = new Content { Charset = "UTF-8", Data = subject }
                 },
                 Source = senderAddress
-            }
+            },
+            ctkn
         );
     }
 

@@ -7,12 +7,24 @@ namespace Common.Server;
 
 public interface IStoreClient : IDisposable
 {
-    public Task CreateBucket(string bucket, S3CannedACL acl);
-    public Task Move(string srcBucket, string dstBucket, string key);
-    public Task Upload(string bucket, string key, string type, ulong size, Stream body);
-    public Task<Stream> Download(string bucket, string key);
-    public Task Delete(string bucket, string key);
-    public Task DeletePrefix(string bucket, string prefix);
+    public Task CreateBucket(string bucket, S3CannedACL acl, CancellationToken ctkn = default);
+    public Task Move(
+        string srcBucket,
+        string dstBucket,
+        string key,
+        CancellationToken ctkn = default
+    );
+    public Task Upload(
+        string bucket,
+        string key,
+        string type,
+        ulong size,
+        Stream body,
+        CancellationToken ctkn = default
+    );
+    public Task<Stream> Download(string bucket, string key, CancellationToken ctkn = default);
+    public Task Delete(string bucket, string key, CancellationToken ctkn = default);
+    public Task DeletePrefix(string bucket, string prefix, CancellationToken ctkn = default);
 }
 
 public class S3StoreClient : IStoreClient
@@ -26,12 +38,13 @@ public class S3StoreClient : IStoreClient
         _minio = minio;
     }
 
-    public async Task CreateBucket(string bucket, S3CannedACL acl)
+    public async Task CreateBucket(string bucket, S3CannedACL acl, CancellationToken ctkn = default)
     {
         try
         {
             await _awsS3.PutBucketAsync(
-                new PutBucketRequest { BucketName = bucket, CannedACL = acl }
+                new PutBucketRequest { BucketName = bucket, CannedACL = acl },
+                ctkn
             );
         }
         catch (Exception ex)
@@ -44,7 +57,12 @@ public class S3StoreClient : IStoreClient
         }
     }
 
-    public async Task Move(string srcBucket, string dstBucket, string key)
+    public async Task Move(
+        string srcBucket,
+        string dstBucket,
+        string key,
+        CancellationToken ctkn = default
+    )
     {
         var res = await _awsS3.CopyObjectAsync(
             new CopyObjectRequest
@@ -53,15 +71,24 @@ public class S3StoreClient : IStoreClient
                 SourceKey = key,
                 DestinationBucket = dstBucket,
                 DestinationKey = key
-            }
+            },
+            ctkn
         );
         // TODO does this need to check if the object has been copied over successfully before calling delete?
         await _awsS3.DeleteObjectAsync(
-            new DeleteObjectRequest { BucketName = srcBucket, Key = key }
+            new DeleteObjectRequest { BucketName = srcBucket, Key = key },
+            ctkn
         );
     }
 
-    public async Task Upload(string bucket, string key, string type, ulong size, Stream stream)
+    public async Task Upload(
+        string bucket,
+        string key,
+        string type,
+        ulong size,
+        Stream stream,
+        CancellationToken ctkn = default
+    )
     {
         await _minio.PutObjectAsync(
             new PutObjectArgs()
@@ -69,31 +96,37 @@ public class S3StoreClient : IStoreClient
                 .WithObject(key)
                 .WithContentType(type)
                 .WithObjectSize((long)size)
-                .WithStreamData(stream)
+                .WithStreamData(stream),
+            ctkn
         );
         await stream.DisposeAsync();
     }
 
-    public async Task<Stream> Download(string bucket, string key)
+    public async Task<Stream> Download(string bucket, string key, CancellationToken ctkn = default)
     {
         var res = await _awsS3.GetObjectAsync(
-            new GetObjectRequest { BucketName = bucket, Key = key }
+            new GetObjectRequest { BucketName = bucket, Key = key },
+            ctkn
         );
         return res.ResponseStream;
     }
 
-    public async Task Delete(string bucket, string key)
+    public async Task Delete(string bucket, string key, CancellationToken ctkn = default)
     {
-        await _awsS3.DeleteObjectAsync(new DeleteObjectRequest { BucketName = bucket, Key = key });
+        await _awsS3.DeleteObjectAsync(
+            new DeleteObjectRequest { BucketName = bucket, Key = key },
+            ctkn
+        );
     }
 
-    public async Task DeletePrefix(string bucket, string prefix)
+    public async Task DeletePrefix(string bucket, string prefix, CancellationToken ctkn = default)
     {
         if (!prefix.EndsWith("/"))
             prefix += "/";
 
         var res = await _awsS3.ListObjectsV2Async(
-            new ListObjectsV2Request { BucketName = bucket, Prefix = prefix }
+            new ListObjectsV2Request { BucketName = bucket, Prefix = prefix },
+            ctkn
         );
         while (res.S3Objects.Count > 0)
         {
@@ -105,10 +138,11 @@ public class S3StoreClient : IStoreClient
             foreach (var obj in res.S3Objects)
                 req.AddKey(obj.Key);
 
-            await _awsS3.DeleteObjectsAsync(req);
+            await _awsS3.DeleteObjectsAsync(req, ctkn);
 
             res = await _awsS3.ListObjectsV2Async(
-                new ListObjectsV2Request { BucketName = bucket, Prefix = prefix }
+                new ListObjectsV2Request { BucketName = bucket, Prefix = prefix },
+                ctkn
             );
         }
     }

@@ -53,7 +53,8 @@ public class AuthEps<TDbCtx>
                             var existing = await db.Auths.SingleOrDefaultAsync(
                                 x =>
                                     x.Email.Equals(req.Email)
-                                    || (x.NewEmail != null && x.NewEmail.Equals(req.Email))
+                                    || (x.NewEmail != null && x.NewEmail.Equals(req.Email)),
+                                ctx.Ctkn
                             );
                             var newCreated = existing == null;
                             if (existing == null)
@@ -74,7 +75,7 @@ public class AuthEps<TDbCtx>
                                     PwdHash = pwd.PwdHash,
                                     PwdIters = pwd.PwdIters
                                 };
-                                await db.Auths.AddAsync(existing);
+                                await db.Auths.AddAsync(existing, ctx.Ctkn);
                             }
 
                             if (
@@ -130,7 +131,8 @@ public class AuthEps<TDbCtx>
                             var auth = await db.Auths.SingleOrDefaultAsync(
                                 x =>
                                     x.Email.Equals(req.Email)
-                                    || (x.NewEmail != null && x.NewEmail.Equals(req.Email))
+                                    || (x.NewEmail != null && x.NewEmail.Equals(req.Email)),
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
@@ -171,7 +173,8 @@ public class AuthEps<TDbCtx>
                         async (db, ses) =>
                         {
                             var existing = await db.Auths.SingleOrDefaultAsync(
-                                x => x.Email.Equals(req.Email)
+                                x => x.Email.Equals(req.Email),
+                                ctx.Ctkn
                             );
                             if (
                                 existing == null
@@ -221,7 +224,8 @@ public class AuthEps<TDbCtx>
                         async (db, ses) =>
                         {
                             var auth = await db.Auths.FirstOrDefaultAsync(
-                                x => x.Email.Equals(req.Email)
+                                x => x.Email.Equals(req.Email),
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
@@ -257,7 +261,8 @@ public class AuthEps<TDbCtx>
                         async (db, ses) =>
                         {
                             var auth = await db.Auths.SingleOrDefaultAsync(
-                                x => x.Email.Equals(req.Email)
+                                x => x.Email.Equals(req.Email),
+                                ctx.Ctkn
                             );
                             ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
@@ -300,7 +305,7 @@ public class AuthEps<TDbCtx>
                             .Where(x => x.User == ses.Id)
                             .Select(x => x.Token)
                             .Distinct()
-                            .ToListAsync();
+                            .ToListAsync(ctx.Ctkn);
                         await fcm.SendRaw(ctx, FcmType.SignOut, tokens, "", null);
                         ses = ctx.ClearSession();
                     }
@@ -315,8 +320,10 @@ public class AuthEps<TDbCtx>
                         async (db, ses) =>
                         {
                             await _onDelete(ctx, db, ses);
-                            await db.Auths.Where(x => x.Id == ses.Id).ExecuteDeleteAsync();
-                            await db.FcmRegs.Where(x => x.User == ses.Id).ExecuteDeleteAsync();
+                            await db.Auths.Where(x => x.Id == ses.Id).ExecuteDeleteAsync(ctx.Ctkn);
+                            await db.FcmRegs
+                                .Where(x => x.User == ses.Id)
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             ses = ctx.ClearSession();
                             return ses.ToApi();
                         }
@@ -351,7 +358,10 @@ public class AuthEps<TDbCtx>
                         await ctx.DbTx<TDbCtx, Nothing>(
                             async (db, _) =>
                             {
-                                var auth = await db.Auths.SingleOrDefaultAsync(x => x.Id == ses.Id);
+                                var auth = await db.Auths.SingleOrDefaultAsync(
+                                    x => x.Id == ses.Id,
+                                    ctx.Ctkn
+                                );
                                 ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                                 ctx.ErrorIf(
                                     auth.NotNull().ActivatedOn.IsZero(),
@@ -389,7 +399,10 @@ public class AuthEps<TDbCtx>
                                 req.Val
                             );
 
-                            var auth = await db.Auths.SingleOrDefaultAsync(x => x.Id == ses.Id);
+                            var auth = await db.Auths.SingleOrDefaultAsync(
+                                x => x.Id == ses.Id,
+                                ctx.Ctkn
+                            );
                             ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
                                 auth.NotNull().ActivatedOn.IsZero(),
@@ -449,7 +462,7 @@ public class AuthEps<TDbCtx>
                             if (existing.Any())
                             {
                                 db.FcmRegs.RemoveRange(existing);
-                                await db.SaveChangesAsync();
+                                await db.SaveChangesAsync(ctx.Ctkn);
                                 await db.FcmRegs.AddAsync(
                                     new FcmReg()
                                     {
@@ -459,7 +472,8 @@ public class AuthEps<TDbCtx>
                                         CreatedOn = DateTimeExt.UtcNowMilli(),
                                         FcmEnabled = true,
                                         User = ses.Id
-                                    }
+                                    },
+                                    ctx.Ctkn
                                 );
                             }
                             else
@@ -478,7 +492,8 @@ public class AuthEps<TDbCtx>
                                         Client = client,
                                         CreatedOn = DateTimeExt.UtcNowMilli(),
                                         FcmEnabled = true
-                                    }
+                                    },
+                                    ctx.Ctkn
                                 );
                             }
 

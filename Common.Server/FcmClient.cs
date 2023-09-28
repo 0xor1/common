@@ -74,7 +74,7 @@ public class FcmClient : IFcmClient
         var tokens = await db.FcmRegs
             .Where(x => x.Topic == topicStr && x.FcmEnabled && x.Client != client)
             .Select(x => x.Token)
-            .ToListAsync();
+            .ToListAsync(ctx.Ctkn);
         await SendRaw(ctx, FcmType.Data, tokens, topicStr, data, fnf);
     }
 

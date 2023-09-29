@@ -2,6 +2,7 @@ using System.Net;
 using Common.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,8 @@ namespace Common.Server;
 public interface IRpcEndpoint
 {
     string Path { get; }
+
+    long? MaxSize { get; }
     Task Execute(IRpcCtxInternal ctx);
 }
 
@@ -52,10 +55,10 @@ public class RpcHttpCtx : IRpcCtxInternal
     private readonly IRpcHttpSessionManager _sessionManager;
     private Session? _session;
 
-    public RpcHttpCtx(HttpContext ctx, IRpcHttpSessionManager sessionManager)
+    public RpcHttpCtx(HttpContext ctx)
     {
         _ctx = ctx;
-        _sessionManager = sessionManager;
+        _sessionManager = ctx.Get<IRpcHttpSessionManager>();
     }
 
     public CancellationToken Ctkn => _ctx.RequestAborted;
@@ -173,11 +176,13 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, T
     where TRes : class
 {
     public string Path => Def.Path;
+    public long? MaxSize => Def.MaxSize;
 
     public async Task Execute(IRpcCtxInternal ctx)
     {
         try
         {
+            ctx.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = MaxSize;
             var arg = await ctx.GetArg<TArg>();
             var res = await Fn(ctx, arg);
             await ctx.WriteResp(res);
@@ -230,7 +235,7 @@ public static class RpcExts
                 app.Run(
                     async (ctx) =>
                     {
-                        var rpcCtx = new RpcHttpCtx(ctx, ctx.Get<IRpcHttpSessionManager>());
+                        var rpcCtx = new RpcHttpCtx(ctx);
                         rpcCtx.ErrorIf(
                             !epsDic.TryGetValue(
                                 ctx.Request.Path.Value.NotNull().ToLower(),

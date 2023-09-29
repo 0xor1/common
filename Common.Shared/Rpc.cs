@@ -10,10 +10,22 @@ public record Rpc<TArg, TRes>
 {
     public string Path { get; }
 
-    public Rpc(string path)
+    public long? MaxSize { get; }
+
+    public Rpc(string path, long? maxSize = Size.KB)
     {
         Path = path.ToLower();
+        MaxSize = maxSize;
     }
+}
+
+public static class Size
+{
+    public const long KB = 1000;
+    public const long MB = KB * KB;
+    public const long GB = KB * MB;
+    public const long TB = KB * GB;
+    public const long PB = KB * TB;
 }
 
 public record RpcStream(Stream Data, string Name, string Type, bool IsDownload, ulong Size)

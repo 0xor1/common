@@ -52,7 +52,6 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         _s = s;
         _apiFactory = apiFactory;
         var services = new ServiceCollection();
-        services.AddScoped<IHttpMaxRequestBodySizeFeature, TestHttpMaxRequestBodySizeFeature>();
         services.AddApiServices<TDbCtx>(_config, s, addServices, initApp);
         _services = services.BuildServiceProvider();
         var dupedPaths = eps.Select(x => x.Path).GetDuplicates().ToList();
@@ -81,7 +80,9 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
     )
     {
         using var scope = _services.CreateScope();
-        var rpcCtx = new RpcTestCtx(scope.ServiceProvider, session, _s, headers, arg);
+        var features = new FeatureCollection();
+        features[typeof(IHttpMaxRequestBodySizeFeature)] = new TestHttpMaxRequestBodySizeFeature();
+        var rpcCtx = new RpcTestCtx(scope.ServiceProvider, features, session, _s, headers, arg);
         rpcCtx.ErrorIf(
             !_eps.TryGetValue(path, out var ep),
             S.RpcUnknownEndpoint,
@@ -201,6 +202,7 @@ public class RpcTestClient : IRpcClient
 public record RpcTestCtx : IRpcCtxInternal
 {
     private readonly IServiceProvider _services;
+    private readonly IFeatureCollection _features;
     private readonly S _s;
     public Session Session { get; set; }
     public object Arg { get; set; }
@@ -211,6 +213,7 @@ public record RpcTestCtx : IRpcCtxInternal
 
     public RpcTestCtx(
         IServiceProvider services,
+        IFeatureCollection features,
         Session? session,
         S s,
         Dictionary<string, string> headers,
@@ -218,6 +221,7 @@ public record RpcTestCtx : IRpcCtxInternal
     )
     {
         _services = services;
+        _features = features;
         _s = s;
         Session = session ?? ClearSession();
         Headers = headers;
@@ -228,6 +232,9 @@ public record RpcTestCtx : IRpcCtxInternal
 
     public T Get<T>()
         where T : notnull => _services.GetRequiredService<T>();
+
+    public T GetFeature<T>()
+        where T : notnull => _features.GetRequiredFeature<T>();
 
     public Session GetSession() => Session;
 

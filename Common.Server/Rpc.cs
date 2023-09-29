@@ -22,6 +22,9 @@ public interface IRpcCtx
     public T Get<T>()
         where T : notnull;
 
+    public T GetFeature<T>()
+        where T : notnull;
+
     public Session GetSession();
 
     public Session CreateSession(
@@ -94,6 +97,12 @@ public class RpcHttpCtx : IRpcCtxInternal
         where T : notnull
     {
         return _ctx.Get<T>();
+    }
+
+    public T GetFeature<T>()
+        where T : notnull
+    {
+        return _ctx.GetFeature<T>();
     }
 
     public async Task<T> GetArg<T>()
@@ -182,7 +191,7 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, T
     {
         try
         {
-            ctx.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = MaxSize;
+            ctx.GetFeature<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = MaxSize;
             var arg = await ctx.GetArg<TArg>();
             var res = await Fn(ctx, arg);
             await ctx.WriteResp(res);
@@ -333,6 +342,9 @@ public static class RpcCtxExts
 {
     public static T Get<T>(this HttpContext ctx)
         where T : notnull => ctx.RequestServices.GetRequiredService<T>();
+
+    public static T GetFeature<T>(this HttpContext ctx)
+        where T : notnull => ctx.Features.GetRequiredFeature<T>();
 
     public static Session GetAuthedSession(this IRpcCtx ctx)
     {

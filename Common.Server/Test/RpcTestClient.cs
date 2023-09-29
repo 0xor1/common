@@ -3,6 +3,7 @@ using System.Reflection;
 using Common.Server.Auth;
 using Common.Shared;
 using Common.Shared.Auth;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -51,6 +52,7 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         _s = s;
         _apiFactory = apiFactory;
         var services = new ServiceCollection();
+        services.AddScoped<IHttpMaxRequestBodySizeFeature, TestHttpMaxRequestBodySizeFeature>();
         services.AddApiServices<TDbCtx>(_config, s, addServices, initApp);
         _services = services.BuildServiceProvider();
         var dupedPaths = eps.Select(x => x.Path).GetDuplicates().ToList();
@@ -147,6 +149,12 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
             }
         }
     }
+}
+
+public class TestHttpMaxRequestBodySizeFeature : IHttpMaxRequestBodySizeFeature
+{
+    public bool IsReadOnly => false;
+    public long? MaxRequestBodySize { get; set; }
 }
 
 public class RpcTestClient : IRpcClient

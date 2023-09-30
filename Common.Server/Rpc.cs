@@ -215,6 +215,13 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, T
                 code = rex.Code;
                 message = rex.Message;
             }
+            else if (
+                ex is BadHttpRequestException bre && bre.Message.Contains("Request body too large")
+            )
+            {
+                code = bre.StatusCode;
+                message = ctx.String(S.RequestBodyTooLarge, new { MaxSize });
+            }
             else
             {
                 ctx.Get<ILogger<IRpcCtx>>().LogError(ex, $"Error thrown by {Def.Path}");

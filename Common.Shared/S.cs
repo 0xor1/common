@@ -37,6 +37,7 @@ public interface S
     public const string MinMaxNullArgs = "min_max_null_args";
     public const string MinMaxReversedArgs = "min_max_reversed_args";
     public const string BadRequest = "bad_request";
+    public const string RequestBodyTooLarge = "request_body_too_large";
 
     // auth specific
     public const string AuthInvalidEmail = "auth_invalid_email";

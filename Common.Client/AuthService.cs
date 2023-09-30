@@ -46,14 +46,14 @@ public class AuthService<TApi> : IAuthService, IDisposable
 
     public void OnSessionChanged(Action<ISession> a) => _onSessionChanged = a;
 
-    public async Task<ISession> GetSession()
+    public async Task<ISession> GetSession(CancellationToken ctkn = default)
     {
         if (Session != null)
             return Session;
         await _sesSs.WaitAsync();
         try
         {
-            Session ??= await _api.Auth.GetSession();
+            Session ??= await _api.Auth.GetSession(ctkn);
         }
         finally
         {
@@ -63,68 +63,77 @@ public class AuthService<TApi> : IAuthService, IDisposable
         return Session;
     }
 
-    public async Task Register(string email, string pwd)
+    public async Task Register(string email, string pwd, CancellationToken ctkn = default)
     {
-        var ses = await GetSession();
+        var ses = await GetSession(ctkn);
         Throw.OpIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
-        await _api.Auth.Register(new(email, pwd));
+        await _api.Auth.Register(new(email, pwd), ctkn);
     }
 
-    public async Task<ISession> SignIn(string email, string pwd, bool rememberMe)
+    public async Task<ISession> SignIn(
+        string email,
+        string pwd,
+        bool rememberMe,
+        CancellationToken ctkn = default
+    )
     {
-        var ses = await GetSession();
+        var ses = await GetSession(ctkn);
         Throw.OpIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
-        return Session = await _api.Auth.SignIn(new(email, pwd, rememberMe));
+        return Session = await _api.Auth.SignIn(new(email, pwd, rememberMe), ctkn);
     }
 
-    public async Task<ISession> SignOut()
+    public async Task<ISession> SignOut(CancellationToken ctkn = default)
     {
-        var ses = await GetSession();
+        var ses = await GetSession(ctkn);
         if (!ses.IsAuthed)
         {
             return ses;
         }
 
-        Session = await _api.Auth.SignOut();
+        Session = await _api.Auth.SignOut(ctkn);
         _fcmClient = null;
         _fcmToken = null;
         return Session;
     }
 
-    public async Task<ISession> Delete()
+    public async Task<ISession> Delete(CancellationToken ctkn = default)
     {
-        var ses = await GetSession();
+        var ses = await GetSession(ctkn);
         if (!ses.IsAuthed)
         {
             return ses;
         }
 
-        Session = await _api.Auth.Delete();
+        Session = await _api.Auth.Delete(ctkn);
         _fcmClient = null;
         _fcmToken = null;
         return Session;
     }
 
-    public async Task<ISession> SetL10n(string lang, string dateFmt, string timeFmt) =>
-        Session = await _api.Auth.SetL10n(new(lang, dateFmt, timeFmt));
+    public async Task<ISession> SetL10n(
+        string lang,
+        string dateFmt,
+        string timeFmt,
+        CancellationToken ctkn = default
+    ) => Session = await _api.Auth.SetL10n(new(lang, dateFmt, timeFmt), ctkn);
 
-    public async Task<ISession> FcmEnabled(bool enabled)
+    public async Task<ISession> FcmEnabled(bool enabled, CancellationToken ctkn = default)
     {
-        var ses = await GetSession();
+        var ses = await GetSession(ctkn);
 
         if (ses.IsAuthed && enabled)
         {
             // if enabling, always go through js to ensure notification permission
             // has been granted
-            await _fcmJsSs.WaitAsync();
+            await _fcmJsSs.WaitAsync(ctkn);
             try
             {
                 if (!_jsInitialized)
                 {
-                    await _js.InvokeVoidAsync("fcmInit", _dnObj);
+                    await _js.InvokeVoidAsync("fcmInit", ctkn, _dnObj);
                     _jsInitialized = true;
                 }
-                await _js.InvokeVoidAsync("fcmGetToken");
+                await _js.InvokeVoidAsync("fcmGetToken", ctkn);
             }
             finally
             {
@@ -134,42 +143,48 @@ public class AuthService<TApi> : IAuthService, IDisposable
         else if (ses.FcmEnabled)
         {
             // if turning off, just turn off
-            Session = await _api.Auth.FcmEnabled(new(false));
+            Session = await _api.Auth.FcmEnabled(new(false), ctkn);
         }
         return Session.NotNull();
     }
 
-    public async Task FcmRegister(List<string> topic, Action<string> a)
+    public async Task FcmRegister(
+        List<string> topic,
+        Action<string> a,
+        CancellationToken ctkn = default
+    )
     {
-        var ses = await GetSession();
+        var ses = await GetSession(ctkn);
         _fcmTopicStr = Fcm.TopicString(topic);
         _fcmTopic = topic;
         _fcmHandler = a;
         if (ses.IsAuthed && ses.FcmEnabled && !_fcmToken.IsNullOrEmpty())
         {
-            _fcmClient = (await _api.Auth.FcmRegister(new(topic, _fcmToken, _fcmClient))).Client;
+            _fcmClient = (
+                await _api.Auth.FcmRegister(new(topic, _fcmToken, _fcmClient), ctkn)
+            ).Client;
         }
         else
         {
             // always call this to ensure js fcm is initialized, this will
             // result in a loop back call to this method once js has inited the fcm token
-            await FcmEnabled(true);
+            await FcmEnabled(true, ctkn);
         }
     }
 
-    public async Task FcmUnregister()
+    public async Task FcmUnregister(CancellationToken ctkn = default)
     {
         if (!_fcmClient.IsNullOrEmpty())
         {
             _fcmTopicStr = null;
             _fcmTopic = null;
             _fcmHandler = null;
-            await _api.Auth.FcmUnregister(new(_fcmClient));
+            await _api.Auth.FcmUnregister(new(_fcmClient), ctkn);
         }
     }
 
     [JSInvokable]
-    public async Task FcmTokenCallback(string? token)
+    public async Task FcmTokenCallback(string? token, CancellationToken ctkn = default)
     {
         var ses = await GetSession();
         _fcmToken = token;
@@ -177,7 +192,7 @@ public class AuthService<TApi> : IAuthService, IDisposable
         {
             // if we have a token from the js then
             // permission is granted
-            Session = await _api.Auth.FcmEnabled(new(true));
+            Session = await _api.Auth.FcmEnabled(new(true), ctkn);
         }
 
         if (
@@ -187,24 +202,24 @@ public class AuthService<TApi> : IAuthService, IDisposable
             && (_fcmTopic?.Any() ?? false)
         )
         {
-            await FcmRegister(_fcmTopic, _fcmHandler);
+            await FcmRegister(_fcmTopic, _fcmHandler, ctkn);
         }
     }
 
     [JSInvokable]
-    public async Task FcmNotificationPermissionRemoved()
+    public async Task FcmNotificationPermissionRemoved(CancellationToken ctkn = default)
     {
-        var ses = await GetSession();
+        var ses = await GetSession(ctkn);
         if (ses.FcmEnabled)
         {
             // user has switched off their notifications on this site
             // so disable fcm
-            await FcmEnabled(false);
+            await FcmEnabled(false, ctkn);
         }
     }
 
     [JSInvokable]
-    public async Task FcmOnMessage(object? obj)
+    public async Task FcmOnMessage(object? obj, CancellationToken ctkn = default)
     {
         if (_fcmHandler == null)
         {
@@ -251,19 +266,19 @@ public class AuthService<TApi> : IAuthService, IDisposable
         }
         if (typeEnum == FcmType.SignOut)
         {
-            await SignOut();
+            await SignOut(ctkn);
             return;
         }
 
         if (typeEnum == FcmType.Disabled)
         {
-            await FcmEnabled(false);
+            await FcmEnabled(false, ctkn);
             return;
         }
 
         if (typeEnum == FcmType.Enabled)
         {
-            await FcmEnabled(true);
+            await FcmEnabled(true, ctkn);
             return;
         }
 

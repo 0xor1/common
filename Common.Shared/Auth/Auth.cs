@@ -21,18 +21,18 @@ public static class Fcm
 
 public interface IAuthApi
 {
-    Task<Session> GetSession();
-    Task Register(Register arg);
-    Task VerifyEmail(VerifyEmail arg);
-    Task SendResetPwdEmail(SendResetPwdEmail arg);
-    Task ResetPwd(ResetPwd arg);
-    Task<Session> SignIn(SignIn arg);
-    Task<Session> SignOut();
-    Task<Session> Delete();
-    Task<Session> SetL10n(SetL10n arg);
-    public Task<Session> FcmEnabled(FcmEnabled arg);
-    public Task<FcmRegisterRes> FcmRegister(FcmRegister arg);
-    public Task FcmUnregister(FcmUnregister arg);
+    Task<Session> GetSession(CancellationToken ctkn = default);
+    Task Register(Register arg, CancellationToken ctkn = default);
+    Task VerifyEmail(VerifyEmail arg, CancellationToken ctkn = default);
+    Task SendResetPwdEmail(SendResetPwdEmail arg, CancellationToken ctkn = default);
+    Task ResetPwd(ResetPwd arg, CancellationToken ctkn = default);
+    Task<Session> SignIn(SignIn arg, CancellationToken ctkn = default);
+    Task<Session> SignOut(CancellationToken ctkn = default);
+    Task<Session> Delete(CancellationToken ctkn = default);
+    Task<Session> SetL10n(SetL10n arg, CancellationToken ctkn = default);
+    public Task<Session> FcmEnabled(FcmEnabled arg, CancellationToken ctkn = default);
+    public Task<FcmRegisterRes> FcmRegister(FcmRegister arg, CancellationToken ctkn = default);
+    public Task FcmUnregister(FcmUnregister arg, CancellationToken ctkn = default);
 }
 
 public class Api : IApi
@@ -54,31 +54,41 @@ public class AuthApi : IAuthApi
         _client = client;
     }
 
-    public Task<Session> GetSession() => _client.Do(AuthRpcs.GetSession, Nothing.Inst);
+    public Task<Session> GetSession(CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.GetSession, Nothing.Inst, ctkn);
 
-    public Task Register(Register arg) => _client.Do(AuthRpcs.Register, arg);
+    public Task Register(Register arg, CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.Register, arg, ctkn);
 
-    public Task VerifyEmail(VerifyEmail arg) => _client.Do(AuthRpcs.VerifyEmail, arg);
+    public Task VerifyEmail(VerifyEmail arg, CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.VerifyEmail, arg, ctkn);
 
-    public Task SendResetPwdEmail(SendResetPwdEmail arg) =>
-        _client.Do(AuthRpcs.SendResetPwdEmail, arg);
+    public Task SendResetPwdEmail(SendResetPwdEmail arg, CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.SendResetPwdEmail, arg, ctkn);
 
-    public Task ResetPwd(ResetPwd arg) => _client.Do(AuthRpcs.ResetPwd, arg);
+    public Task ResetPwd(ResetPwd arg, CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.ResetPwd, arg, ctkn);
 
-    public Task<Session> SignIn(SignIn arg) => _client.Do(AuthRpcs.SignIn, arg);
+    public Task<Session> SignIn(SignIn arg, CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.SignIn, arg, ctkn);
 
-    public Task<Session> SignOut() => _client.Do(AuthRpcs.SignOut, Nothing.Inst);
+    public Task<Session> SignOut(CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.SignOut, Nothing.Inst, ctkn);
 
-    public Task<Session> Delete() => _client.Do(AuthRpcs.Delete, Nothing.Inst);
+    public Task<Session> Delete(CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.Delete, Nothing.Inst, ctkn);
 
-    public Task<Session> SetL10n(SetL10n arg) => _client.Do(AuthRpcs.SetL10n, arg);
+    public Task<Session> SetL10n(SetL10n arg, CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.SetL10n, arg, ctkn);
 
-    public Task<Session> FcmEnabled(FcmEnabled arg) => _client.Do(AuthRpcs.FcmEnabled, arg);
+    public Task<Session> FcmEnabled(FcmEnabled arg, CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.FcmEnabled, arg, ctkn);
 
-    public Task<FcmRegisterRes> FcmRegister(FcmRegister arg) =>
-        _client.Do(AuthRpcs.FcmRegister, arg);
+    public Task<FcmRegisterRes> FcmRegister(FcmRegister arg, CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.FcmRegister, arg, ctkn);
 
-    public Task FcmUnregister(FcmUnregister arg) => _client.Do(AuthRpcs.FcmUnregister, arg);
+    public Task FcmUnregister(FcmUnregister arg, CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.FcmUnregister, arg, ctkn);
 }
 
 public static class AuthRpcs

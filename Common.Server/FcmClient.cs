@@ -9,14 +9,15 @@ namespace Common.Server;
 
 public interface IFcmClient
 {
-    Task Send(Message msg, bool fnf = true);
+    Task Send(Message msg, bool fnf = true, CancellationToken ctkn = default);
     Task SendTopic<TDbCtx>(
         IRpcCtx ctx,
         TDbCtx db,
         Session ses,
         IReadOnlyList<string> topic,
         object? data,
-        bool fnf = true
+        bool fnf = true,
+        CancellationToken ctkn = default
     )
         where TDbCtx : IAuthDb;
     Task SendRaw(
@@ -25,7 +26,8 @@ public interface IFcmClient
         IReadOnlyList<string> tokens,
         string topic,
         object? data,
-        bool fnf = true
+        bool fnf = true,
+        CancellationToken ctkn = default
     );
 }
 
@@ -41,9 +43,9 @@ public class FcmClient : IFcmClient
         _client = client;
     }
 
-    public async Task Send(Message msg, bool fnf = true)
+    public async Task Send(Message msg, bool fnf = true, CancellationToken ctkn = default)
     {
-        var t = _client.SendAsync(msg);
+        var t = _client.SendAsync(msg, ctkn);
         if (fnf)
         {
             t.FnF();
@@ -60,7 +62,8 @@ public class FcmClient : IFcmClient
         Session ses,
         IReadOnlyList<string> topic,
         object? data,
-        bool fnf = true
+        bool fnf = true,
+        CancellationToken ctkn = default
     )
         where TDbCtx : IAuthDb
     {
@@ -75,7 +78,7 @@ public class FcmClient : IFcmClient
             .Where(x => x.Topic == topicStr && x.FcmEnabled && x.Client != client)
             .Select(x => x.Token)
             .ToListAsync(ctx.Ctkn);
-        await SendRaw(ctx, FcmType.Data, tokens, topicStr, data, fnf);
+        await SendRaw(ctx, FcmType.Data, tokens, topicStr, data, fnf, ctkn);
     }
 
     public async Task SendRaw(
@@ -84,7 +87,8 @@ public class FcmClient : IFcmClient
         IReadOnlyList<string> tokens,
         string topic,
         object? data,
-        bool fnf = true
+        bool fnf = true,
+        CancellationToken ctkn = default
     )
     {
         if (!(tokens?.Any() ?? false))
@@ -104,7 +108,7 @@ public class FcmClient : IFcmClient
 
         foreach (var t in tokens)
         {
-            await Send(new() { Token = t, Data = dic }, fnf);
+            await Send(new() { Token = t, Data = dic }, fnf, ctkn);
         }
     }
 }
@@ -113,7 +117,7 @@ public class FcmNopClient : IFcmClient
 {
     public FcmNopClient() { }
 
-    public async Task Send(Message msg, bool fnf = true)
+    public async Task Send(Message msg, bool fnf = true, CancellationToken ctkn = default)
     {
         await Task.CompletedTask;
     }
@@ -124,7 +128,8 @@ public class FcmNopClient : IFcmClient
         Session ses,
         IReadOnlyList<string> topic,
         object? data,
-        bool fnf = true
+        bool fnf = true,
+        CancellationToken ctkn = default
     )
         where TDbCtx : IAuthDb
     {
@@ -137,7 +142,8 @@ public class FcmNopClient : IFcmClient
         IReadOnlyList<string> tokens,
         string topic,
         object? data,
-        bool fnf = true
+        bool fnf = true,
+        CancellationToken ctkn = default
     )
     {
         await Task.CompletedTask;

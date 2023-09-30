@@ -106,7 +106,10 @@ public class AuthEps<TDbCtx>
                                     ctx.String(S.AuthConfirmEmailHtml, model),
                                     ctx.String(S.AuthConfirmEmailText, model),
                                     config.Email.NoReplyAddress,
-                                    new List<string> { req.Email }
+                                    new List<string> { req.Email },
+                                    null,
+                                    null,
+                                    ctx.Ctkn
                                 );
                             }
                             return Nothing.Inst;
@@ -187,7 +190,7 @@ public class AuthEps<TDbCtx>
 
                             existing.ResetPwdCodeCreatedOn = DateTimeExt.UtcNowMilli();
                             existing.ResetPwdCode = Crypto.String(32);
-                            await db.SaveChangesAsync();
+                            await db.SaveChangesAsync(ctx.Ctkn);
                             var config = ctx.Get<IConfig>();
                             var model = new
                             {
@@ -201,7 +204,10 @@ public class AuthEps<TDbCtx>
                                 ctx.String(S.AuthResetPwdHtml, model),
                                 ctx.String(S.AuthResetPwdText, model),
                                 config.Email.NoReplyAddress,
-                                new List<string> { req.Email }
+                                new List<string> { req.Email },
+                                null,
+                                null,
+                                ctx.Ctkn
                             );
                             return Nothing.Inst;
                         },
@@ -412,14 +418,15 @@ public class AuthEps<TDbCtx>
                             await db.FcmRegs
                                 .Where(x => x.User == ses.Id)
                                 .ExecuteUpdateAsync(
-                                    x => x.SetProperty(x => x.FcmEnabled, _ => req.Val)
+                                    x => x.SetProperty(x => x.FcmEnabled, _ => req.Val),
+                                    ctx.Ctkn
                                 );
                             var fcm = ctx.Get<IFcmClient>();
                             var tokens = await db.FcmRegs
                                 .Where(x => x.User == ses.Id)
                                 .Select(x => x.Token)
                                 .Distinct()
-                                .ToListAsync();
+                                .ToListAsync(ctx.Ctkn);
                             await fcm.SendRaw(
                                 ctx,
                                 req.Val ? FcmType.Enabled : FcmType.Disabled,
@@ -449,7 +456,7 @@ public class AuthEps<TDbCtx>
                             var fcmRegs = await db.FcmRegs
                                 .Where(x => x.User == ses.Id)
                                 .OrderByDescending(x => x.CreatedOn)
-                                .ToListAsync();
+                                .ToListAsync(ctx.Ctkn);
 
                             var topic = Fcm.TopicString(req.Topic);
                             var existing = fcmRegs
@@ -509,7 +516,7 @@ public class AuthEps<TDbCtx>
                         {
                             await db.FcmRegs
                                 .Where(x => x.User == ses.Id && x.Client == req.Client)
-                                .ExecuteDeleteAsync();
+                                .ExecuteDeleteAsync(ctx.Ctkn);
                             return Nothing.Inst;
                         }
                     )

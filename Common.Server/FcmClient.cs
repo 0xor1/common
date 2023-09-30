@@ -16,8 +16,7 @@ public interface IFcmClient
         Session ses,
         IReadOnlyList<string> topic,
         object? data,
-        bool fnf = true,
-        CancellationToken ctkn = default
+        bool fnf = true
     )
         where TDbCtx : IAuthDb;
     Task SendRaw(
@@ -26,8 +25,7 @@ public interface IFcmClient
         IReadOnlyList<string> tokens,
         string topic,
         object? data,
-        bool fnf = true,
-        CancellationToken ctkn = default
+        bool fnf = true
     );
 }
 
@@ -62,8 +60,7 @@ public class FcmClient : IFcmClient
         Session ses,
         IReadOnlyList<string> topic,
         object? data,
-        bool fnf = true,
-        CancellationToken ctkn = default
+        bool fnf = true
     )
         where TDbCtx : IAuthDb
     {
@@ -78,7 +75,7 @@ public class FcmClient : IFcmClient
             .Where(x => x.Topic == topicStr && x.FcmEnabled && x.Client != client)
             .Select(x => x.Token)
             .ToListAsync(ctx.Ctkn);
-        await SendRaw(ctx, FcmType.Data, tokens, topicStr, data, fnf, ctkn);
+        await SendRaw(ctx, FcmType.Data, tokens, topicStr, data, fnf);
     }
 
     public async Task SendRaw(
@@ -87,8 +84,7 @@ public class FcmClient : IFcmClient
         IReadOnlyList<string> tokens,
         string topic,
         object? data,
-        bool fnf = true,
-        CancellationToken ctkn = default
+        bool fnf = true
     )
     {
         if (!(tokens?.Any() ?? false))
@@ -108,7 +104,7 @@ public class FcmClient : IFcmClient
 
         foreach (var t in tokens)
         {
-            await Send(new() { Token = t, Data = dic }, fnf, ctkn);
+            await Send(new() { Token = t, Data = dic }, fnf, ctx.Ctkn);
         }
     }
 }
@@ -128,8 +124,7 @@ public class FcmNopClient : IFcmClient
         Session ses,
         IReadOnlyList<string> topic,
         object? data,
-        bool fnf = true,
-        CancellationToken ctkn = default
+        bool fnf = true
     )
         where TDbCtx : IAuthDb
     {
@@ -142,8 +137,7 @@ public class FcmNopClient : IFcmClient
         IReadOnlyList<string> tokens,
         string topic,
         object? data,
-        bool fnf = true,
-        CancellationToken ctkn = default
+        bool fnf = true
     )
     {
         await Task.CompletedTask;

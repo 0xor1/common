@@ -76,13 +76,22 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         string path,
         Session? session,
         Dictionary<string, string> headers,
-        object arg
+        object arg,
+        CancellationToken ctkn = default
     )
     {
         using var scope = _services.CreateScope();
         var features = new FeatureCollection();
         features[typeof(IHttpMaxRequestBodySizeFeature)] = new TestHttpMaxRequestBodySizeFeature();
-        var rpcCtx = new RpcTestCtx(scope.ServiceProvider, features, session, _s, headers, arg);
+        var rpcCtx = new RpcTestCtx(
+            scope.ServiceProvider,
+            features,
+            session,
+            _s,
+            headers,
+            arg,
+            ctkn
+        );
         rpcCtx.ErrorIf(
             !_eps.TryGetValue(path, out var ep),
             S.RpcUnknownEndpoint,
@@ -167,11 +176,19 @@ public class RpcTestClient : IRpcClient
         Session?,
         Dictionary<string, string>,
         object,
+        CancellationToken,
         Task<(Session, object)>
     > _exe;
 
     public RpcTestClient(
-        Func<string, Session?, Dictionary<string, string>, object, Task<(Session, object)>> exe,
+        Func<
+            string,
+            Session?,
+            Dictionary<string, string>,
+            object,
+            CancellationToken,
+            Task<(Session, object)>
+        > exe,
         Session? session = null
     )
     {
@@ -179,11 +196,15 @@ public class RpcTestClient : IRpcClient
         _session = session;
     }
 
-    public async Task<TRes> Do<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)
+    public async Task<TRes> Do<TArg, TRes>(
+        Rpc<TArg, TRes> rpc,
+        TArg arg,
+        CancellationToken ctkn = default
+    )
         where TArg : class
         where TRes : class
     {
-        (_session, var res) = await _exe(rpc.Path, _session, _headers, arg);
+        (_session, var res) = await _exe(rpc.Path, _session, _headers, arg, ctkn);
         return (TRes)res;
     }
 
@@ -217,7 +238,8 @@ public record RpcTestCtx : IRpcCtxInternal
         Session? session,
         S s,
         Dictionary<string, string> headers,
-        object arg
+        object arg,
+        CancellationToken ctkn
     )
     {
         _services = services;
@@ -226,9 +248,10 @@ public record RpcTestCtx : IRpcCtxInternal
         Session = session ?? ClearSession();
         Headers = headers;
         Arg = arg;
+        Ctkn = ctkn;
     }
 
-    public CancellationToken Ctkn => CancellationToken.None;
+    public CancellationToken Ctkn { get; init; }
 
     public T Get<T>()
         where T : notnull => _services.GetRequiredService<T>();

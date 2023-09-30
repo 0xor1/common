@@ -71,7 +71,7 @@ public class RpcException : Exception
 
 public interface IRpcClient
 {
-    Task<TRes> Do<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)
+    Task<TRes> Do<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg, CancellationToken ctkn = default)
         where TArg : class
         where TRes : class;
     string GetUrl<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)
@@ -92,7 +92,11 @@ public record RpcHttpClient : IRpcClient
         _rpcExceptionHandler = reh;
     }
 
-    public async Task<TRes> Do<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)
+    public async Task<TRes> Do<TArg, TRes>(
+        Rpc<TArg, TRes> rpc,
+        TArg arg,
+        CancellationToken ctkn = default
+    )
         where TArg : class
         where TRes : class
     {
@@ -111,10 +115,10 @@ public record RpcHttpClient : IRpcClient
             req.Content = new ByteArrayContent(RpcHttp.Serialize(arg));
         }
 
-        using var resp = await _client.NotNull().SendAsync(req);
+        using var resp = await _client.NotNull().SendAsync(req, ctkn);
         if (!resp.IsSuccessStatusCode)
         {
-            var msg = await resp.Content.ReadAsStringAsync();
+            var msg = await resp.Content.ReadAsStringAsync(ctkn);
             _rpcExceptionHandler(msg);
             throw new RpcException(msg, (int)resp.StatusCode);
         }
@@ -129,7 +133,7 @@ public record RpcHttpClient : IRpcClient
             {
                 return (Nothing.Inst as TRes).NotNull();
             }
-            var bs = await resp.Content.ReadAsByteArrayAsync();
+            var bs = await resp.Content.ReadAsByteArrayAsync(ctkn);
             var tRes = RpcHttp.Deserialize<TRes>(bs).NotNull();
             if (tRes is FcmRegisterRes regRes)
             {
@@ -149,7 +153,7 @@ public record RpcHttpClient : IRpcClient
             string.Join(";", resp.Headers.GetValues(RpcHttp.ContentDispositionHeader))
         );
         sub.Stream = new RpcStream(
-            await resp.Content.ReadAsStreamAsync(),
+            await resp.Content.ReadAsStreamAsync(ctkn),
             cd.FileName ?? "unnamed_file",
             cd.DispositionType,
             true,

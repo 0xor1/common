@@ -124,7 +124,7 @@ public class RpcHttpCtx : IRpcCtxInternal
         else if (!RpcHttp.HasStream<T>())
         {
             using var ms = new MemoryStream();
-            await _ctx.Request.Body.CopyToAsync(ms);
+            await _ctx.Request.Body.CopyToAsync(ms, Ctkn);
             argBs = ms.ToArray();
         }
 
@@ -340,7 +340,7 @@ public static class RpcExts
             resp.Headers[header.Key] = header.Value.ToArray();
         }
 
-        await using var responseStream = await respMsg.Content.ReadAsStreamAsync();
+        await using var responseStream = await respMsg.Content.ReadAsStreamAsync(ctx.RequestAborted);
         await responseStream.CopyToAsync(resp.Body, ctx.RequestAborted);
     }
 }

@@ -184,7 +184,7 @@ public class AuthService<TApi> : IAuthService, IDisposable
     }
 
     [JSInvokable]
-    public async Task FcmTokenCallback(string? token, CancellationToken ctkn = default)
+    public async Task FcmTokenCallback(string? token)
     {
         var ses = await GetSession();
         _fcmToken = token;
@@ -192,7 +192,7 @@ public class AuthService<TApi> : IAuthService, IDisposable
         {
             // if we have a token from the js then
             // permission is granted
-            Session = await _api.Auth.FcmEnabled(new(true), ctkn);
+            Session = await _api.Auth.FcmEnabled(new(true));
         }
 
         if (
@@ -202,24 +202,24 @@ public class AuthService<TApi> : IAuthService, IDisposable
             && (_fcmTopic?.Any() ?? false)
         )
         {
-            await FcmRegister(_fcmTopic, _fcmHandler, ctkn);
+            await FcmRegister(_fcmTopic, _fcmHandler);
         }
     }
 
     [JSInvokable]
-    public async Task FcmNotificationPermissionRemoved(CancellationToken ctkn = default)
+    public async Task FcmNotificationPermissionRemoved()
     {
-        var ses = await GetSession(ctkn);
+        var ses = await GetSession();
         if (ses.FcmEnabled)
         {
             // user has switched off their notifications on this site
             // so disable fcm
-            await FcmEnabled(false, ctkn);
+            await FcmEnabled(false);
         }
     }
 
     [JSInvokable]
-    public async Task FcmOnMessage(object? obj, CancellationToken ctkn = default)
+    public async Task FcmOnMessage(object? obj)
     {
         if (_fcmHandler == null)
         {
@@ -266,19 +266,19 @@ public class AuthService<TApi> : IAuthService, IDisposable
         }
         if (typeEnum == FcmType.SignOut)
         {
-            await SignOut(ctkn);
+            await SignOut();
             return;
         }
 
         if (typeEnum == FcmType.Disabled)
         {
-            await FcmEnabled(false, ctkn);
+            await FcmEnabled(false);
             return;
         }
 
         if (typeEnum == FcmType.Enabled)
         {
-            await FcmEnabled(true, ctkn);
+            await FcmEnabled(true);
             return;
         }
 

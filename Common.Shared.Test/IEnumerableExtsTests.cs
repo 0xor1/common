@@ -3,6 +3,15 @@ namespace Common.Shared.Test;
 public class IEnumerableExtsTests
 {
     [Fact]
+    public void Join_Success()
+    {
+        Assert.Equal("1, 2, 3", new List<string> { "1", "2", "3" }.Join());
+        Assert.Equal("a, b, c, d", new List<Key> { new("a"), new("b"), new("c"), new("d") }.Join());
+        Assert.Equal("1,2,3", new List<string> { "1", "2", "3" }.Join(","));
+        Assert.Equal("a,b,c,d", new List<Key> { new("a"), new("b"), new("c"), new("d") }.Join(","));
+    }
+
+    [Fact]
     public void GetDuplicates_WorksWithStrings()
     {
         Assert.Empty(new List<string> { "one", "two", "three" }.GetDuplicates());

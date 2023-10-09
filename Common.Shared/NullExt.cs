@@ -5,6 +5,8 @@ namespace Common.Shared;
 
 public static class NullExt
 {
+    public static IEnumerable<T> Empty<T>(this IEnumerable<T>? src) => src ?? Enumerable.Empty<T>();
+
     public static T NotNull<T>(
         [NotNull] this T? obj,
         [CallerArgumentExpression("obj")] string? paramName = null

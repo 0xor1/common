@@ -15,15 +15,17 @@ public record ValidationResult
     public Message Message { get; private set; }
     public List<Message> SubMessages { get; }
 
-    public void InvalidIf(bool condition, string? msgKey = null, object? msgModel = null)
+    public bool InvalidIf(bool condition, string? msgKey = null, object? msgModel = null)
     {
-        if (!condition)
-            return;
-        Valid = false;
-        if (!msgKey.IsNullOrEmpty())
+        if (condition)
         {
-            SubMessages.Add(new(msgKey, msgModel));
+            Valid = false;
+            if (!msgKey.IsNullOrEmpty())
+            {
+                SubMessages.Add(new(msgKey, msgModel));
+            }
         }
+        return condition;
     }
 }
 

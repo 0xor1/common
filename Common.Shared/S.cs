@@ -81,6 +81,12 @@ public interface S
     string GetOr(string lang, string key, string def, object? model = null);
     string GetOrAddress(string lang, string key, object? model = null);
     string BestLang(string acceptLangsHeader);
+    string BestLang(IReadOnlyList<string> langPrefs);
+    string BestLang(
+        IReadOnlyList<string> langPrefs,
+        IReadOnlyList<string> supportedLangs,
+        string defaultLang
+    );
 }
 
 public class Strings : S
@@ -102,6 +108,7 @@ public class Strings : S
         DefaultDateFmt = defaultDateFmt;
         DefaultTimeFmt = defaultTimeFmt;
         SupportedLangs = supportedLangs;
+        SupportedLangCodes = supportedLangs.Select(x => x.Code).ToList();
         SupportedDateFmts = supportedDateFmts;
         SupportedTimeFmts = supportedTimeFmts;
         Library = library;
@@ -111,6 +118,7 @@ public class Strings : S
     public string DefaultDateFmt { get; }
     public string DefaultTimeFmt { get; }
     public IReadOnlyList<Lang> SupportedLangs { get; }
+    public IReadOnlyList<string> SupportedLangCodes { get; }
     public IReadOnlyList<DateTimeFmt> SupportedDateFmts { get; }
     public IReadOnlyList<DateTimeFmt> SupportedTimeFmts { get; }
 
@@ -160,22 +168,31 @@ public class Strings : S
         return RenderWithModel(Library[lang][key], model);
     }
 
-    public string BestLang(string acceptLangsHeader)
+    public string BestLang(string acceptLangsHeader) =>
+        BestLang(acceptLangsHeader.Replace(" ", "").Split(",").ToList());
+
+    public string BestLang(IReadOnlyList<string> langPrefs) =>
+        BestLang(langPrefs, SupportedLangCodes, DefaultLang);
+
+    public string BestLang(
+        IReadOnlyList<string> langPrefs,
+        IReadOnlyList<string> supportedLangs,
+        string defaultLang
+    )
     {
-        var langs = acceptLangsHeader.Replace(" ", "").Split(",");
         // direct matches
-        foreach (var lang in langs)
-            if (Library.ContainsKey(lang))
+        foreach (var lang in langPrefs)
+            if (supportedLangs.Contains(lang))
                 return lang;
         // root match
-        foreach (var lang in langs)
+        foreach (var lang in langPrefs)
         {
             var root = lang.Split("-").First();
-            if (Library.ContainsKey(root))
+            if (supportedLangs.Contains(root))
                 return root;
         }
 
-        return DefaultLang;
+        return defaultLang;
     }
 
     private static string RenderWithModel(TemplatableString tplStr, object? model)

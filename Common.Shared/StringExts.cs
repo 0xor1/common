@@ -16,6 +16,8 @@ public static class StringAndBytesExt
         return $"{str.Substring(0, max - 3)}...";
     }
 
+    public static Key ToKey(this string str) => Key.Force(str);
+
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
     {
         return string.IsNullOrEmpty(str);

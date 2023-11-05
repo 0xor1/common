@@ -15,7 +15,7 @@ public record ValidationResult
         Message = new Message(msgKey, msgModel);
     }
 
-    private readonly bool _valid;
+    private bool _valid;
     public bool Valid => _valid && _subResults.All(x => x.Valid);
     public Message Message { get; private set; }
     private List<ValidationResult> _subResults = new();
@@ -25,6 +25,7 @@ public record ValidationResult
     {
         if (condition)
         {
+            _valid = false;
             if (!msgKey.IsNullOrEmpty())
             {
                 _subResults.Add(new(false, msgKey, msgModel));

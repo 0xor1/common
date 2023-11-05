@@ -4,28 +4,40 @@ namespace Common.Shared;
 
 public record ValidationResult
 {
-    public ValidationResult(string msgKey = S.Invalid, object? msgModel = null)
+    public static ValidationResult New(string msgKey = S.Invalid, object? msgModel = null)
     {
-        Valid = true;
-        Message = new Message(msgKey, msgModel);
-        SubMessages = new List<Message>();
+        return new(true, msgKey, msgModel);
     }
 
-    public bool Valid { get; private set; }
+    private ValidationResult(bool valid, string msgKey = S.Invalid, object? msgModel = null)
+    {
+        _valid = valid;
+        Message = new Message(msgKey, msgModel);
+    }
+
+    private readonly bool _valid;
+    public bool Valid => _valid && _subResults.All(x => x.Valid);
     public Message Message { get; private set; }
-    public List<Message> SubMessages { get; }
+    private List<ValidationResult> _subResults = new();
+    public IReadOnlyList<ValidationResult> SubResults => _subResults;
 
     public bool InvalidIf(bool condition, string? msgKey = null, object? msgModel = null)
     {
         if (condition)
         {
-            Valid = false;
             if (!msgKey.IsNullOrEmpty())
             {
-                SubMessages.Add(new(msgKey, msgModel));
+                _subResults.Add(new(false, msgKey, msgModel));
             }
         }
         return condition;
+    }
+
+    public ValidationResult NewSubResult(string msgKey = S.Invalid, object? msgModel = null)
+    {
+        var res = new ValidationResult(true, msgKey, msgModel);
+        _subResults.Add(res);
+        return res;
     }
 }
 
@@ -45,14 +57,14 @@ public static partial class AuthValidator
 {
     public static ValidationResult Email(string str)
     {
-        var res = new ValidationResult(S.AuthInvalidEmail);
+        var res = ValidationResult.New(S.AuthInvalidEmail);
         res.InvalidIf(!EmailRegex().IsMatch(str));
         return res;
     }
 
     public static ValidationResult Pwd(string str)
     {
-        var res = new ValidationResult(S.AuthInvalidPwd);
+        var res = ValidationResult.New(S.AuthInvalidPwd);
         res.InvalidIf(!EightOrMoreCharsRegex().IsMatch(str), S.AuthLessThan8Chars);
         res.InvalidIf(!LowerCaseRegex().IsMatch(str), S.AuthNoLowerCaseChar);
         res.InvalidIf(!UpperCaseRegex().IsMatch(str), S.AuthNoUpperCaseChar);

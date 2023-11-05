@@ -11,9 +11,7 @@ public class CommonCustomValidator : ValidatorBase
     [Inject]
     private L L { get; set; } = default!;
     public override string Text { get; set; } = S.Invalid;
-    public Message Message { get; set; } = new(S.Invalid);
-
-    private List<Message> SubMessages { get; set; } = new();
+    public ValidationResult Result { get; set; } = ValidationResult.New();
 
     [Parameter]
     [EditorRequired]
@@ -21,10 +19,8 @@ public class CommonCustomValidator : ValidatorBase
 
     protected override bool Validate(IRadzenFormComponent component)
     {
-        var res = Validator(component);
-        Message = res.Message;
-        SubMessages = res.SubMessages;
-        return res.Valid;
+        Result = Validator(component);
+        return Result.Valid;
     }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -35,22 +31,30 @@ public class CommonCustomValidator : ValidatorBase
         builder.AddAttribute(1, "style", Style);
         builder.AddAttribute(2, "class", GetCssClass());
         builder.AddMultipleAttributes(3, Attributes);
-        if (!Text.IsNullOrWhiteSpace())
-            builder.AddContent(4, L.S(Message.Key, Message.Model));
-        if (SubMessages.Any())
+        RecursiveBuildRenderTree(builder, Result, 4);
+        builder.CloseElement();
+    }
+
+    private void RecursiveBuildRenderTree(
+        RenderTreeBuilder builder,
+        ValidationResult res,
+        int sequence
+    )
+    {
+        builder.AddContent(sequence++, L.S(res.Message.Key, res.Message.Model));
+        var subs = res.SubResults.Where(x => !x.Valid).ToList();
+        if (subs.Any())
         {
-            builder.OpenElement(5, "ul");
-            builder.AddAttribute(6, "class", "p-l-1h m-y-0");
-            foreach (var subRule in SubMessages)
+            builder.OpenElement(sequence++, "ul");
+            builder.AddAttribute(sequence++, "class", "p-l-1h m-y-0");
+            foreach (var subRes in subs)
             {
-                builder.OpenElement(7, "li");
-                builder.AddContent(8, L.S(subRule.Key, subRule.Model));
+                builder.OpenElement(sequence++, "li");
+                RecursiveBuildRenderTree(builder, subRes, sequence);
                 builder.CloseElement();
             }
 
             builder.CloseElement();
         }
-
-        builder.CloseElement();
     }
 }

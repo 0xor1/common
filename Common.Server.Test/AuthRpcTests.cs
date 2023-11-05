@@ -53,12 +53,12 @@ public class AuthRpcTests : IDisposable
         var (api, _, _) = await _rpcTestRig.NewApi();
         try
         {
-            await api.Auth.Register(new("ali@ali.ali", "abc123@="));
+            await api.Auth.Register(new("ali@ali.ali", "abc123abc"));
         }
         catch (RpcTestException ex)
         {
             Assert.Equal(
-                $"{S.Inst.GetOrAddress(S.DefaultLang, Shared.S.AuthInvalidPwd)}:\n{S.Inst.GetOrAddress(S.DefaultLang, Shared.S.AuthNoUpperCaseChar)}",
+                $"{S.Inst.GetOrAddress(S.DefaultLang, Shared.S.AuthInvalidPwd)}:\n  {S.Inst.GetOrAddress(S.DefaultLang, Shared.S.AuthNoUpperCaseChar)}\n  {S.Inst.GetOrAddress(S.DefaultLang, Shared.S.AuthNoSpecialChar)}",
                 ex.Rpc.Message
             );
         }

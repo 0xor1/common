@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text;
 using Common.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 
 namespace Common.Server;
 
@@ -432,14 +434,36 @@ public static class RpcCtxExts
         HttpStatusCode code = HttpStatusCode.InternalServerError
     )
     {
-        Throw.If(
-            !res.Valid,
-            () =>
-                new RpcException(
-                    $"{ctx.String(res.Message.Key, res.Message.Model)}{(res.SubMessages.Any() ? $":\n{string.Join("\n", res.SubMessages.Select(x => ctx.String(x.Key, x.Model)))}" : "")}",
-                    (int)code
-                )
-        );
+        if (res.Valid)
+            return;
+        var sb = new StringBuilder();
+        BuildValidationStringRecursively(ctx, res, sb);
+        throw new RpcException(sb.ToString(), (int)code);
+    }
+
+    private static void BuildValidationStringRecursively(
+        IRpcCtx ctx,
+        ValidationResult res,
+        StringBuilder sb,
+        int depth = 0
+    )
+    {
+        if (res.Valid)
+            return;
+        if (depth > 0)
+        {
+            sb.Append(new String(' ', depth * 2));
+        }
+        sb.Append(ctx.String(res.Message.Key, res.Message.Model));
+        if (res.SubResults.Any(x => !x.Valid))
+        {
+            sb.Append(':');
+        }
+        foreach (var subRes in res.SubResults.Where(x => !x.Valid))
+        {
+            sb.Append('\n');
+            BuildValidationStringRecursively(ctx, subRes, sb, depth + 1);
+        }
     }
 
     public static string String(this IRpcCtx ctx, string key, object? model = null)

@@ -25,6 +25,12 @@ public enum Env
     Pro
 }
 
+public record ClientConfig
+{
+    public bool DemoMode { get; init; }
+    public string? RepoUrl { get; init; }
+}
+
 public record ServerConfig
 {
     public string Listen { get; init; }
@@ -83,6 +89,8 @@ public static class AwsStringExts
 public record Config : IConfig
 {
     public Env Env { get; init; } = Env.Lcl;
+
+    public ClientConfig Client { get; init; }
     public ServerConfig Server { get; init; }
     public DbConfig Db { get; init; }
     public SessionConfig Session { get; init; }
@@ -96,6 +104,7 @@ public record Config : IConfig
 public interface IConfig
 {
     public Env Env { get; }
+    public ClientConfig Client { get; }
     public ServerConfig Server { get; }
     public DbConfig Db { get; }
     public SessionConfig Session { get; }

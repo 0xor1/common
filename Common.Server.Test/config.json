@@ -1,5 +1,9 @@
 {
   "env": "lcl",
+  "client": {
+    "demoMode": false,
+    "repoUrl": "https://github.com/0xor1/common"    
+  },
   "server": {
     "listen": "https://localhost:9500"
   },

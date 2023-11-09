@@ -15,16 +15,19 @@ public class AuthEps<TDbCtx>
     where TDbCtx : DbContext, IAuthDb
 {
     private readonly int _maxAuthAttemptsPerSecond;
+    private readonly Func<IRpcCtx, TDbCtx, string, string, Task> _onActivation;
     private readonly Func<IRpcCtx, TDbCtx, Session, Task> _onDelete;
     private readonly Func<IRpcCtx, TDbCtx, Session, IReadOnlyList<string>, Task> _validateFcmTopic;
 
     public AuthEps(
         int maxAuthAttemptsPerSecond,
+        Func<IRpcCtx, TDbCtx, string, string, Task> onActivation,
         Func<IRpcCtx, TDbCtx, Session, Task> onDelete,
         Func<IRpcCtx, TDbCtx, Session, IReadOnlyList<string>, Task> validateFcmTopic
     )
     {
         _maxAuthAttemptsPerSecond = maxAuthAttemptsPerSecond;
+        _onActivation = onActivation;
         _onDelete = onDelete;
         _validateFcmTopic = validateFcmTopic;
         Eps = new List<IRpcEndpoint>
@@ -152,6 +155,7 @@ public class AuthEps<TDbCtx>
                             {
                                 // first account activation
                                 auth.ActivatedOn = DateTimeExt.UtcNowMilli();
+                                await _onActivation(ctx, db, auth.Id, auth.Email);
                             }
 
                             auth.VerifyEmailCodeCreatedOn = DateTimeExt.Zero();

@@ -16,6 +16,7 @@ public class StoreClientTests : IDisposable
             S.Inst,
             new AuthEps<CommonTestDb>(
                 0,
+                (_, _, _, _) => Task.CompletedTask,
                 (_, _, _) => Task.CompletedTask,
                 (_, _, _, _) => Task.CompletedTask
             ).Eps,

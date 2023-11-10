@@ -82,6 +82,18 @@ public class AuthService<TApi> : IAuthService, IDisposable
         return Session = await _api.Auth.SignIn(new(email, pwd, rememberMe), ctkn);
     }
 
+    public async Task<ISession> MagicLinkSignIn(
+        string email,
+        string code,
+        bool rememberMe,
+        CancellationToken ctkn = default
+    )
+    {
+        var ses = await GetSession(ctkn);
+        Throw.OpIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
+        return Session = await _api.Auth.MagicLinkSignIn(new(email, code, rememberMe), ctkn);
+    }
+
     public async Task<ISession> SignOut(CancellationToken ctkn = default)
     {
         var ses = await GetSession(ctkn);

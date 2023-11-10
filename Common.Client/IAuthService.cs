@@ -13,6 +13,12 @@ public interface IAuthService
         bool rememberMe,
         CancellationToken ctkn = default
     );
+    Task<ISession> MagicLinkSignIn(
+        string email,
+        string code,
+        bool rememberMe,
+        CancellationToken ctkn = default
+    );
     Task<ISession> SignOut(CancellationToken ctkn = default);
     Task<ISession> Delete(CancellationToken ctkn = default);
     Task<ISession> SetL10n(

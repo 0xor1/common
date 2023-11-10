@@ -32,6 +32,19 @@ public class AuthRpcTests : IDisposable
     }
 
     [Fact]
+    public async Task MagicLinkFlow_Success()
+    {
+        var (ali, email, _) = await _rpcTestRig.NewApi("ali");
+        var ses = await ali.Auth.GetSession();
+        await ali.Auth.SignOut();
+        await ali.Auth.SendMagicLinkEmail(new(email, true));
+        var code = _rpcTestRig.RunDb((db) => db.Auths.Single(x => x.Email == email).MagicLinkCode);
+        ses = await ali.Auth.MagicLinkSignIn(new(email, code, true));
+        Assert.True(ses.IsAuthed);
+        Assert.True(ses.RememberMe);
+    }
+
+    [Fact]
     public async Task Register_ThrowsOnInvalidEmail()
     {
         var (api, _, _) = await _rpcTestRig.NewApi();

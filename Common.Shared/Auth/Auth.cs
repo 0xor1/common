@@ -26,6 +26,8 @@ public interface IAuthApi
     Task VerifyEmail(VerifyEmail arg, CancellationToken ctkn = default);
     Task SendResetPwdEmail(SendResetPwdEmail arg, CancellationToken ctkn = default);
     Task ResetPwd(ResetPwd arg, CancellationToken ctkn = default);
+    Task SendMagicLinkEmail(SendMagicLinkEmail arg, CancellationToken ctkn = default);
+    Task<Session> MagicLinkSignIn(MagicLinkSignIn arg, CancellationToken ctkn = default);
     Task<Session> SignIn(SignIn arg, CancellationToken ctkn = default);
     Task<Session> SignOut(CancellationToken ctkn = default);
     Task<Session> Delete(CancellationToken ctkn = default);
@@ -69,6 +71,12 @@ public class AuthApi : IAuthApi
     public Task ResetPwd(ResetPwd arg, CancellationToken ctkn = default) =>
         _client.Do(AuthRpcs.ResetPwd, arg, ctkn);
 
+    public Task SendMagicLinkEmail(SendMagicLinkEmail arg, CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.SendMagicLinkEmail, arg, ctkn);
+
+    public Task<Session> MagicLinkSignIn(MagicLinkSignIn arg, CancellationToken ctkn = default) =>
+        _client.Do(AuthRpcs.MagicLinkSignIn, arg, ctkn);
+
     public Task<Session> SignIn(SignIn arg, CancellationToken ctkn = default) =>
         _client.Do(AuthRpcs.SignIn, arg, ctkn);
 
@@ -99,6 +107,10 @@ public static class AuthRpcs
     public static readonly Rpc<SendResetPwdEmail, Nothing> SendResetPwdEmail =
         new("/auth/send_reset_pwd_email");
     public static readonly Rpc<ResetPwd, Nothing> ResetPwd = new("/auth/reset_pwd");
+    public static readonly Rpc<SendMagicLinkEmail, Nothing> SendMagicLinkEmail =
+        new("/auth/send_magic_link_email");
+    public static readonly Rpc<MagicLinkSignIn, Session> MagicLinkSignIn =
+        new("/auth/magic_link_sign_in");
     public static readonly Rpc<SignIn, Session> SignIn = new("/auth/sign_in");
     public static readonly Rpc<Nothing, Session> SignOut = new("/auth/sign_out");
     public static readonly Rpc<Nothing, Session> Delete = new("/auth/delete");
@@ -144,6 +156,10 @@ public record VerifyEmail(string Email, string Code);
 public record SendResetPwdEmail(string Email);
 
 public record ResetPwd(string Email, string Code, string NewPwd);
+
+public record SendMagicLinkEmail(string Email, bool RememberMe);
+
+public record MagicLinkSignIn(string Email, string Code, bool RememberMe);
 
 public record SignIn(string Email, string Pwd, bool RememberMe);
 

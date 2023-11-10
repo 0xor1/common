@@ -16,8 +16,8 @@ public class Auth : Pwd
     public string VerifyEmailCode { get; set; } = "";
     public DateTime ResetPwdCodeCreatedOn { get; set; } = DateTimeExt.Zero();
     public string ResetPwdCode { get; set; } = "";
-    public DateTime LoginCodeCreatedOn { get; set; } = DateTimeExt.Zero();
-    public string LoginCode { get; set; } = "";
+    public DateTime MagicLinkCodeCreatedOn { get; set; } = DateTimeExt.Zero();
+    public string MagicLinkCode { get; set; } = "";
     public bool Use2FA { get; set; }
     public string Lang { get; set; }
     public string DateFmt { get; set; }

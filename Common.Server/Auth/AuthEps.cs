@@ -43,51 +43,26 @@ public class AuthEps<TDbCtx>
                     // basic validation
                     var ses = ctx.GetSession();
                     ctx.ErrorIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
-                    // !!! ToLower all emails in all Auth_ api endpoints
-                    req = req with
-                    {
-                        Email = req.Email.ToLower()
-                    };
-                    ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
-                    ctx.ErrorFromValidationResult(AuthValidator.Pwd(req.Pwd));
                     return await ctx.DbTx<TDbCtx, Nothing>(
                         async (db, ses) =>
                         {
-                            var existing = await db.Auths.SingleOrDefaultAsync(
-                                x =>
-                                    x.Email.Equals(req.Email)
-                                    || (x.NewEmail != null && x.NewEmail.Equals(req.Email)),
-                                ctx.Ctkn
+                            var (auth, newCreated) = await CreateAuth(
+                                ctx,
+                                db,
+                                req,
+                                ses.Id,
+                                ses.Lang,
+                                ses.DateFmt,
+                                ses.TimeFmt
                             );
-                            var newCreated = existing == null;
-                            if (existing == null)
-                            {
-                                var verifyEmailCode = Crypto.String(32);
-                                var pwd = Crypto.HashPwd(req.Pwd);
-                                existing = new Auth
-                                {
-                                    Id = ses.Id,
-                                    Email = req.Email,
-                                    VerifyEmailCodeCreatedOn = DateTime.UtcNow,
-                                    VerifyEmailCode = verifyEmailCode,
-                                    Lang = ses.Lang,
-                                    DateFmt = ses.DateFmt,
-                                    TimeFmt = ses.TimeFmt,
-                                    PwdVersion = pwd.PwdVersion,
-                                    PwdSalt = pwd.PwdSalt,
-                                    PwdHash = pwd.PwdHash,
-                                    PwdIters = pwd.PwdIters
-                                };
-                                await db.Auths.AddAsync(existing, ctx.Ctkn);
-                            }
 
                             if (
-                                !existing.VerifyEmailCode.IsNullOrEmpty()
+                                !auth.VerifyEmailCode.IsNullOrEmpty()
                                 && (
                                     newCreated
                                     || (
-                                        existing.VerifyEmailCodeCreatedOn.MinutesSince() > 10
-                                        && existing.ActivatedOn.IsZero()
+                                        auth.VerifyEmailCodeCreatedOn.MinutesSince() > 10
+                                        && auth.ActivatedOn.IsZero()
                                     )
                                 )
                             )
@@ -101,8 +76,8 @@ public class AuthEps<TDbCtx>
                                 var model = new
                                 {
                                     BaseHref = config.Server.Listen,
-                                    existing.Email,
-                                    Code = existing.VerifyEmailCode
+                                    auth.Email,
+                                    Code = auth.VerifyEmailCode
                                 };
                                 await emailClient.SendEmailAsync(
                                     ctx.String(S.AuthConfirmEmailSubject),
@@ -239,7 +214,8 @@ public class AuthEps<TDbCtx>
                             );
                             ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
-                                auth.NotNull().ResetPwdCode != req.Code,
+                                auth.NotNull().ResetPwdCode != req.Code
+                                    && auth.ResetPwdCodeCreatedOn.MinutesSince() > 10,
                                 S.AuthInvalidResetPwdCode
                             );
                             var pwd = Crypto.HashPwd(req.NewPwd);
@@ -250,6 +226,112 @@ public class AuthEps<TDbCtx>
                             auth.PwdHash = pwd.PwdHash;
                             auth.PwdIters = pwd.PwdIters;
                             return Nothing.Inst;
+                        },
+                        false
+                    );
+                }
+            ),
+            new RpcEndpoint<SendMagicLinkEmail, Nothing>(
+                AuthRpcs.SendMagicLinkEmail,
+                async (ctx, req) =>
+                {
+                    // basic validation
+                    var ses = ctx.GetSession();
+                    ctx.ErrorIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
+                    // !!! ToLower all emails in all Auth api endpoints
+                    req = req with
+                    {
+                        Email = req.Email.ToLower()
+                    };
+                    ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
+                    return await ctx.DbTx<TDbCtx, Nothing>(
+                        async (db, _) =>
+                        {
+                            var auth = await db.Auths.SingleOrDefaultAsync(
+                                x => x.Email.Equals(req.Email),
+                                ctx.Ctkn
+                            );
+                            if (
+                                auth == null
+                                || auth.MagicLinkCodeCreatedOn.MinutesSince() < 10
+                            )
+                                // if email is not associated with an account or
+                                // a reset pwd was sent within the last 10 minutes
+                                // dont do anything
+                                return Nothing.Inst;
+
+                            auth.MagicLinkCodeCreatedOn = DateTimeExt.UtcNowMilli();
+                            auth.MagicLinkCode = Crypto.String(32);
+                            await db.SaveChangesAsync(ctx.Ctkn);
+                            var config = ctx.Get<IConfig>();
+                            var model = new
+                            {
+                                BaseHref = config.Server.Listen,
+                                auth.Email,
+                                Code = auth.MagicLinkCode,
+                                req.RememberMe
+                            };
+                            var emailClient = ctx.Get<IEmailClient>();
+                            await emailClient.SendEmailAsync(
+                                ctx.String(S.AuthMagicLinkSubject),
+                                ctx.String(S.AuthMagicLinkHtml, model),
+                                ctx.String(S.AuthMagicLinkText, model),
+                                config.Email.NoReplyAddress,
+                                new List<string> { req.Email },
+                                null,
+                                null,
+                                ctx.Ctkn
+                            );
+                            return Nothing.Inst;
+                        },
+                        false
+                    );
+                }
+            ),
+            new RpcEndpoint<MagicLinkSignIn, ApiSession>(
+                AuthRpcs.MagicLinkSignIn,
+                async (ctx, req) =>
+                {
+                    var ses = ctx.GetSession();
+                    ctx.ErrorIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
+                    // !!! ToLower all emails in all Auth api endpoints
+                    req = req with
+                    {
+                        Email = req.Email.ToLower()
+                    };
+                    ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
+                    return await ctx.DbTx<TDbCtx, ApiSession>(
+                        async (db, ses) =>
+                        {
+                            var auth = await db.Auths.SingleOrDefaultAsync(
+                                x => x.Email.Equals(req.Email),
+                                ctx.Ctkn
+                            );
+                            ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
+                            ctx.ErrorIf(
+                                auth.NotNull().ActivatedOn.IsZero(),
+                                S.AuthAccountNotVerified
+                            );
+                            RateLimitAuthAttempts(ctx, auth.NotNull());
+                            auth.LastSignInAttemptOn = DateTimeExt.UtcNowMilli();
+                            ctx.NotFoundIf(
+                                auth.MagicLinkCode != req.Code
+                                    || auth.MagicLinkCodeCreatedOn.MinutesSince() > 10,
+                                model: new { Name = "Auth" }
+                            );
+                            auth.MagicLinkCode = string.Empty;
+                            auth.MagicLinkCodeCreatedOn = DateTimeExt.Zero();
+                            auth.LastSignedInOn = DateTimeExt.UtcNowMilli();
+                            return ctx.CreateSession(
+                                    auth.Id,
+                                    true,
+                                    req.RememberMe,
+                                    auth.Lang,
+                                    auth.DateFmt,
+                                    auth.TimeFmt,
+                                    auth.FcmEnabled
+                                )
+                                .ToApi();
                         },
                         false
                     );
@@ -281,12 +363,12 @@ public class AuthEps<TDbCtx>
                             );
                             RateLimitAuthAttempts(ctx, auth.NotNull());
                             auth.LastSignInAttemptOn = DateTimeExt.UtcNowMilli();
-                            var pwdIsValid = Crypto.PwdIsValid(req.Pwd, auth);
-                            ctx.NotFoundIf(!pwdIsValid, model: new { Name = "Auth" });
-                            if (pwdIsValid)
-                            {
-                                auth.LastSignedInOn = DateTimeExt.UtcNowMilli();
-                                ses = ctx.CreateSession(
+                            ctx.NotFoundIf(
+                                !Crypto.PwdIsValid(req.Pwd, auth),
+                                model: new { Name = "Auth" }
+                            );
+                            auth.LastSignedInOn = DateTimeExt.UtcNowMilli();
+                            return ctx.CreateSession(
                                     auth.Id,
                                     true,
                                     req.RememberMe,
@@ -294,9 +376,8 @@ public class AuthEps<TDbCtx>
                                     auth.DateFmt,
                                     auth.TimeFmt,
                                     auth.FcmEnabled
-                                );
-                            }
-                            return ses.ToApi();
+                                )
+                                .ToApi();
                         },
                         false
                     );
@@ -536,5 +617,52 @@ public class AuthEps<TDbCtx>
             auth.LastSignInAttemptOn.SecondsSince() < _maxAuthAttemptsPerSecond,
             S.AuthAttemptRateLimit
         );
+    }
+
+    public static async Task<(Auth Auth, bool Created)> CreateAuth(
+        IRpcCtx ctx,
+        TDbCtx db,
+        Register req,
+        string id,
+        string lang,
+        string dateFmt,
+        string timeFmt
+    )
+    {
+        req = req with
+        {
+            // !!! ToLower all emails in all Auth api endpoints
+            Email = req.Email.ToLower()
+        };
+        ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
+        ctx.ErrorFromValidationResult(AuthValidator.Pwd(req.Pwd));
+        var auth = await db.Auths.SingleOrDefaultAsync(
+            x => x.Email.Equals(req.Email) || (x.NewEmail != null && x.NewEmail.Equals(req.Email)),
+            ctx.Ctkn
+        );
+        var newCreated = false;
+        if (auth == null)
+        {
+            newCreated = true;
+            var verifyEmailCode = Crypto.String(32);
+            var pwd = Crypto.HashPwd(req.Pwd);
+            auth = new Auth
+            {
+                Id = id,
+                Email = req.Email,
+                VerifyEmailCodeCreatedOn = DateTime.UtcNow,
+                VerifyEmailCode = verifyEmailCode,
+                Lang = lang,
+                DateFmt = dateFmt,
+                TimeFmt = timeFmt,
+                PwdVersion = pwd.PwdVersion,
+                PwdSalt = pwd.PwdSalt,
+                PwdHash = pwd.PwdHash,
+                PwdIters = pwd.PwdIters
+            };
+            await db.Auths.AddAsync(auth, ctx.Ctkn);
+        }
+
+        return (auth, newCreated);
     }
 }

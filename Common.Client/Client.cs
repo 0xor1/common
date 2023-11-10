@@ -32,7 +32,6 @@ public static class Client
             (message) =>
                 ns.Notify(NotificationSeverity.Error, l.S(S.ApiError), message, duration: 6000D)
         );
-
         builder.Services.AddSingleton(httpClient);
         builder.Services.AddSingleton<IRpcClient>(rpcClient);
         builder.Services.AddSingleton(s);
@@ -41,6 +40,8 @@ public static class Client
         builder.Services.AddSingleton<IAuthService, AuthService<TApi>>();
         builder.Services.AddSingleton(ns);
         builder.Services.AddSingleton<DialogService>();
+        builder.Services.AddSingleton<TooltipService>();
+        builder.Services.AddSingleton<ContextMenuService>();
         addServices?.Invoke(builder.Services);
         await builder.Build().RunAsync();
     }

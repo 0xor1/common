@@ -11,7 +11,7 @@ public class AuthRpcTests : IDisposable
     {
         _rpcTestRig = new RpcTestRig<CommonTestDb, Api>(
             S.Inst,
-            new AuthEps<CommonTestDb>(
+            new CommonEps<CommonTestDb>(
                 0,
                 (_, _, _, _) => Task.CompletedTask,
                 (_, _, _) => Task.CompletedTask,
@@ -152,6 +152,15 @@ public class AuthRpcTests : IDisposable
         var ses = await ali.Auth.FcmEnabled(new(true));
         var res = await ali.Auth.FcmRegister(new(new List<string>() { "a", "b" }, "a", null));
         await ali.Auth.FcmUnregister(new(res.Client));
+    }
+
+    [Fact]
+    public async Task AppGetConfig_Success()
+    {
+        var (ali, _, _) = await _rpcTestRig.NewApi("ali");
+        var c = await ali.App.GetConfig();
+        Assert.True(c.DemoMode);
+        Assert.Equal("https://github.com/0xor1/common", c.RepoUrl);
     }
 
     public void Dispose()

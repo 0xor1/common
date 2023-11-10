@@ -2,37 +2,6 @@ using Newtonsoft.Json;
 
 namespace Common.Shared;
 
-public class ArgumentValidationException : Exception
-{
-    public ArgumentValidationException(string msg)
-        : base(msg) { }
-}
-
-public class MinMaxBaseException : ArgumentValidationException
-{
-    public MinMaxBaseException(string msg)
-        : base(msg) { }
-}
-
-public class NullMinMaxValuesException : MinMaxBaseException
-{
-    public NullMinMaxValuesException()
-        : base("invalid min max args, both are null") { }
-}
-
-public class ReversedMinMaxValuesException : MinMaxBaseException
-{
-    public string Min { get; }
-    public string Max { get; }
-
-    public ReversedMinMaxValuesException(string min, string max)
-        : base($"reversed min max args, min: {min} must not be larger than max: {max}")
-    {
-        Min = min;
-        Max = max;
-    }
-}
-
 public record MinMax<T>
     where T : struct, IComparable<T>
 {

@@ -1,0 +1,13 @@
+using Newtonsoft.Json;
+
+namespace Common.Shared;
+
+public record HasStream : IDisposable, IAsyncDisposable
+{
+    [JsonIgnore]
+    public RpcStream Stream { get; set; }
+
+    public void Dispose() => Stream.Dispose();
+
+    public ValueTask DisposeAsync() => Stream.DisposeAsync();
+}

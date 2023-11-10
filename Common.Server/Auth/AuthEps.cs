@@ -5,12 +5,6 @@ using ApiSession = Common.Shared.Auth.Session;
 
 namespace Common.Server.Auth;
 
-public interface IAuthDb
-{
-    DbSet<Auth> Auths { get; }
-    DbSet<FcmReg> FcmRegs { get; }
-}
-
 public class AuthEps<TDbCtx>
     where TDbCtx : DbContext, IAuthDb
 {
@@ -251,10 +245,7 @@ public class AuthEps<TDbCtx>
                                 x => x.Email.Equals(req.Email),
                                 ctx.Ctkn
                             );
-                            if (
-                                auth == null
-                                || auth.MagicLinkCodeCreatedOn.MinutesSince() < 10
-                            )
+                            if (auth == null || auth.MagicLinkCodeCreatedOn.MinutesSince() < 10)
                                 // if email is not associated with an account or
                                 // a reset pwd was sent within the last 10 minutes
                                 // dont do anything

@@ -14,7 +14,7 @@ public class StoreClientTests : IDisposable
     {
         _rpcTestRig = new RpcTestRig<CommonTestDb, Api>(
             S.Inst,
-            new AuthEps<CommonTestDb>(
+            new CommonEps<CommonTestDb>(
                 0,
                 (_, _, _, _) => Task.CompletedTask,
                 (_, _, _) => Task.CompletedTask,

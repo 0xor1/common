@@ -25,6 +25,8 @@ public interface IAuthService
         string lang,
         string dateFmt,
         string timeFmt,
+        string thousandsSeparator,
+        string decimalSeparator,
         CancellationToken ctkn = default
     );
     Task<ISession> FcmEnabled(bool enabled, CancellationToken ctkn = default);

@@ -22,5 +22,7 @@ public class Auth : Pwd
     public string Lang { get; set; }
     public string DateFmt { get; set; }
     public string TimeFmt { get; set; }
+    public string ThousandsSeparator { get; set; }
+    public string DecimalSeparator { get; set; }
     public bool FcmEnabled { get; set; }
 }

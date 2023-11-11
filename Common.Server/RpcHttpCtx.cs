@@ -27,6 +27,8 @@ public class RpcHttpCtx : IRpcCtxInternal
         string lang,
         string dateFmt,
         string timeFmt,
+        string thousandsSeparator,
+        string decimalSeparator,
         bool fcmEnabled
     ) =>
         _sessionManager.Create(
@@ -37,6 +39,8 @@ public class RpcHttpCtx : IRpcCtxInternal
             lang,
             dateFmt,
             timeFmt,
+            thousandsSeparator,
+            decimalSeparator,
             fcmEnabled
         );
 

@@ -27,6 +27,12 @@ public record Session
     public string TimeFmt { get; init; }
 
     [Key(7)]
+    public string ThousandsSeparator { get; init; }
+
+    [Key(8)]
+    public string DecimalSeparator { get; init; }
+
+    [Key(9)]
     public bool FcmEnabled { get; init; }
 
     [IgnoreMember]
@@ -34,6 +40,17 @@ public record Session
 
     public Shared.Auth.Session ToApi()
     {
-        return new(Id, IsAuthed, StartedOn, RememberMe, Lang, DateFmt, TimeFmt, FcmEnabled);
+        return new(
+            Id,
+            IsAuthed,
+            StartedOn,
+            RememberMe,
+            Lang,
+            DateFmt,
+            TimeFmt,
+            ThousandsSeparator,
+            DecimalSeparator,
+            FcmEnabled
+        );
     }
 }

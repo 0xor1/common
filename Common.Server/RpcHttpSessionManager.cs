@@ -51,6 +51,8 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
         string lang,
         string dateFmt,
         string timeFmt,
+        string thousandsSeparator,
+        string decimalSeparator,
         bool fcmEnabled
     )
     {
@@ -63,6 +65,8 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
             Lang = lang,
             DateFmt = dateFmt,
             TimeFmt = timeFmt,
+            ThousandsSeparator = thousandsSeparator,
+            DecimalSeparator = decimalSeparator,
             FcmEnabled = fcmEnabled
         };
         ctx.Items[SessionKey] = ses;
@@ -87,6 +91,8 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
             _s.BestLang(ctx.Request.Headers.AcceptLanguage.ToArray().FirstOrDefault() ?? ""),
             _s.DefaultDateFmt,
             _s.DefaultTimeFmt,
+            _s.DefaultThousandsSeparator,
+            _s.DefaultDecimalSeparator,
             false
         );
     }

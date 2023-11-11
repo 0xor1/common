@@ -14,6 +14,8 @@ public interface IRpcHttpSessionManager
         string lang,
         string dateFmt,
         string timeFmt,
+        string thousandsSeparator,
+        string decimalSeparator,
         bool fcmEnabled
     );
 

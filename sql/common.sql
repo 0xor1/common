@@ -22,6 +22,8 @@ CREATE TABLE Auths (
     Lang VARCHAR(7) NOT NULL,
     DateFmt VARCHAR(20) NOT NULL,
     TimeFmt VARCHAR(10) NOT NULL,
+    ThousandsSeparator VARCHAR(10) NOT NULL,
+    DecimalSeparator VARCHAR(10) NOT NULL,
     FcmEnabled BOOLEAN NOT NULL,
     PwdVersion INT NOT NULL,
     PwdSalt    VARBINARY(16) NOT NULL,

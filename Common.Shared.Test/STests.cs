@@ -5,10 +5,14 @@ public class STests
     const string lang = "en";
     const string dateFmt = "yyyy-MM-dd";
     const string timeFmt = "hh:mm";
+    const string thousandsSeparator = ",";
+    const string decimalSeparator = ".";
     static readonly S S = new Strings(
         lang,
         dateFmt,
         timeFmt,
+        thousandsSeparator,
+        decimalSeparator,
         new List<Lang>() { new(lang, "English"), new("es", "Español") },
         new List<DateTimeFmt>() { new(dateFmt), new("dd-MM-yyyy"), new("MM-dd-yyyy") },
         new List<DateTimeFmt>() { new(timeFmt), new("h:mmtt") },

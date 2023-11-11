@@ -1,3 +1,4 @@
+using System.Globalization;
 using Common.Shared;
 using Microsoft.AspNetCore.Components;
 
@@ -9,6 +10,8 @@ internal class Localizer : L
     private string _dateFmt;
     private string _lang;
     private string _timeFmt;
+    private string _thousandsSeparator;
+    private string _decimalSeparator;
 
     public Localizer(S s)
     {
@@ -16,13 +19,23 @@ internal class Localizer : L
         _lang = s.DefaultLang;
         _dateFmt = s.DefaultDateFmt;
         _timeFmt = s.DefaultTimeFmt;
+        _thousandsSeparator = s.DefaultThousandsSeparator;
+        _decimalSeparator = s.DefaultDecimalSeparator;
     }
 
-    public void Config(string lang, string date, string time)
+    public void Config(
+        string lang,
+        string date,
+        string time,
+        string thousandsSeparator,
+        string decimalSeparator
+    )
     {
         _lang = lang;
         _dateFmt = date;
         _timeFmt = time;
+        _thousandsSeparator = thousandsSeparator;
+        _decimalSeparator = decimalSeparator;
     }
 
     // S for String
@@ -37,4 +50,25 @@ internal class Localizer : L
 
     // T for Time
     public string T(DateTime dt) => dt.ToLocalTime().ToString(_timeFmt);
+
+    // I for Int
+    public string I(int i) =>
+        i.ToString(
+            new NumberFormatInfo()
+            {
+                NumberDecimalDigits = 0,
+                NumberGroupSeparator = _thousandsSeparator,
+                NumberDecimalSeparator = _decimalSeparator
+            }
+        );
+
+    // Dec for Decimal
+    public string Dec(decimal d) =>
+        d.ToString(
+            new NumberFormatInfo()
+            {
+                NumberGroupSeparator = _thousandsSeparator,
+                NumberDecimalSeparator = _decimalSeparator
+            }
+        );
 }

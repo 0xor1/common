@@ -30,7 +30,13 @@ public class AuthService<TApi> : IAuthService, IDisposable
         set
         {
             _ses = value;
-            L.Config(_ses.Lang, _ses.DateFmt, _ses.TimeFmt);
+            L.Config(
+                _ses.Lang,
+                _ses.DateFmt,
+                _ses.TimeFmt,
+                _ses.ThousandsSeparator,
+                _ses.DecimalSeparator
+            );
             _onSessionChanged?.Invoke(_ses);
         }
     }
@@ -126,8 +132,14 @@ public class AuthService<TApi> : IAuthService, IDisposable
         string lang,
         string dateFmt,
         string timeFmt,
+        string thousandsSeparator,
+        string decimalSeparator,
         CancellationToken ctkn = default
-    ) => Session = await _api.Auth.SetL10n(new(lang, dateFmt, timeFmt), ctkn);
+    ) =>
+        Session = await _api.Auth.SetL10n(
+            new(lang, dateFmt, timeFmt, thousandsSeparator, decimalSeparator),
+            ctkn
+        );
 
     public async Task<ISession> FcmEnabled(bool enabled, CancellationToken ctkn = default)
     {

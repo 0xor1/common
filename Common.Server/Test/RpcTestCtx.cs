@@ -53,6 +53,8 @@ public record RpcTestCtx : IRpcCtxInternal
         string lang,
         string dateFmt,
         string timeFmt,
+        string thousandsSeparator,
+        string decimalSeparator,
         bool fcmEnabled
     )
     {
@@ -65,6 +67,8 @@ public record RpcTestCtx : IRpcCtxInternal
             Lang = lang,
             DateFmt = dateFmt,
             TimeFmt = timeFmt,
+            ThousandsSeparator = thousandsSeparator,
+            DecimalSeparator = decimalSeparator,
             FcmEnabled = fcmEnabled
         };
         return Session;
@@ -79,7 +83,9 @@ public record RpcTestCtx : IRpcCtxInternal
             RememberMe = false,
             Lang = _s.DefaultLang,
             DateFmt = _s.DefaultDateFmt,
-            TimeFmt = _s.DefaultTimeFmt
+            TimeFmt = _s.DefaultTimeFmt,
+            ThousandsSeparator = _s.DefaultThousandsSeparator,
+            DecimalSeparator = _s.DefaultDecimalSeparator
         };
         return Session;
     }

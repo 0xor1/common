@@ -5,7 +5,13 @@ namespace Common.Client;
 // L for Localizer
 public interface L
 {
-    void Config(string lang, string date, string time);
+    void Config(
+        string lang,
+        string date,
+        string time,
+        string thousandsSeparator,
+        string decimalSeparator
+    );
 
     // S for String
     public string S(string key, object? model = null);
@@ -18,4 +24,10 @@ public interface L
 
     // T for Time
     public string T(DateTime dt);
+
+    // I for Int
+    public string I(int i);
+
+    // Dec for Decimal
+    public string Dec(decimal d);
 }

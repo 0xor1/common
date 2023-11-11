@@ -133,7 +133,9 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
                         IsAuthed = true,
                         Lang = _s.DefaultLang,
                         DateFmt = _s.DefaultDateFmt,
-                        TimeFmt = _s.DefaultTimeFmt
+                        TimeFmt = _s.DefaultTimeFmt,
+                        ThousandsSeparator = _s.DefaultThousandsSeparator,
+                        DecimalSeparator = _s.DefaultDecimalSeparator
                     }
                 )
             ).Auth.Delete();

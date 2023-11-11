@@ -9,6 +9,8 @@ public static class S
     public const string DefaultLang = EN;
     public const string DefaultDateFmt = "yyyy-MM-dd";
     public const string DefaultTimeFmt = "HH:mm";
+    public const string DefaultThousandsSeparator = ",";
+    public const string DefaultDecimalSeparator = ".";
 
     public static readonly IReadOnlyList<Lang> SupportedLangs = new List<Lang>()
     {
@@ -37,6 +39,8 @@ public static class S
             DefaultLang,
             DefaultDateFmt,
             DefaultTimeFmt,
+            DefaultThousandsSeparator,
+            DefaultDecimalSeparator,
             SupportedLangs,
             SupportedDateFmts,
             SupportedTimeFmts,

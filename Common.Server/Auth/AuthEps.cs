@@ -47,7 +47,9 @@ public class AuthEps<TDbCtx>
                                 ses.Id,
                                 ses.Lang,
                                 ses.DateFmt,
-                                ses.TimeFmt
+                                ses.TimeFmt,
+                                ses.ThousandsSeparator,
+                                ses.DecimalSeparator
                             );
 
                             if (
@@ -320,6 +322,8 @@ public class AuthEps<TDbCtx>
                                     auth.Lang,
                                     auth.DateFmt,
                                     auth.TimeFmt,
+                                    auth.ThousandsSeparator,
+                                    auth.DecimalSeparator,
                                     auth.FcmEnabled
                                 )
                                 .ToApi();
@@ -366,6 +370,8 @@ public class AuthEps<TDbCtx>
                                     auth.Lang,
                                     auth.DateFmt,
                                     auth.TimeFmt,
+                                    auth.ThousandsSeparator,
+                                    auth.DecimalSeparator,
                                     auth.FcmEnabled
                                 )
                                 .ToApi();
@@ -415,11 +421,20 @@ public class AuthEps<TDbCtx>
                 AuthRpcs.SetL10n,
                 async (ctx, req) =>
                 {
+                    ctx.BadRequestIf(
+                        req.Lang.IsNullOrEmpty()
+                            || req.DateFmt.IsNullOrEmpty()
+                            || req.TimeFmt.IsNullOrEmpty()
+                            || req.ThousandsSeparator.IsNullOrEmpty()
+                            || req.DecimalSeparator.IsNullOrEmpty()
+                    );
                     var ses = ctx.GetSession();
                     if (
-                        (req.Lang.IsNullOrWhiteSpace() || ses.Lang == req.Lang)
-                        && (req.DateFmt.IsNullOrWhiteSpace() || ses.DateFmt == req.DateFmt)
-                        && (req.TimeFmt.IsNullOrWhiteSpace() || ses.TimeFmt == req.TimeFmt)
+                        ses.Lang == req.Lang
+                        && ses.DateFmt == req.DateFmt
+                        && ses.TimeFmt == req.TimeFmt
+                        && ses.ThousandsSeparator == req.ThousandsSeparator
+                        && ses.DecimalSeparator == req.DecimalSeparator
                     )
                     {
                         return ses.ToApi();
@@ -433,6 +448,8 @@ public class AuthEps<TDbCtx>
                         s.BestLang(req.Lang),
                         req.DateFmt,
                         req.TimeFmt,
+                        req.ThousandsSeparator,
+                        req.DecimalSeparator,
                         ses.FcmEnabled
                     );
                     if (ses.IsAuthed)
@@ -452,6 +469,8 @@ public class AuthEps<TDbCtx>
                                 auth.Lang = ses.Lang;
                                 auth.DateFmt = ses.DateFmt;
                                 auth.TimeFmt = ses.TimeFmt;
+                                auth.ThousandsSeparator = ses.ThousandsSeparator;
+                                auth.DecimalSeparator = ses.DecimalSeparator;
                                 return Nothing.Inst;
                             }
                         );
@@ -478,6 +497,8 @@ public class AuthEps<TDbCtx>
                                 ses.Lang,
                                 ses.DateFmt,
                                 ses.TimeFmt,
+                                ses.ThousandsSeparator,
+                                ses.DecimalSeparator,
                                 req.Val
                             );
 
@@ -617,7 +638,9 @@ public class AuthEps<TDbCtx>
         string id,
         string lang,
         string dateFmt,
-        string timeFmt
+        string timeFmt,
+        string thousandsSeparator,
+        string decimalSeparator
     )
     {
         req = req with
@@ -646,6 +669,8 @@ public class AuthEps<TDbCtx>
                 Lang = lang,
                 DateFmt = dateFmt,
                 TimeFmt = timeFmt,
+                ThousandsSeparator = thousandsSeparator,
+                DecimalSeparator = decimalSeparator,
                 PwdVersion = pwd.PwdVersion,
                 PwdSalt = pwd.PwdSalt,
                 PwdHash = pwd.PwdHash,

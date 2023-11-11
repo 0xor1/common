@@ -10,11 +10,30 @@ public record Session(
     string Lang,
     string DateFmt,
     string TimeFmt,
+    string ThousandsSeparator,
+    string DecimalSeparator,
     bool FcmEnabled
 ) : ISession
 {
-    public static Session Default(string lang, string dateFmt, string timeFmt) =>
-        new(string.Empty, false, DateTime.UtcNow, false, lang, dateFmt, timeFmt, false);
+    public static Session Default(
+        string lang,
+        string dateFmt,
+        string timeFmt,
+        string thousandsSeparator,
+        string decimalSeparator
+    ) =>
+        new(
+            string.Empty,
+            false,
+            DateTime.UtcNow,
+            false,
+            lang,
+            dateFmt,
+            timeFmt,
+            thousandsSeparator,
+            decimalSeparator,
+            false
+        );
 
     [JsonIgnore]
     public bool IsAnon => !IsAuthed;

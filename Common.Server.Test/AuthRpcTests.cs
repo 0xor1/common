@@ -97,10 +97,12 @@ public class AuthRpcTests : IDisposable
     public async Task SetL10n_Success()
     {
         var (ali, _, _) = await _rpcTestRig.NewApi("ali");
-        var ses = await ali.Auth.SetL10n(new("es", "MM-dd-yyyy", "h:mmtt"));
+        var ses = await ali.Auth.SetL10n(new("es", "MM-dd-yyyy", "h:mmtt", ".", ","));
         Assert.Equal("es", ses.Lang);
         Assert.Equal("MM-dd-yyyy", ses.DateFmt);
         Assert.Equal("h:mmtt", ses.TimeFmt);
+        Assert.Equal(".", ses.ThousandsSeparator);
+        Assert.Equal(",", ses.DecimalSeparator);
     }
 
     [Fact]

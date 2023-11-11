@@ -11,6 +11,8 @@ public class Strings : S
         string defaultLang,
         string defaultDateFmt,
         string defaultTimeFmt,
+        string defaultThousandsSeparator,
+        string defaultDecimalSeparator,
         IReadOnlyList<Lang> supportedLangs,
         IReadOnlyList<DateTimeFmt> supportedDateFmts,
         IReadOnlyList<DateTimeFmt> supportedTimeFmts,
@@ -20,6 +22,8 @@ public class Strings : S
         DefaultLang = defaultLang;
         DefaultDateFmt = defaultDateFmt;
         DefaultTimeFmt = defaultTimeFmt;
+        DefaultThousandsSeparator = defaultThousandsSeparator;
+        DefaultDecimalSeparator = defaultDecimalSeparator;
         SupportedLangs = supportedLangs;
         SupportedLangCodes = supportedLangs.Select(x => x.Code).ToList();
         SupportedDateFmts = supportedDateFmts;
@@ -30,6 +34,8 @@ public class Strings : S
     public string DefaultLang { get; }
     public string DefaultDateFmt { get; }
     public string DefaultTimeFmt { get; }
+    public string DefaultThousandsSeparator { get; }
+    public string DefaultDecimalSeparator { get; }
     public IReadOnlyList<Lang> SupportedLangs { get; }
     public IReadOnlyList<string> SupportedLangCodes { get; }
     public IReadOnlyList<DateTimeFmt> SupportedDateFmts { get; }

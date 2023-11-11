@@ -1,3 +1,9 @@
 namespace Common.Shared.Auth;
 
-public record SetL10n(string Lang, string DateFmt, string TimeFmt);
+public record SetL10n(
+    string Lang,
+    string DateFmt,
+    string TimeFmt,
+    string ThousandsSeparator,
+    string DecimalSeparator
+);

@@ -16,9 +16,15 @@ public class Strings : S
         IReadOnlyList<Lang> supportedLangs,
         IReadOnlyList<DateTimeFmt> supportedDateFmts,
         IReadOnlyList<DateTimeFmt> supportedTimeFmts,
+        IReadOnlyList<string> supportedThousandsSeparators,
+        IReadOnlyList<string> supportedDecimalSeparators,
         IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> library
     )
     {
+        Throw.DataIf(
+            defaultThousandsSeparator == defaultDecimalSeparator,
+            "default thousands separator is the same as default decimal separator"
+        );
         DefaultLang = defaultLang;
         DefaultDateFmt = defaultDateFmt;
         DefaultTimeFmt = defaultTimeFmt;
@@ -28,6 +34,8 @@ public class Strings : S
         SupportedLangCodes = supportedLangs.Select(x => x.Code).ToList();
         SupportedDateFmts = supportedDateFmts;
         SupportedTimeFmts = supportedTimeFmts;
+        SupportedThousandsSeparators = supportedThousandsSeparators;
+        SupportedDecimalSeparators = supportedDecimalSeparators;
         Library = library;
     }
 
@@ -40,6 +48,8 @@ public class Strings : S
     public IReadOnlyList<string> SupportedLangCodes { get; }
     public IReadOnlyList<DateTimeFmt> SupportedDateFmts { get; }
     public IReadOnlyList<DateTimeFmt> SupportedTimeFmts { get; }
+    public IReadOnlyList<string> SupportedThousandsSeparators { get; }
+    public IReadOnlyList<string> SupportedDecimalSeparators { get; }
 
     public IReadOnlyDictionary<
         string,

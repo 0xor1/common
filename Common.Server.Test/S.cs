@@ -31,6 +31,18 @@ public static class S
         new("h:mmtt")
     };
 
+    public static readonly IReadOnlyList<string> SupportedThousandsSeparators = new List<string>()
+    {
+        DefaultThousandsSeparator,
+        DefaultDecimalSeparator
+    };
+
+    public static readonly IReadOnlyList<string> SupportedDecimalSeparators = new List<string>()
+    {
+        DefaultDecimalSeparator,
+        DefaultThousandsSeparator
+    };
+
     public static readonly Common.Shared.S Inst;
 
     static S()
@@ -44,6 +56,8 @@ public static class S
             SupportedLangs,
             SupportedDateFmts,
             SupportedTimeFmts,
+            SupportedThousandsSeparators,
+            SupportedDecimalSeparators,
             new Dictionary<string, IReadOnlyDictionary<string, TemplatableString>>()
             {
                 { EN, new Dictionary<string, TemplatableString>() },

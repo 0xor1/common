@@ -428,6 +428,10 @@ public class AuthEps<TDbCtx>
                             || req.ThousandsSeparator.IsNullOrEmpty()
                             || req.DecimalSeparator.IsNullOrEmpty()
                     );
+                    ctx.BadRequestIf(
+                        req.ThousandsSeparator == req.DecimalSeparator,
+                        S.AuthThousandsAndDecimalSeparatorsMatch
+                    );
                     var ses = ctx.GetSession();
                     if (
                         ses.Lang == req.Lang
@@ -650,6 +654,10 @@ public class AuthEps<TDbCtx>
         };
         ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
         ctx.ErrorFromValidationResult(AuthValidator.Pwd(req.Pwd));
+        ctx.BadRequestIf(
+            thousandsSeparator == decimalSeparator,
+            S.AuthThousandsAndDecimalSeparatorsMatch
+        );
         var auth = await db.Auths.SingleOrDefaultAsync(
             x => x.Email.Equals(req.Email) || (x.NewEmail != null && x.NewEmail.Equals(req.Email)),
             ctx.Ctkn

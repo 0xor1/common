@@ -16,6 +16,8 @@ public class STests
         new List<Lang>() { new(lang, "English"), new("es", "Español") },
         new List<DateTimeFmt>() { new(dateFmt), new("dd-MM-yyyy"), new("MM-dd-yyyy") },
         new List<DateTimeFmt>() { new(timeFmt), new("h:mmtt") },
+        new List<string>() { thousandsSeparator, decimalSeparator },
+        new List<string>() { decimalSeparator, thousandsSeparator },
         new Dictionary<string, IReadOnlyDictionary<string, TemplatableString>>()
         {
             {

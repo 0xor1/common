@@ -22,6 +22,8 @@ public interface S
     public const string AuthNoUpperCaseChar = "auth_no_upper_case_char";
     public const string AuthNoDigit = "auth_no_digit";
     public const string AuthNoSpecialChar = "auth_no_special_char";
+    public const string AuthThousandsAndDecimalSeparatorsMatch =
+        "auth_thousands_and_decimal_separators_match";
     public const string AuthInvalidEmailCode = "auth_invalid_email_code";
     public const string AuthInvalidResetPwdCode = "auth_invalid_reset_pwd_code";
     public const string AuthAccountNotVerified = "auth_account_not_verified";
@@ -50,6 +52,8 @@ public interface S
     public IReadOnlyList<Lang> SupportedLangs { get; }
     public IReadOnlyList<DateTimeFmt> SupportedDateFmts { get; }
     public IReadOnlyList<DateTimeFmt> SupportedTimeFmts { get; }
+    public IReadOnlyList<string> SupportedThousandsSeparators { get; }
+    public IReadOnlyList<string> SupportedDecimalSeparators { get; }
 
     public IReadOnlyDictionary<
         string,

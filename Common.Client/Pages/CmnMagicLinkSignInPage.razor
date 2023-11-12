@@ -1,0 +1,12 @@
+﻿@page "/magic_link_sign_in"
+@using Common.Shared.I18n
+@using Common.Client
+@using Common.Client.Auth
+@inject L L;
+<PageTitle>@L.S(S.MagicLinkSignIn)</PageTitle>
+<MagicLinkSignIn
+    Email="@(Nav.QueryValue<string>("email"))"
+    Code="@(Nav.QueryValue<string>("code"))"
+    RememberMe="@(Nav.QueryValue<bool>("remember_me"))"/>
+
+@inject NavigationManager Nav;

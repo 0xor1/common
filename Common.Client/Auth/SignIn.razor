@@ -1,0 +1,86 @@
+﻿@using System.Text.RegularExpressions
+@using Common.Client
+@using Common.Shared
+@using Common.Shared.Auth
+@using Radzen
+@using S = Common.Shared.I18n.S
+@using AuthValidator = Common.Client.AuthValidator
+<div class="root jc-c ai-c">
+    <RadzenCard class="p-3 w-25">
+        <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
+            @L.S(S.SignIn)
+        </RadzenText>
+        <RadzenTemplateForm
+            TItem="Model"
+            Data="_model"
+            Submit="Do"
+            class="flx col ai-stretch g-1">
+            <div class="flx col ai-stretch">
+                <RadzenLabel class="m-b-0q" Component="Email" Text="@L.S(S.Email)"/>
+                <RadzenTextBox Name="Email" @bind-Value="@_model.Email"/>
+                <CommonCustomValidator Validator="AuthValidator.EmailValidator" Component="Email" Popup="true"></CommonCustomValidator>
+            </div>
+            <div class="flx col ai-stretch">
+                <RadzenLabel class="m-b-0q" Component="Password" Text="@L.S(S.Pwd)"/>
+                <RadzenPassword Name="Password" @bind-Value="@_model.Pwd"/>
+                <CommonCustomValidator Validator="AuthValidator.PwdValidator" Component="Password" Popup="true"></CommonCustomValidator>
+                <RadzenLink class="f-0t" Path="send_reset_pwd_email" Text="@L.S(S.ResetPwd)"></RadzenLink>
+            </div>
+            <div class="flx g-0h">
+                <RadzenCheckBox Name="RememberMe" @bind-Value="@_model.RememberMe"/>
+                <RadzenLabel class="m-b-0q" Component="RememberMe" Text="@L.S(S.RememberMe)"/>
+            </div>
+            <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.SigningIn)" IsBusy="_doing" Text="@L.S(S.SignIn)"/>
+            <div class="flx jc-sb">
+                <RadzenLink Path="register" Text="@L.S(S.Register)"></RadzenLink>
+                <RadzenLink Path="send_magic_link_email" Text="@L.S(S.MagicLink)"></RadzenLink>
+            </div>
+        </RadzenTemplateForm>
+    </RadzenCard>
+</div>
+
+@inject NavigationManager Nav;
+@inject IAuthService Auth;
+@inject L L;
+@code{
+
+    
+    [CascadingParameter]
+    public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt, S.DefaultThousandsSeparator, S.DefaultDecimalSeparator);
+    
+    protected override void OnInitialized()
+    {
+        if (Session.IsAuthed)
+        {
+            Nav.NavigateTo("/");
+        }
+    }
+    
+    class Model
+    {
+        public string Email { get; set; } = "";
+        public string Pwd { get; set; } = "";
+        public bool RememberMe { get; set; } = false;
+    }
+
+    private Model _model = new ();
+
+    private bool _doing = false;
+
+    private async Task Do()
+    {
+        _doing = true;
+        try
+        {
+            await Auth.SignIn(_model.Email, _model.Pwd, _model.RememberMe);
+            Nav.NavigateTo("/");
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+    }
+
+}

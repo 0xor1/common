@@ -2,6 +2,7 @@ using Common.Shared;
 using Common.Shared.Auth;
 using Microsoft.EntityFrameworkCore;
 using ApiSession = Common.Shared.Auth.Session;
+using CS = Common.Shared.I18n.S;
 
 namespace Common.Server.Auth;
 
@@ -36,7 +37,7 @@ public class AuthEps<TDbCtx>
                 {
                     // basic validation
                     var ses = ctx.GetSession();
-                    ctx.ErrorIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
+                    ctx.ErrorIf(ses.IsAuthed, CS.AuthAlreadyAuthenticated);
                     return await ctx.DbTx<TDbCtx, Nothing>(
                         async (db, ses) =>
                         {
@@ -76,9 +77,9 @@ public class AuthEps<TDbCtx>
                                     Code = auth.VerifyEmailCode
                                 };
                                 await emailClient.SendEmailAsync(
-                                    ctx.String(S.AuthConfirmEmailSubject),
-                                    ctx.String(S.AuthConfirmEmailHtml, model),
-                                    ctx.String(S.AuthConfirmEmailText, model),
+                                    ctx.String(CS.AuthConfirmEmailSubject),
+                                    ctx.String(CS.AuthConfirmEmailHtml, model),
+                                    ctx.String(CS.AuthConfirmEmailText, model),
                                     config.Email.NoReplyAddress,
                                     new List<string> { req.Email },
                                     null,
@@ -114,7 +115,7 @@ public class AuthEps<TDbCtx>
                             ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
                                 auth.NotNull().VerifyEmailCode != req.Code,
-                                S.AuthInvalidEmailCode
+                                CS.AuthInvalidEmailCode
                             );
                             if (!auth.NewEmail.IsNullOrEmpty() && auth.NewEmail == req.Email)
                             {
@@ -143,7 +144,7 @@ public class AuthEps<TDbCtx>
                 {
                     // basic validation
                     var ses = ctx.GetSession();
-                    ctx.ErrorIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
+                    ctx.ErrorIf(ses.IsAuthed, CS.AuthAlreadyAuthenticated);
                     // !!! ToLower all emails in all Auth_ api endpoints
                     req = new SendResetPwdEmail(req.Email.ToLower());
                     ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
@@ -175,9 +176,9 @@ public class AuthEps<TDbCtx>
                             };
                             var emailClient = ctx.Get<IEmailClient>();
                             await emailClient.SendEmailAsync(
-                                ctx.String(S.AuthResetPwdSubject),
-                                ctx.String(S.AuthResetPwdHtml, model),
-                                ctx.String(S.AuthResetPwdText, model),
+                                ctx.String(CS.AuthResetPwdSubject),
+                                ctx.String(CS.AuthResetPwdHtml, model),
+                                ctx.String(CS.AuthResetPwdText, model),
                                 config.Email.NoReplyAddress,
                                 new List<string> { req.Email },
                                 null,
@@ -212,7 +213,7 @@ public class AuthEps<TDbCtx>
                             ctx.ErrorIf(
                                 auth.NotNull().ResetPwdCode != req.Code
                                     && auth.ResetPwdCodeCreatedOn.MinutesSince() > 10,
-                                S.AuthInvalidResetPwdCode
+                                CS.AuthInvalidResetPwdCode
                             );
                             var pwd = Crypto.HashPwd(req.NewPwd);
                             auth.ResetPwdCodeCreatedOn = DateTimeExt.Zero();
@@ -233,7 +234,7 @@ public class AuthEps<TDbCtx>
                 {
                     // basic validation
                     var ses = ctx.GetSession();
-                    ctx.ErrorIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
+                    ctx.ErrorIf(ses.IsAuthed, CS.AuthAlreadyAuthenticated);
                     // !!! ToLower all emails in all Auth api endpoints
                     req = req with
                     {
@@ -266,9 +267,9 @@ public class AuthEps<TDbCtx>
                             };
                             var emailClient = ctx.Get<IEmailClient>();
                             await emailClient.SendEmailAsync(
-                                ctx.String(S.AuthMagicLinkSubject),
-                                ctx.String(S.AuthMagicLinkHtml, model),
-                                ctx.String(S.AuthMagicLinkText, model),
+                                ctx.String(CS.AuthMagicLinkSubject),
+                                ctx.String(CS.AuthMagicLinkHtml, model),
+                                ctx.String(CS.AuthMagicLinkText, model),
                                 config.Email.NoReplyAddress,
                                 new List<string> { req.Email },
                                 null,
@@ -286,7 +287,7 @@ public class AuthEps<TDbCtx>
                 async (ctx, req) =>
                 {
                     var ses = ctx.GetSession();
-                    ctx.ErrorIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
+                    ctx.ErrorIf(ses.IsAuthed, CS.AuthAlreadyAuthenticated);
                     // !!! ToLower all emails in all Auth api endpoints
                     req = req with
                     {
@@ -303,7 +304,7 @@ public class AuthEps<TDbCtx>
                             ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
                                 auth.NotNull().ActivatedOn.IsZero(),
-                                S.AuthAccountNotVerified
+                                CS.AuthAccountNotVerified
                             );
                             RateLimitAuthAttempts(ctx, auth.NotNull());
                             auth.LastSignInAttemptOn = DateTimeExt.UtcNowMilli();
@@ -337,7 +338,7 @@ public class AuthEps<TDbCtx>
                 async (ctx, req) =>
                 {
                     var ses = ctx.GetSession();
-                    ctx.ErrorIf(ses.IsAuthed, S.AuthAlreadyAuthenticated);
+                    ctx.ErrorIf(ses.IsAuthed, CS.AuthAlreadyAuthenticated);
                     // !!! ToLower all emails in all Auth_ api endpoints
                     req = req with
                     {
@@ -354,7 +355,7 @@ public class AuthEps<TDbCtx>
                             ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
                                 auth.NotNull().ActivatedOn.IsZero(),
-                                S.AuthAccountNotVerified
+                                CS.AuthAccountNotVerified
                             );
                             RateLimitAuthAttempts(ctx, auth.NotNull());
                             auth.LastSignInAttemptOn = DateTimeExt.UtcNowMilli();
@@ -430,7 +431,7 @@ public class AuthEps<TDbCtx>
                     );
                     ctx.BadRequestIf(
                         req.ThousandsSeparator == req.DecimalSeparator,
-                        S.AuthThousandsAndDecimalSeparatorsMatch
+                        CS.AuthThousandsAndDecimalSeparatorsMatch
                     );
                     var ses = ctx.GetSession();
                     if (
@@ -468,7 +469,7 @@ public class AuthEps<TDbCtx>
                                 ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                                 ctx.ErrorIf(
                                     auth.NotNull().ActivatedOn.IsZero(),
-                                    S.AuthAccountNotVerified
+                                    CS.AuthAccountNotVerified
                                 );
                                 auth.Lang = ses.Lang;
                                 auth.DateFmt = ses.DateFmt;
@@ -513,7 +514,7 @@ public class AuthEps<TDbCtx>
                             ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
                             ctx.ErrorIf(
                                 auth.NotNull().ActivatedOn.IsZero(),
-                                S.AuthAccountNotVerified
+                                CS.AuthAccountNotVerified
                             );
                             auth.FcmEnabled = req.Val;
                             await db.FcmRegs
@@ -547,11 +548,14 @@ public class AuthEps<TDbCtx>
                         {
                             ctx.BadRequestIf(
                                 req.Topic.Count < 1 || req.Topic.Count > 5,
-                                S.AuthFcmTopicInvalid,
+                                CS.AuthFcmTopicInvalid,
                                 new { Min = 1, Max = 5 }
                             );
-                            ctx.BadRequestIf(req.Token.IsNullOrWhiteSpace(), S.AuthFcmTokenInvalid);
-                            ctx.BadRequestIf(!ses.FcmEnabled, S.AuthFcmNotEnabled);
+                            ctx.BadRequestIf(
+                                req.Token.IsNullOrWhiteSpace(),
+                                CS.AuthFcmTokenInvalid
+                            );
+                            ctx.BadRequestIf(!ses.FcmEnabled, CS.AuthFcmNotEnabled);
                             await _validateFcmTopic(ctx, db, ses, req.Topic);
                             var client = req.Client ?? Id.New();
                             var fcmRegs = await db.FcmRegs
@@ -631,7 +635,7 @@ public class AuthEps<TDbCtx>
     {
         ctx.ErrorIf(
             auth.LastSignInAttemptOn.SecondsSince() < _maxAuthAttemptsPerSecond,
-            S.AuthAttemptRateLimit
+            CS.AuthAttemptRateLimit
         );
     }
 
@@ -656,7 +660,7 @@ public class AuthEps<TDbCtx>
         ctx.ErrorFromValidationResult(AuthValidator.Pwd(req.Pwd));
         ctx.BadRequestIf(
             thousandsSeparator == decimalSeparator,
-            S.AuthThousandsAndDecimalSeparatorsMatch
+            CS.AuthThousandsAndDecimalSeparatorsMatch
         );
         var auth = await db.Auths.SingleOrDefaultAsync(
             x => x.Email.Equals(req.Email) || (x.NewEmail != null && x.NewEmail.Equals(req.Email)),

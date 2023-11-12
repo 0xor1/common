@@ -2,6 +2,7 @@ using System.Net;
 using System.Reflection;
 using Common.Server.Auth;
 using Common.Shared;
+using S = Common.Shared.I18n.S;
 using Common.Shared.Auth;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +17,12 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
     private readonly string Id = Shared.Id.New();
     private readonly IServiceProvider _services;
     private readonly IConfig _config;
-    private readonly S _s;
+    private readonly Shared.S _s;
     private readonly Func<IRpcClient, TApi> _apiFactory;
     private readonly IReadOnlyDictionary<string, IRpcEndpoint> _eps;
 
     public RpcTestRig(
-        S s,
+        Shared.S s,
         IReadOnlyList<IRpcEndpoint> eps,
         Func<IRpcClient, TApi> apiFactory,
         Action<IServiceCollection>? addServices = null,

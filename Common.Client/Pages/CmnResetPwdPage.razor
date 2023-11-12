@@ -1,0 +1,12 @@
+﻿@page "/reset_pwd"
+@using Common.Shared.I18n
+@using Common.Client
+@using Common.Client.Auth
+@inject L L;
+<PageTitle>@L.S(S.ResetPwd)</PageTitle>
+
+<ResetPwd
+    Email="@(Nav.QueryValue<string>("email"))"
+    Code="@(Nav.QueryValue<string>("code"))"/>
+
+@inject NavigationManager Nav;

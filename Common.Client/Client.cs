@@ -1,4 +1,5 @@
 using Common.Shared;
+using CS = Common.Shared.I18n.S;
 using Common.Shared.Auth;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -30,13 +31,15 @@ public static class Client
             builder.HostEnvironment.BaseAddress,
             httpClient,
             (message) =>
-                ns.Notify(NotificationSeverity.Error, l.S(S.ApiError), message, duration: 6000D)
+                ns.Notify(NotificationSeverity.Error, l.S(CS.ApiError), message, duration: 6000D)
         );
+        var api = apiFactory(rpcClient);
         builder.Services.AddSingleton(httpClient);
         builder.Services.AddSingleton<IRpcClient>(rpcClient);
         builder.Services.AddSingleton(s);
         builder.Services.AddSingleton<L>(l);
-        builder.Services.AddSingleton(apiFactory(rpcClient));
+        builder.Services.AddSingleton(api);
+        builder.Services.AddSingleton<IApi>(api);
         builder.Services.AddSingleton<IAuthService, AuthService<TApi>>();
         builder.Services.AddSingleton(ns);
         builder.Services.AddSingleton<DialogService>();

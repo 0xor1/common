@@ -7,5 +7,6 @@ TestResults/
 riderModule.iml
 /_ReSharper.Caches/
 *.css
+!common-global.css
 fcm_service_account_key.json
 *.sln.DotSettings.user

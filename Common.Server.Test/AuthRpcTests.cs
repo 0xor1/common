@@ -55,7 +55,7 @@ public class AuthRpcTests : IDisposable
         catch (RpcTestException ex)
         {
             Assert.Equal(
-                S.Inst.GetOrAddress(S.DefaultLang, Shared.S.AuthInvalidEmail),
+                S.Inst.GetOrAddress(S.DefaultLang, Shared.I18n.S.AuthInvalidEmail),
                 ex.Rpc.Message
             );
         }
@@ -72,7 +72,7 @@ public class AuthRpcTests : IDisposable
         catch (RpcTestException ex)
         {
             Assert.Equal(
-                $"{S.Inst.GetOrAddress(S.DefaultLang, Shared.S.AuthInvalidPwd)}:\n  {S.Inst.GetOrAddress(S.DefaultLang, Shared.S.AuthNoUpperCaseChar)}\n  {S.Inst.GetOrAddress(S.DefaultLang, Shared.S.AuthNoSpecialChar)}",
+                $"{S.Inst.GetOrAddress(S.DefaultLang, Shared.I18n.S.AuthInvalidPwd)}:\n  {S.Inst.GetOrAddress(S.DefaultLang, Shared.I18n.S.AuthNoUpperCaseChar)}\n  {S.Inst.GetOrAddress(S.DefaultLang, Shared.I18n.S.AuthNoSpecialChar)}",
                 ex.Rpc.Message
             );
         }

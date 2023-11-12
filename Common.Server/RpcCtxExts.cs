@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using CS = Common.Shared.I18n.S;
 
 namespace Common.Server;
 
@@ -19,7 +20,7 @@ public static class RpcCtxExts
     public static Session GetAuthedSession(this IRpcCtx ctx)
     {
         var ses = ctx.GetSession();
-        ctx.ErrorIf(ses.IsAnon, S.AuthNotAuthenticated, null, HttpStatusCode.Unauthorized);
+        ctx.ErrorIf(ses.IsAnon, CS.AuthNotAuthenticated, null, HttpStatusCode.Unauthorized);
         return ses;
     }
 
@@ -64,7 +65,7 @@ public static class RpcCtxExts
         object? model = null
     )
     {
-        ctx.ErrorIf(condition, key ?? S.EntityNotFound, model, HttpStatusCode.NotFound);
+        ctx.ErrorIf(condition, key ?? CS.EntityNotFound, model, HttpStatusCode.NotFound);
     }
 
     public static void InsufficientPermissionsIf(
@@ -74,7 +75,7 @@ public static class RpcCtxExts
         object? model = null
     )
     {
-        ctx.ErrorIf(condition, key ?? S.InsufficientPermission, model, HttpStatusCode.Forbidden);
+        ctx.ErrorIf(condition, key ?? CS.InsufficientPermission, model, HttpStatusCode.Forbidden);
     }
 
     public static void BadRequestIf(
@@ -84,7 +85,7 @@ public static class RpcCtxExts
         object? model = null
     )
     {
-        ctx.ErrorIf(condition, key ?? S.BadRequest, model, HttpStatusCode.BadRequest);
+        ctx.ErrorIf(condition, key ?? CS.BadRequest, model, HttpStatusCode.BadRequest);
     }
 
     public static void ErrorFromValidationResult(

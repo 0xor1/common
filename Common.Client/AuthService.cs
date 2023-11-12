@@ -3,6 +3,7 @@ using Common.Shared;
 using Common.Shared.Auth;
 using Microsoft.JSInterop;
 using Radzen;
+using S = Common.Shared.I18n.S;
 
 namespace Common.Client;
 

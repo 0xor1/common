@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using CS = Common.Shared.I18n.S;
 
 namespace Common.Shared;
 
@@ -6,19 +7,19 @@ public static partial class AuthValidator
 {
     public static ValidationResult Email(string str)
     {
-        var res = ValidationResult.New(S.AuthInvalidEmail);
+        var res = ValidationResult.New(CS.AuthInvalidEmail);
         res.InvalidIf(!EmailRegex().IsMatch(str));
         return res;
     }
 
     public static ValidationResult Pwd(string str)
     {
-        var res = ValidationResult.New(S.AuthInvalidPwd);
-        res.InvalidIf(!EightOrMoreCharsRegex().IsMatch(str), S.AuthLessThan8Chars);
-        res.InvalidIf(!LowerCaseRegex().IsMatch(str), S.AuthNoLowerCaseChar);
-        res.InvalidIf(!UpperCaseRegex().IsMatch(str), S.AuthNoUpperCaseChar);
-        res.InvalidIf(!DigitRegex().IsMatch(str), S.AuthNoDigit);
-        res.InvalidIf(!SpecialCharRegex().IsMatch(str), S.AuthNoSpecialChar);
+        var res = ValidationResult.New(CS.AuthInvalidPwd);
+        res.InvalidIf(!EightOrMoreCharsRegex().IsMatch(str), CS.AuthLessThan8Chars);
+        res.InvalidIf(!LowerCaseRegex().IsMatch(str), CS.AuthNoLowerCaseChar);
+        res.InvalidIf(!UpperCaseRegex().IsMatch(str), CS.AuthNoUpperCaseChar);
+        res.InvalidIf(!DigitRegex().IsMatch(str), CS.AuthNoDigit);
+        res.InvalidIf(!SpecialCharRegex().IsMatch(str), CS.AuthNoSpecialChar);
         return res;
     }
 

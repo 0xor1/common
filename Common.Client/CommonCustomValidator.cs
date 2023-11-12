@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Radzen;
 using Radzen.Blazor;
+using S = Common.Shared.I18n.S;
 
 namespace Common.Client;
 

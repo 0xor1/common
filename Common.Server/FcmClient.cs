@@ -4,6 +4,7 @@ using Common.Shared.Auth;
 using FirebaseAdmin.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Message = FirebaseAdmin.Messaging.Message;
+using S = Common.Shared.I18n.S;
 
 namespace Common.Server;
 

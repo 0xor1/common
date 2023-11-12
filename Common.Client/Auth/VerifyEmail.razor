@@ -1,0 +1,72 @@
+﻿@using Common.Shared.I18n
+@using AuthValidator = Common.Client.AuthValidator
+@using Common.Client
+@using Common.Shared.Auth;
+<div class="root jc-c ai-c">
+    <RadzenCard class="flx col jc-c ai-c p-3 w-25">
+        <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
+            @L.S(S.VerifyEmail)
+        </RadzenText>
+        @if (_doing)
+        {
+            <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-b-1">
+                @L.S(S.VerifyingEmail)
+            </RadzenText>
+        }
+        else
+        {
+            @if (_success)
+            {
+                <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-b-1 f-b rz-color-success-light">
+                    @L.S(S.VerifyEmailSuccess)
+                </RadzenText>
+            }
+            else
+            {
+                <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-b-1 f-b rz-color-danger">
+                    @L.S(S.Error)
+                </RadzenText>
+            }
+        }
+        <RadzenButton ButtonType="ButtonType.Button" BusyText="@L.S(S.Verifying)" IsBusy="_doing" Text="@L.S(S.SignIn)" Click="SignIn"/>
+    </RadzenCard>
+</div>
+
+@inject L L;
+@inject IApi Api;
+@inject NavigationManager Nav;
+@code{
+
+    [Parameter]
+    public string Email { get; set; } = "";
+
+    [Parameter]
+    public string Code { get; set; } = "";
+
+    private bool _doing = false;
+    private bool _success = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _doing = true;
+        try
+        {
+            await Api.Auth.VerifyEmail(new (Email, Code));
+            _success = true;
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+    }
+
+    private void SignIn()
+    {
+        if (!_doing && _success)
+        {
+            Nav.NavigateTo("sign_in");
+        }
+    }
+}

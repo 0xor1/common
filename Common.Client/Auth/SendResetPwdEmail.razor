@@ -1,0 +1,70 @@
+﻿@using System.Text.RegularExpressions
+@using Common.Client
+@using Common.Shared
+@using Common.Shared.Auth;
+@using Radzen
+@using S = Common.Shared.I18n.S
+@using AuthValidator = Common.Client.AuthValidator
+<div class="root jc-c ai-c">
+    <RadzenCard class="p-3 w-25">
+        <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
+            @L.S(S.SendResetPwdLink)
+        </RadzenText>
+        <RadzenTemplateForm
+            TItem="Model"
+            Data="_model"
+            Submit="Do"
+            class="flx col ai-stretch g-1">
+            <div class="flx col ai-stretch">
+                <RadzenLabel class="m-b-0q" Component="Email" Text="@L.S(S.Email)"/>
+                <RadzenTextBox Name="Email" @bind-Value="@_model.Email" Disabled="!CanDo"/>
+                <CommonCustomValidator Validator="AuthValidator.EmailValidator" Component="Email" Popup="true"></CommonCustomValidator>
+            </div>
+            @if (_success)
+            {
+                <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-t-0 f-b rz-color-success-light">
+                    @L.S(S.SendResetPwdLinkSuccess)
+                </RadzenText>
+            }
+            <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.Processing)" IsBusy="_doing" Text="@L.S(S.Send)" Disabled="!CanDo"/>
+            <div class="flx jc-sb">
+                <RadzenLink Path="sign_in" Text="@L.S(S.SignIn)"></RadzenLink>
+                <RadzenLink Path="register" Text="@L.S(S.Register)"></RadzenLink>
+            </div>
+        </RadzenTemplateForm>
+    </RadzenCard>
+</div>
+
+@inject L L;
+@inject IApi Api;
+@code{
+
+    class Model
+    {
+        public string Email { get; set; } = "";
+    }
+
+    private bool CanDo => !_doing && !_success;
+
+    private Model _model = new ();
+
+    private bool _doing = false;
+
+    private bool _success = false;
+
+    private async Task Do()
+    {
+        _doing = true;
+        _success = false;
+        try
+        {
+            await Api.Auth.SendResetPwdEmail(new (_model.Email));
+            _success = true;
+        }
+        catch
+        {
+            _success = false;
+        }
+        _doing = false;
+    }
+}

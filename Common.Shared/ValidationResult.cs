@@ -1,13 +1,15 @@
+using CS = Common.Shared.I18n.S;
+
 namespace Common.Shared;
 
 public record ValidationResult
 {
-    public static ValidationResult New(string msgKey = S.Invalid, object? msgModel = null)
+    public static ValidationResult New(string msgKey = CS.Invalid, object? msgModel = null)
     {
         return new(true, msgKey, msgModel);
     }
 
-    private ValidationResult(bool valid, string msgKey = S.Invalid, object? msgModel = null)
+    private ValidationResult(bool valid, string msgKey = CS.Invalid, object? msgModel = null)
     {
         _valid = valid;
         Message = new Message(msgKey, msgModel);
@@ -32,7 +34,7 @@ public record ValidationResult
         return condition;
     }
 
-    public ValidationResult NewSubResult(string msgKey = S.Invalid, object? msgModel = null)
+    public ValidationResult NewSubResult(string msgKey = CS.Invalid, object? msgModel = null)
     {
         var res = new ValidationResult(true, msgKey, msgModel);
         _subResults.Add(res);

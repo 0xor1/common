@@ -54,6 +54,7 @@ internal class Localizer : L
     // I for Int
     public string I(int i) =>
         i.ToString(
+            "N",
             new NumberFormatInfo()
             {
                 NumberDecimalDigits = 0,
@@ -65,6 +66,7 @@ internal class Localizer : L
     // Dec for Decimal
     public string Dec(decimal d) =>
         d.ToString(
+            "N",
             new NumberFormatInfo()
             {
                 NumberGroupSeparator = _thousandsSeparator,

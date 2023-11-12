@@ -1,0 +1,66 @@
+﻿@using Common.Shared.I18n
+@using AuthValidator = Common.Client.AuthValidator
+@using Common.Client
+<div class="root jc-c ai-c">
+    <RadzenCard class="flx col jc-c ai-c p-3 w-25">
+        <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
+            @L.S(S.MagicLinkSignIn)
+        </RadzenText>
+        @if (_doing)
+        {
+            <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-b-1">
+                @L.S(S.SigningIn)
+            </RadzenText>
+        }
+        else
+        {
+            @if (_success)
+            {
+                <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-b-1 rz-color-success">
+                    @L.S(S.Success)
+                </RadzenText>
+            }
+            else
+            {
+                <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-b-1 rz-color-danger">
+                    @L.S(S.Error)
+                </RadzenText>
+            }
+        }
+    </RadzenCard>
+</div>
+
+@inject L L;
+@inject IAuthService Auth;
+@inject NavigationManager Nav;
+@code{
+
+    [Parameter]
+    public string Email { get; set; } = "";
+
+    [Parameter]
+    public string Code { get; set; } = "";
+
+    [Parameter]
+    public bool RememberMe { get; set; } = false;
+
+    private bool _doing = false;
+    private bool _success = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _doing = true;
+        try
+        {
+            await Auth.MagicLinkSignIn(Email, Code, RememberMe);
+            _success = true;
+            Nav.NavigateTo("/");
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+    }
+}

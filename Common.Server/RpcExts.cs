@@ -1,5 +1,6 @@
 using System.Net;
 using Common.Shared;
+using S = Common.Shared.I18n.S;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;

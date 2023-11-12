@@ -1,0 +1,136 @@
+﻿@using System.Text.RegularExpressions
+@using Common.Client
+@using Common.Shared.Auth
+@using Lang = Common.Shared.Lang
+@using Common.Shared.I18n
+@using AuthValidator = Common.Client.AuthValidator
+<div class="root col g-1 p-1">
+    <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
+        @L.S(S.L10n)
+    </RadzenText>
+    <RadzenTemplateForm
+        TItem="Model"
+        Data="_model"
+        Submit="Do"
+        class="flx col g-1 ai-s">
+        <div class="flx col ai-s">
+            <RadzenLabel class="m-b-0q" Component="Lang" Text="@L.S(S.Language)"/>
+            <RadzenDropDown Name="Lang" AllowClear="false" TValue="string" 
+                            Data="S.SupportedLangs" 
+                            TextProperty="NativeName" ValueProperty="Code"
+                            @bind-Value="_model.Lang" />
+        </div>
+        <div class="flx col ai-s">
+            <RadzenLabel class="m-b-0q" Component="Date" Text="@L.S(S.DateFmt)"/>
+            <RadzenDropDown Name="Date" AllowClear="false" TValue="string" 
+                            Data="S.SupportedDateFmts" 
+                            ValueProperty="Value"
+                            @bind-Value="_model.DateFmt" />
+        </div>
+        <div class="flx col ai-s">
+            <RadzenLabel class="m-b-0q" Component="Time" Text="@L.S(S.TimeFmt)"/>
+            <RadzenDropDown Name="Time" AllowClear=false TValue=string 
+                            Data="S.SupportedTimeFmts" 
+                            ValueProperty="Value"
+                            @bind-Value="@_model.TimeFmt" />
+        </div>
+        <div class="flx col ai-s">
+            <RadzenLabel class="m-b-0q" Component="ThousandsSeparator" Text="@L.S(S.ThousandsSeparator)"/>
+            <RadzenDropDown Name="ThousandsSeparator" AllowClear=false TValue=string 
+                            Data="S.SupportedThousandsSeparators"
+                            @bind-Value="@_model.ThousandsSeparator" />
+        </div>
+        <div class="flx col ai-s">
+            <RadzenLabel class="m-b-0q" Component="DecimalSeparator" Text="@L.S(S.DecimalSeparator)"/>
+            <RadzenDropDown Name="DecimalSeparator" AllowClear=false TValue=string 
+                            Data="S.SupportedDecimalSeparators"
+                            @bind-Value="@_model.DecimalSeparator" />
+        </div>
+        <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.Updating)" IsBusy="_doing" Text="@L.S(S.Update)" Disabled="!CanDo"/>
+    </RadzenTemplateForm>
+</div>
+
+@inject IAuthService Auth;
+@inject L L;
+@code{
+
+    record Model
+    {
+        public string Lang { get; set; } = S.DefaultLang;
+        public string DateFmt { get; set; } = S.DefaultDateFmt;
+        public string TimeFmt { get; set; } = S.DefaultTimeFmt;
+        private string _thousands = S.DefaultThousandsSeparator;
+        public string ThousandsSeparator
+        {
+            get => _thousands;
+            set
+            {
+                if (value == _decimal)
+                {
+                    _decimal = S.SupportedDecimalSeparators.First(x => x != value);
+                }
+                _thousands = value;
+            }
+        }
+        private string _decimal = S.DefaultDecimalSeparator;
+        public string DecimalSeparator
+        {
+            get => _decimal;
+            set
+            {
+                if (value == _thousands)
+                {
+                    _thousands = S.SupportedThousandsSeparators.First(x => x != value);
+                }
+                _decimal = value;
+            }
+        }
+    }
+
+    private bool CanDo => _model != _initialValues && !_doing;
+
+    private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt, S.DefaultThousandsSeparator, S.DefaultDecimalSeparator); 
+    private Model _model = new (); 
+    private Model _initialValues = new (); 
+    private bool _doing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _session = await Auth.GetSession();
+        _model.Lang = _session.Lang;
+        _model.DateFmt = _session.DateFmt;
+        _model.TimeFmt = _session.TimeFmt;
+        _model.ThousandsSeparator = _session.ThousandsSeparator;
+        _model.DecimalSeparator = _session.DecimalSeparator;
+        _initialValues.Lang = _session.Lang;
+        _initialValues.DateFmt = _session.DateFmt;
+        _initialValues.TimeFmt = _session.TimeFmt;
+        _initialValues.ThousandsSeparator = _session.ThousandsSeparator;
+        _initialValues.DecimalSeparator = _session.DecimalSeparator;
+    }
+
+    private async Task Do()
+    {
+        _doing = true;
+        try
+        {
+            var ses = await Auth.SetL10n(_model.Lang, _model.DateFmt, _model.TimeFmt, _model.ThousandsSeparator, _model.DecimalSeparator);
+            _initialValues.Lang = ses.Lang;
+            _initialValues.DateFmt = ses.DateFmt;
+            _initialValues.TimeFmt = ses.TimeFmt;
+            _initialValues.ThousandsSeparator = ses.ThousandsSeparator;
+            _initialValues.DecimalSeparator = ses.DecimalSeparator;
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+    }
+
+    private void LangSelected(object val)
+    {
+        _model.Lang = ((Lang)val).Code;
+    }
+}

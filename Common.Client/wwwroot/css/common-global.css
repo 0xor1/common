@@ -1,0 +1,2771 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;800&display=swap");
+* {
+  box-sizing: border-box;
+}
+
+html, body, .fill, .root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  font-family: 'Open Sans', sans-serif;
+}
+
+textarea {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.root {
+  --a-0: 0rem;
+  --a-0q: 0.25rem;
+  --a-0h: 0.5rem;
+  --a-0t: 0.75rem;
+  --a-1: 1rem;
+  --a-1q: 1.25rem;
+  --a-1h: 1.5rem;
+  --a-1t: 1.75rem;
+  --a-2: 2rem;
+  --a-2q: 2.25rem;
+  --a-2h: 2.5rem;
+  --a-2t: 2.75rem;
+  --a-3: 3rem;
+  --a-3q: 3.25rem;
+  --a-3h: 3.5rem;
+  --a-3t: 3.75rem;
+  --a-4: 4rem;
+  --a-4q: 4.25rem;
+  --a-4h: 4.5rem;
+  --a-4t: 4.75rem;
+  --a-5: 5rem;
+  --a-5q: 5.25rem;
+  --a-5h: 5.5rem;
+  --a-5t: 5.75rem;
+  --r-0: 0em;
+  --r-0q: 0.25em;
+  --r-0h: 0.5em;
+  --r-0t: 0.75em;
+  --r-1: 1em;
+  --r-1q: 1.25em;
+  --r-1h: 1.5em;
+  --r-1t: 1.75em;
+  --r-2: 2em;
+  --r-2q: 2.25em;
+  --r-2h: 2.5em;
+  --r-2t: 2.75em;
+  --r-3: 3em;
+  --r-3q: 3.25em;
+  --r-3h: 3.5em;
+  --r-3t: 3.75em;
+  --r-4: 4em;
+  --r-4q: 4.25em;
+  --r-4h: 4.5em;
+  --r-4t: 4.75em;
+  --r-5: 5em;
+  --r-5q: 5.25em;
+  --r-5h: 5.5em;
+  --r-5t: 5.75em;
+  --px-0: 0px;
+  --px-0q: 0.25px;
+  --px-0h: 0.5px;
+  --px-0t: 0.75px;
+  --px-1: 1px;
+  --px-1q: 1.25px;
+  --px-1h: 1.5px;
+  --px-1t: 1.75px;
+  --px-2: 2px;
+  --px-2q: 2.25px;
+  --px-2h: 2.5px;
+  --px-2t: 2.75px;
+  --px-3: 3px;
+  --px-3q: 3.25px;
+  --px-3h: 3.5px;
+  --px-3t: 3.75px;
+  --px-4: 4px;
+  --px-4q: 4.25px;
+  --px-4h: 4.5px;
+  --px-4t: 4.75px;
+  --px-5: 5px;
+  --px-5q: 5.25px;
+  --px-5h: 5.5px;
+  --px-5t: 5.75px;
+  --r-10: 10em;
+  --r-15: 15em;
+  --r-20: 20em;
+  --r-25: 25em;
+  --r-30: 30em;
+  --r-35: 35em;
+  --r-40: 40em;
+  --r-45: 45em;
+  --r-50: 50em;
+}
+
+.root .f-0 {
+  font-size: var(--a-0);
+}
+
+.root .f-0q {
+  font-size: var(--a-0q);
+}
+
+.root .f-0h {
+  font-size: var(--a-0h);
+}
+
+.root .f-0t {
+  font-size: var(--a-0t);
+}
+
+.root .f-1 {
+  font-size: var(--a-1);
+}
+
+.root .f-1q {
+  font-size: var(--a-1q);
+}
+
+.root .f-1h {
+  font-size: var(--a-1h);
+}
+
+.root .f-1t {
+  font-size: var(--a-1t);
+}
+
+.root .f-2 {
+  font-size: var(--a-2);
+}
+
+.root .f-2q {
+  font-size: var(--a-2q);
+}
+
+.root .f-2h {
+  font-size: var(--a-2h);
+}
+
+.root .f-2t {
+  font-size: var(--a-2t);
+}
+
+.root .f-3 {
+  font-size: var(--a-3);
+}
+
+.root .f-3q {
+  font-size: var(--a-3q);
+}
+
+.root .f-3h {
+  font-size: var(--a-3h);
+}
+
+.root .f-3t {
+  font-size: var(--a-3t);
+}
+
+.root .f-4 {
+  font-size: var(--a-4);
+}
+
+.root .f-4q {
+  font-size: var(--a-4q);
+}
+
+.root .f-4h {
+  font-size: var(--a-4h);
+}
+
+.root .f-4t {
+  font-size: var(--a-4t);
+}
+
+.root .f-5 {
+  font-size: var(--a-5);
+}
+
+.root .f-5q {
+  font-size: var(--a-5q);
+}
+
+.root .f-5h {
+  font-size: var(--a-5h);
+}
+
+.root .f-5t {
+  font-size: var(--a-5t);
+}
+
+.root .br-0 {
+  border-radius: var(--r-0);
+}
+
+.root .br-0q {
+  border-radius: var(--r-0q);
+}
+
+.root .br-0h {
+  border-radius: var(--r-0h);
+}
+
+.root .br-0t {
+  border-radius: var(--r-0t);
+}
+
+.root .br-1 {
+  border-radius: var(--r-1);
+}
+
+.root .br-1q {
+  border-radius: var(--r-1q);
+}
+
+.root .br-1h {
+  border-radius: var(--r-1h);
+}
+
+.root .br-1t {
+  border-radius: var(--r-1t);
+}
+
+.root .br-2 {
+  border-radius: var(--r-2);
+}
+
+.root .br-2q {
+  border-radius: var(--r-2q);
+}
+
+.root .br-2h {
+  border-radius: var(--r-2h);
+}
+
+.root .br-2t {
+  border-radius: var(--r-2t);
+}
+
+.root .br-3 {
+  border-radius: var(--r-3);
+}
+
+.root .br-3q {
+  border-radius: var(--r-3q);
+}
+
+.root .br-3h {
+  border-radius: var(--r-3h);
+}
+
+.root .br-3t {
+  border-radius: var(--r-3t);
+}
+
+.root .br-4 {
+  border-radius: var(--r-4);
+}
+
+.root .br-4q {
+  border-radius: var(--r-4q);
+}
+
+.root .br-4h {
+  border-radius: var(--r-4h);
+}
+
+.root .br-4t {
+  border-radius: var(--r-4t);
+}
+
+.root .br-5 {
+  border-radius: var(--r-5);
+}
+
+.root .br-5q {
+  border-radius: var(--r-5q);
+}
+
+.root .br-5h {
+  border-radius: var(--r-5h);
+}
+
+.root .br-5t {
+  border-radius: var(--r-5t);
+}
+
+.root .bw-0 {
+  border-width: var(--px-0);
+}
+
+.root .bw-0q {
+  border-width: var(--px-0q);
+}
+
+.root .bw-0h {
+  border-width: var(--px-0h);
+}
+
+.root .bw-0t {
+  border-width: var(--px-0t);
+}
+
+.root .bw-1 {
+  border-width: var(--px-1);
+}
+
+.root .bw-1q {
+  border-width: var(--px-1q);
+}
+
+.root .bw-1h {
+  border-width: var(--px-1h);
+}
+
+.root .bw-1t {
+  border-width: var(--px-1t);
+}
+
+.root .bw-2 {
+  border-width: var(--px-2);
+}
+
+.root .bw-2q {
+  border-width: var(--px-2q);
+}
+
+.root .bw-2h {
+  border-width: var(--px-2h);
+}
+
+.root .bw-2t {
+  border-width: var(--px-2t);
+}
+
+.root .bw-3 {
+  border-width: var(--px-3);
+}
+
+.root .bw-3q {
+  border-width: var(--px-3q);
+}
+
+.root .bw-3h {
+  border-width: var(--px-3h);
+}
+
+.root .bw-3t {
+  border-width: var(--px-3t);
+}
+
+.root .bw-4 {
+  border-width: var(--px-4);
+}
+
+.root .bw-4q {
+  border-width: var(--px-4q);
+}
+
+.root .bw-4h {
+  border-width: var(--px-4h);
+}
+
+.root .bw-4t {
+  border-width: var(--px-4t);
+}
+
+.root .bw-5 {
+  border-width: var(--px-5);
+}
+
+.root .bw-5q {
+  border-width: var(--px-5q);
+}
+
+.root .bw-5h {
+  border-width: var(--px-5h);
+}
+
+.root .bw-5t {
+  border-width: var(--px-5t);
+}
+
+.root .w-0 {
+  width: var(--r-0);
+}
+
+.root .w-0q {
+  width: var(--r-0q);
+}
+
+.root .w-0h {
+  width: var(--r-0h);
+}
+
+.root .w-0t {
+  width: var(--r-0t);
+}
+
+.root .w-1 {
+  width: var(--r-1);
+}
+
+.root .w-1q {
+  width: var(--r-1q);
+}
+
+.root .w-1h {
+  width: var(--r-1h);
+}
+
+.root .w-1t {
+  width: var(--r-1t);
+}
+
+.root .w-2 {
+  width: var(--r-2);
+}
+
+.root .w-2q {
+  width: var(--r-2q);
+}
+
+.root .w-2h {
+  width: var(--r-2h);
+}
+
+.root .w-2t {
+  width: var(--r-2t);
+}
+
+.root .w-3 {
+  width: var(--r-3);
+}
+
+.root .w-3q {
+  width: var(--r-3q);
+}
+
+.root .w-3h {
+  width: var(--r-3h);
+}
+
+.root .w-3t {
+  width: var(--r-3t);
+}
+
+.root .w-4 {
+  width: var(--r-4);
+}
+
+.root .w-4q {
+  width: var(--r-4q);
+}
+
+.root .w-4h {
+  width: var(--r-4h);
+}
+
+.root .w-4t {
+  width: var(--r-4t);
+}
+
+.root .w-5 {
+  width: var(--r-5);
+}
+
+.root .w-5q {
+  width: var(--r-5q);
+}
+
+.root .w-5h {
+  width: var(--r-5h);
+}
+
+.root .w-5t {
+  width: var(--r-5t);
+}
+
+.root .w-10 {
+  width: var(--r-10);
+}
+
+.root .w-15 {
+  width: var(--r-15);
+}
+
+.root .w-20 {
+  width: var(--r-20);
+}
+
+.root .w-25 {
+  width: var(--r-25);
+}
+
+.root .w-30 {
+  width: var(--r-30);
+}
+
+.root .w-35 {
+  width: var(--r-35);
+}
+
+.root .w-40 {
+  width: var(--r-40);
+}
+
+.root .w-45 {
+  width: var(--r-45);
+}
+
+.root .w-50 {
+  width: var(--r-50);
+}
+
+.root .h-0 {
+  height: var(--r-0);
+}
+
+.root .h-0q {
+  height: var(--r-0q);
+}
+
+.root .h-0h {
+  height: var(--r-0h);
+}
+
+.root .h-0t {
+  height: var(--r-0t);
+}
+
+.root .h-1 {
+  height: var(--r-1);
+}
+
+.root .h-1q {
+  height: var(--r-1q);
+}
+
+.root .h-1h {
+  height: var(--r-1h);
+}
+
+.root .h-1t {
+  height: var(--r-1t);
+}
+
+.root .h-2 {
+  height: var(--r-2);
+}
+
+.root .h-2q {
+  height: var(--r-2q);
+}
+
+.root .h-2h {
+  height: var(--r-2h);
+}
+
+.root .h-2t {
+  height: var(--r-2t);
+}
+
+.root .h-3 {
+  height: var(--r-3);
+}
+
+.root .h-3q {
+  height: var(--r-3q);
+}
+
+.root .h-3h {
+  height: var(--r-3h);
+}
+
+.root .h-3t {
+  height: var(--r-3t);
+}
+
+.root .h-4 {
+  height: var(--r-4);
+}
+
+.root .h-4q {
+  height: var(--r-4q);
+}
+
+.root .h-4h {
+  height: var(--r-4h);
+}
+
+.root .h-4t {
+  height: var(--r-4t);
+}
+
+.root .h-5 {
+  height: var(--r-5);
+}
+
+.root .h-5q {
+  height: var(--r-5q);
+}
+
+.root .h-5h {
+  height: var(--r-5h);
+}
+
+.root .h-5t {
+  height: var(--r-5t);
+}
+
+.root .sq-0 {
+  width: var(--r-0);
+  height: var(--r-0);
+}
+
+.root .sq-0q {
+  width: var(--r-0q);
+  height: var(--r-0q);
+}
+
+.root .sq-0h {
+  width: var(--r-0h);
+  height: var(--r-0h);
+}
+
+.root .sq-0t {
+  width: var(--r-0t);
+  height: var(--r-0t);
+}
+
+.root .sq-1 {
+  width: var(--r-1);
+  height: var(--r-1);
+}
+
+.root .sq-1q {
+  width: var(--r-1q);
+  height: var(--r-1q);
+}
+
+.root .sq-1h {
+  width: var(--r-1h);
+  height: var(--r-1h);
+}
+
+.root .sq-1t {
+  width: var(--r-1t);
+  height: var(--r-1t);
+}
+
+.root .sq-2 {
+  width: var(--r-2);
+  height: var(--r-2);
+}
+
+.root .sq-2q {
+  width: var(--r-2q);
+  height: var(--r-2q);
+}
+
+.root .sq-2h {
+  width: var(--r-2h);
+  height: var(--r-2h);
+}
+
+.root .sq-2t {
+  width: var(--r-2t);
+  height: var(--r-2t);
+}
+
+.root .sq-3 {
+  width: var(--r-3);
+  height: var(--r-3);
+}
+
+.root .sq-3q {
+  width: var(--r-3q);
+  height: var(--r-3q);
+}
+
+.root .sq-3h {
+  width: var(--r-3h);
+  height: var(--r-3h);
+}
+
+.root .sq-3t {
+  width: var(--r-3t);
+  height: var(--r-3t);
+}
+
+.root .sq-4 {
+  width: var(--r-4);
+  height: var(--r-4);
+}
+
+.root .sq-4q {
+  width: var(--r-4q);
+  height: var(--r-4q);
+}
+
+.root .sq-4h {
+  width: var(--r-4h);
+  height: var(--r-4h);
+}
+
+.root .sq-4t {
+  width: var(--r-4t);
+  height: var(--r-4t);
+}
+
+.root .sq-5 {
+  width: var(--r-5);
+  height: var(--r-5);
+}
+
+.root .sq-5q {
+  width: var(--r-5q);
+  height: var(--r-5q);
+}
+
+.root .sq-5h {
+  width: var(--r-5h);
+  height: var(--r-5h);
+}
+
+.root .sq-5t {
+  width: var(--r-5t);
+  height: var(--r-5t);
+}
+
+.root .m-0 {
+  margin: var(--r-0);
+}
+
+.root .m-0q {
+  margin: var(--r-0q);
+}
+
+.root .m-0h {
+  margin: var(--r-0h);
+}
+
+.root .m-0t {
+  margin: var(--r-0t);
+}
+
+.root .m-1 {
+  margin: var(--r-1);
+}
+
+.root .m-1q {
+  margin: var(--r-1q);
+}
+
+.root .m-1h {
+  margin: var(--r-1h);
+}
+
+.root .m-1t {
+  margin: var(--r-1t);
+}
+
+.root .m-2 {
+  margin: var(--r-2);
+}
+
+.root .m-2q {
+  margin: var(--r-2q);
+}
+
+.root .m-2h {
+  margin: var(--r-2h);
+}
+
+.root .m-2t {
+  margin: var(--r-2t);
+}
+
+.root .m-3 {
+  margin: var(--r-3);
+}
+
+.root .m-3q {
+  margin: var(--r-3q);
+}
+
+.root .m-3h {
+  margin: var(--r-3h);
+}
+
+.root .m-3t {
+  margin: var(--r-3t);
+}
+
+.root .m-4 {
+  margin: var(--r-4);
+}
+
+.root .m-4q {
+  margin: var(--r-4q);
+}
+
+.root .m-4h {
+  margin: var(--r-4h);
+}
+
+.root .m-4t {
+  margin: var(--r-4t);
+}
+
+.root .m-5 {
+  margin: var(--r-5);
+}
+
+.root .m-5q {
+  margin: var(--r-5q);
+}
+
+.root .m-5h {
+  margin: var(--r-5h);
+}
+
+.root .m-5t {
+  margin: var(--r-5t);
+}
+
+.root .m-x-0 {
+  margin-left: var(--r-0);
+  margin-right: var(--r-0);
+}
+
+.root .m-x-0q {
+  margin-left: var(--r-0q);
+  margin-right: var(--r-0q);
+}
+
+.root .m-x-0h {
+  margin-left: var(--r-0h);
+  margin-right: var(--r-0h);
+}
+
+.root .m-x-0t {
+  margin-left: var(--r-0t);
+  margin-right: var(--r-0t);
+}
+
+.root .m-x-1 {
+  margin-left: var(--r-1);
+  margin-right: var(--r-1);
+}
+
+.root .m-x-1q {
+  margin-left: var(--r-1q);
+  margin-right: var(--r-1q);
+}
+
+.root .m-x-1h {
+  margin-left: var(--r-1h);
+  margin-right: var(--r-1h);
+}
+
+.root .m-x-1t {
+  margin-left: var(--r-1t);
+  margin-right: var(--r-1t);
+}
+
+.root .m-x-2 {
+  margin-left: var(--r-2);
+  margin-right: var(--r-2);
+}
+
+.root .m-x-2q {
+  margin-left: var(--r-2q);
+  margin-right: var(--r-2q);
+}
+
+.root .m-x-2h {
+  margin-left: var(--r-2h);
+  margin-right: var(--r-2h);
+}
+
+.root .m-x-2t {
+  margin-left: var(--r-2t);
+  margin-right: var(--r-2t);
+}
+
+.root .m-x-3 {
+  margin-left: var(--r-3);
+  margin-right: var(--r-3);
+}
+
+.root .m-x-3q {
+  margin-left: var(--r-3q);
+  margin-right: var(--r-3q);
+}
+
+.root .m-x-3h {
+  margin-left: var(--r-3h);
+  margin-right: var(--r-3h);
+}
+
+.root .m-x-3t {
+  margin-left: var(--r-3t);
+  margin-right: var(--r-3t);
+}
+
+.root .m-x-4 {
+  margin-left: var(--r-4);
+  margin-right: var(--r-4);
+}
+
+.root .m-x-4q {
+  margin-left: var(--r-4q);
+  margin-right: var(--r-4q);
+}
+
+.root .m-x-4h {
+  margin-left: var(--r-4h);
+  margin-right: var(--r-4h);
+}
+
+.root .m-x-4t {
+  margin-left: var(--r-4t);
+  margin-right: var(--r-4t);
+}
+
+.root .m-x-5 {
+  margin-left: var(--r-5);
+  margin-right: var(--r-5);
+}
+
+.root .m-x-5q {
+  margin-left: var(--r-5q);
+  margin-right: var(--r-5q);
+}
+
+.root .m-x-5h {
+  margin-left: var(--r-5h);
+  margin-right: var(--r-5h);
+}
+
+.root .m-x-5t {
+  margin-left: var(--r-5t);
+  margin-right: var(--r-5t);
+}
+
+.root .m-y-0 {
+  margin-top: var(--r-0);
+  margin-bottom: var(--r-0);
+}
+
+.root .m-y-0q {
+  margin-top: var(--r-0q);
+  margin-bottom: var(--r-0q);
+}
+
+.root .m-y-0h {
+  margin-top: var(--r-0h);
+  margin-bottom: var(--r-0h);
+}
+
+.root .m-y-0t {
+  margin-top: var(--r-0t);
+  margin-bottom: var(--r-0t);
+}
+
+.root .m-y-1 {
+  margin-top: var(--r-1);
+  margin-bottom: var(--r-1);
+}
+
+.root .m-y-1q {
+  margin-top: var(--r-1q);
+  margin-bottom: var(--r-1q);
+}
+
+.root .m-y-1h {
+  margin-top: var(--r-1h);
+  margin-bottom: var(--r-1h);
+}
+
+.root .m-y-1t {
+  margin-top: var(--r-1t);
+  margin-bottom: var(--r-1t);
+}
+
+.root .m-y-2 {
+  margin-top: var(--r-2);
+  margin-bottom: var(--r-2);
+}
+
+.root .m-y-2q {
+  margin-top: var(--r-2q);
+  margin-bottom: var(--r-2q);
+}
+
+.root .m-y-2h {
+  margin-top: var(--r-2h);
+  margin-bottom: var(--r-2h);
+}
+
+.root .m-y-2t {
+  margin-top: var(--r-2t);
+  margin-bottom: var(--r-2t);
+}
+
+.root .m-y-3 {
+  margin-top: var(--r-3);
+  margin-bottom: var(--r-3);
+}
+
+.root .m-y-3q {
+  margin-top: var(--r-3q);
+  margin-bottom: var(--r-3q);
+}
+
+.root .m-y-3h {
+  margin-top: var(--r-3h);
+  margin-bottom: var(--r-3h);
+}
+
+.root .m-y-3t {
+  margin-top: var(--r-3t);
+  margin-bottom: var(--r-3t);
+}
+
+.root .m-y-4 {
+  margin-top: var(--r-4);
+  margin-bottom: var(--r-4);
+}
+
+.root .m-y-4q {
+  margin-top: var(--r-4q);
+  margin-bottom: var(--r-4q);
+}
+
+.root .m-y-4h {
+  margin-top: var(--r-4h);
+  margin-bottom: var(--r-4h);
+}
+
+.root .m-y-4t {
+  margin-top: var(--r-4t);
+  margin-bottom: var(--r-4t);
+}
+
+.root .m-y-5 {
+  margin-top: var(--r-5);
+  margin-bottom: var(--r-5);
+}
+
+.root .m-y-5q {
+  margin-top: var(--r-5q);
+  margin-bottom: var(--r-5q);
+}
+
+.root .m-y-5h {
+  margin-top: var(--r-5h);
+  margin-bottom: var(--r-5h);
+}
+
+.root .m-y-5t {
+  margin-top: var(--r-5t);
+  margin-bottom: var(--r-5t);
+}
+
+.root .m-t-0 {
+  margin-top: var(--r-0);
+}
+
+.root .m-t-0q {
+  margin-top: var(--r-0q);
+}
+
+.root .m-t-0h {
+  margin-top: var(--r-0h);
+}
+
+.root .m-t-0t {
+  margin-top: var(--r-0t);
+}
+
+.root .m-t-1 {
+  margin-top: var(--r-1);
+}
+
+.root .m-t-1q {
+  margin-top: var(--r-1q);
+}
+
+.root .m-t-1h {
+  margin-top: var(--r-1h);
+}
+
+.root .m-t-1t {
+  margin-top: var(--r-1t);
+}
+
+.root .m-t-2 {
+  margin-top: var(--r-2);
+}
+
+.root .m-t-2q {
+  margin-top: var(--r-2q);
+}
+
+.root .m-t-2h {
+  margin-top: var(--r-2h);
+}
+
+.root .m-t-2t {
+  margin-top: var(--r-2t);
+}
+
+.root .m-t-3 {
+  margin-top: var(--r-3);
+}
+
+.root .m-t-3q {
+  margin-top: var(--r-3q);
+}
+
+.root .m-t-3h {
+  margin-top: var(--r-3h);
+}
+
+.root .m-t-3t {
+  margin-top: var(--r-3t);
+}
+
+.root .m-t-4 {
+  margin-top: var(--r-4);
+}
+
+.root .m-t-4q {
+  margin-top: var(--r-4q);
+}
+
+.root .m-t-4h {
+  margin-top: var(--r-4h);
+}
+
+.root .m-t-4t {
+  margin-top: var(--r-4t);
+}
+
+.root .m-t-5 {
+  margin-top: var(--r-5);
+}
+
+.root .m-t-5q {
+  margin-top: var(--r-5q);
+}
+
+.root .m-t-5h {
+  margin-top: var(--r-5h);
+}
+
+.root .m-t-5t {
+  margin-top: var(--r-5t);
+}
+
+.root .m-r-0 {
+  margin-right: var(--r-0);
+}
+
+.root .m-r-0q {
+  margin-right: var(--r-0q);
+}
+
+.root .m-r-0h {
+  margin-right: var(--r-0h);
+}
+
+.root .m-r-0t {
+  margin-right: var(--r-0t);
+}
+
+.root .m-r-1 {
+  margin-right: var(--r-1);
+}
+
+.root .m-r-1q {
+  margin-right: var(--r-1q);
+}
+
+.root .m-r-1h {
+  margin-right: var(--r-1h);
+}
+
+.root .m-r-1t {
+  margin-right: var(--r-1t);
+}
+
+.root .m-r-2 {
+  margin-right: var(--r-2);
+}
+
+.root .m-r-2q {
+  margin-right: var(--r-2q);
+}
+
+.root .m-r-2h {
+  margin-right: var(--r-2h);
+}
+
+.root .m-r-2t {
+  margin-right: var(--r-2t);
+}
+
+.root .m-r-3 {
+  margin-right: var(--r-3);
+}
+
+.root .m-r-3q {
+  margin-right: var(--r-3q);
+}
+
+.root .m-r-3h {
+  margin-right: var(--r-3h);
+}
+
+.root .m-r-3t {
+  margin-right: var(--r-3t);
+}
+
+.root .m-r-4 {
+  margin-right: var(--r-4);
+}
+
+.root .m-r-4q {
+  margin-right: var(--r-4q);
+}
+
+.root .m-r-4h {
+  margin-right: var(--r-4h);
+}
+
+.root .m-r-4t {
+  margin-right: var(--r-4t);
+}
+
+.root .m-r-5 {
+  margin-right: var(--r-5);
+}
+
+.root .m-r-5q {
+  margin-right: var(--r-5q);
+}
+
+.root .m-r-5h {
+  margin-right: var(--r-5h);
+}
+
+.root .m-r-5t {
+  margin-right: var(--r-5t);
+}
+
+.root .m-b-0 {
+  margin-bottom: var(--r-0);
+}
+
+.root .m-b-0q {
+  margin-bottom: var(--r-0q);
+}
+
+.root .m-b-0h {
+  margin-bottom: var(--r-0h);
+}
+
+.root .m-b-0t {
+  margin-bottom: var(--r-0t);
+}
+
+.root .m-b-1 {
+  margin-bottom: var(--r-1);
+}
+
+.root .m-b-1q {
+  margin-bottom: var(--r-1q);
+}
+
+.root .m-b-1h {
+  margin-bottom: var(--r-1h);
+}
+
+.root .m-b-1t {
+  margin-bottom: var(--r-1t);
+}
+
+.root .m-b-2 {
+  margin-bottom: var(--r-2);
+}
+
+.root .m-b-2q {
+  margin-bottom: var(--r-2q);
+}
+
+.root .m-b-2h {
+  margin-bottom: var(--r-2h);
+}
+
+.root .m-b-2t {
+  margin-bottom: var(--r-2t);
+}
+
+.root .m-b-3 {
+  margin-bottom: var(--r-3);
+}
+
+.root .m-b-3q {
+  margin-bottom: var(--r-3q);
+}
+
+.root .m-b-3h {
+  margin-bottom: var(--r-3h);
+}
+
+.root .m-b-3t {
+  margin-bottom: var(--r-3t);
+}
+
+.root .m-b-4 {
+  margin-bottom: var(--r-4);
+}
+
+.root .m-b-4q {
+  margin-bottom: var(--r-4q);
+}
+
+.root .m-b-4h {
+  margin-bottom: var(--r-4h);
+}
+
+.root .m-b-4t {
+  margin-bottom: var(--r-4t);
+}
+
+.root .m-b-5 {
+  margin-bottom: var(--r-5);
+}
+
+.root .m-b-5q {
+  margin-bottom: var(--r-5q);
+}
+
+.root .m-b-5h {
+  margin-bottom: var(--r-5h);
+}
+
+.root .m-b-5t {
+  margin-bottom: var(--r-5t);
+}
+
+.root .m-l-0 {
+  margin-left: var(--r-0);
+}
+
+.root .m-l-0q {
+  margin-left: var(--r-0q);
+}
+
+.root .m-l-0h {
+  margin-left: var(--r-0h);
+}
+
+.root .m-l-0t {
+  margin-left: var(--r-0t);
+}
+
+.root .m-l-1 {
+  margin-left: var(--r-1);
+}
+
+.root .m-l-1q {
+  margin-left: var(--r-1q);
+}
+
+.root .m-l-1h {
+  margin-left: var(--r-1h);
+}
+
+.root .m-l-1t {
+  margin-left: var(--r-1t);
+}
+
+.root .m-l-2 {
+  margin-left: var(--r-2);
+}
+
+.root .m-l-2q {
+  margin-left: var(--r-2q);
+}
+
+.root .m-l-2h {
+  margin-left: var(--r-2h);
+}
+
+.root .m-l-2t {
+  margin-left: var(--r-2t);
+}
+
+.root .m-l-3 {
+  margin-left: var(--r-3);
+}
+
+.root .m-l-3q {
+  margin-left: var(--r-3q);
+}
+
+.root .m-l-3h {
+  margin-left: var(--r-3h);
+}
+
+.root .m-l-3t {
+  margin-left: var(--r-3t);
+}
+
+.root .m-l-4 {
+  margin-left: var(--r-4);
+}
+
+.root .m-l-4q {
+  margin-left: var(--r-4q);
+}
+
+.root .m-l-4h {
+  margin-left: var(--r-4h);
+}
+
+.root .m-l-4t {
+  margin-left: var(--r-4t);
+}
+
+.root .m-l-5 {
+  margin-left: var(--r-5);
+}
+
+.root .m-l-5q {
+  margin-left: var(--r-5q);
+}
+
+.root .m-l-5h {
+  margin-left: var(--r-5h);
+}
+
+.root .m-l-5t {
+  margin-left: var(--r-5t);
+}
+
+.root .p-0 {
+  padding: var(--r-0);
+}
+
+.root .p-0q {
+  padding: var(--r-0q);
+}
+
+.root .p-0h {
+  padding: var(--r-0h);
+}
+
+.root .p-0t {
+  padding: var(--r-0t);
+}
+
+.root .p-1 {
+  padding: var(--r-1);
+}
+
+.root .p-1q {
+  padding: var(--r-1q);
+}
+
+.root .p-1h {
+  padding: var(--r-1h);
+}
+
+.root .p-1t {
+  padding: var(--r-1t);
+}
+
+.root .p-2 {
+  padding: var(--r-2);
+}
+
+.root .p-2q {
+  padding: var(--r-2q);
+}
+
+.root .p-2h {
+  padding: var(--r-2h);
+}
+
+.root .p-2t {
+  padding: var(--r-2t);
+}
+
+.root .p-3 {
+  padding: var(--r-3);
+}
+
+.root .p-3q {
+  padding: var(--r-3q);
+}
+
+.root .p-3h {
+  padding: var(--r-3h);
+}
+
+.root .p-3t {
+  padding: var(--r-3t);
+}
+
+.root .p-4 {
+  padding: var(--r-4);
+}
+
+.root .p-4q {
+  padding: var(--r-4q);
+}
+
+.root .p-4h {
+  padding: var(--r-4h);
+}
+
+.root .p-4t {
+  padding: var(--r-4t);
+}
+
+.root .p-5 {
+  padding: var(--r-5);
+}
+
+.root .p-5q {
+  padding: var(--r-5q);
+}
+
+.root .p-5h {
+  padding: var(--r-5h);
+}
+
+.root .p-5t {
+  padding: var(--r-5t);
+}
+
+.root .p-x-0 {
+  padding-left: var(--r-0);
+  padding-right: var(--r-0);
+}
+
+.root .p-x-0q {
+  padding-left: var(--r-0q);
+  padding-right: var(--r-0q);
+}
+
+.root .p-x-0h {
+  padding-left: var(--r-0h);
+  padding-right: var(--r-0h);
+}
+
+.root .p-x-0t {
+  padding-left: var(--r-0t);
+  padding-right: var(--r-0t);
+}
+
+.root .p-x-1 {
+  padding-left: var(--r-1);
+  padding-right: var(--r-1);
+}
+
+.root .p-x-1q {
+  padding-left: var(--r-1q);
+  padding-right: var(--r-1q);
+}
+
+.root .p-x-1h {
+  padding-left: var(--r-1h);
+  padding-right: var(--r-1h);
+}
+
+.root .p-x-1t {
+  padding-left: var(--r-1t);
+  padding-right: var(--r-1t);
+}
+
+.root .p-x-2 {
+  padding-left: var(--r-2);
+  padding-right: var(--r-2);
+}
+
+.root .p-x-2q {
+  padding-left: var(--r-2q);
+  padding-right: var(--r-2q);
+}
+
+.root .p-x-2h {
+  padding-left: var(--r-2h);
+  padding-right: var(--r-2h);
+}
+
+.root .p-x-2t {
+  padding-left: var(--r-2t);
+  padding-right: var(--r-2t);
+}
+
+.root .p-x-3 {
+  padding-left: var(--r-3);
+  padding-right: var(--r-3);
+}
+
+.root .p-x-3q {
+  padding-left: var(--r-3q);
+  padding-right: var(--r-3q);
+}
+
+.root .p-x-3h {
+  padding-left: var(--r-3h);
+  padding-right: var(--r-3h);
+}
+
+.root .p-x-3t {
+  padding-left: var(--r-3t);
+  padding-right: var(--r-3t);
+}
+
+.root .p-x-4 {
+  padding-left: var(--r-4);
+  padding-right: var(--r-4);
+}
+
+.root .p-x-4q {
+  padding-left: var(--r-4q);
+  padding-right: var(--r-4q);
+}
+
+.root .p-x-4h {
+  padding-left: var(--r-4h);
+  padding-right: var(--r-4h);
+}
+
+.root .p-x-4t {
+  padding-left: var(--r-4t);
+  padding-right: var(--r-4t);
+}
+
+.root .p-x-5 {
+  padding-left: var(--r-5);
+  padding-right: var(--r-5);
+}
+
+.root .p-x-5q {
+  padding-left: var(--r-5q);
+  padding-right: var(--r-5q);
+}
+
+.root .p-x-5h {
+  padding-left: var(--r-5h);
+  padding-right: var(--r-5h);
+}
+
+.root .p-x-5t {
+  padding-left: var(--r-5t);
+  padding-right: var(--r-5t);
+}
+
+.root .p-y-0 {
+  padding-top: var(--r-0);
+  padding-bottom: var(--r-0);
+}
+
+.root .p-y-0q {
+  padding-top: var(--r-0q);
+  padding-bottom: var(--r-0q);
+}
+
+.root .p-y-0h {
+  padding-top: var(--r-0h);
+  padding-bottom: var(--r-0h);
+}
+
+.root .p-y-0t {
+  padding-top: var(--r-0t);
+  padding-bottom: var(--r-0t);
+}
+
+.root .p-y-1 {
+  padding-top: var(--r-1);
+  padding-bottom: var(--r-1);
+}
+
+.root .p-y-1q {
+  padding-top: var(--r-1q);
+  padding-bottom: var(--r-1q);
+}
+
+.root .p-y-1h {
+  padding-top: var(--r-1h);
+  padding-bottom: var(--r-1h);
+}
+
+.root .p-y-1t {
+  padding-top: var(--r-1t);
+  padding-bottom: var(--r-1t);
+}
+
+.root .p-y-2 {
+  padding-top: var(--r-2);
+  padding-bottom: var(--r-2);
+}
+
+.root .p-y-2q {
+  padding-top: var(--r-2q);
+  padding-bottom: var(--r-2q);
+}
+
+.root .p-y-2h {
+  padding-top: var(--r-2h);
+  padding-bottom: var(--r-2h);
+}
+
+.root .p-y-2t {
+  padding-top: var(--r-2t);
+  padding-bottom: var(--r-2t);
+}
+
+.root .p-y-3 {
+  padding-top: var(--r-3);
+  padding-bottom: var(--r-3);
+}
+
+.root .p-y-3q {
+  padding-top: var(--r-3q);
+  padding-bottom: var(--r-3q);
+}
+
+.root .p-y-3h {
+  padding-top: var(--r-3h);
+  padding-bottom: var(--r-3h);
+}
+
+.root .p-y-3t {
+  padding-top: var(--r-3t);
+  padding-bottom: var(--r-3t);
+}
+
+.root .p-y-4 {
+  padding-top: var(--r-4);
+  padding-bottom: var(--r-4);
+}
+
+.root .p-y-4q {
+  padding-top: var(--r-4q);
+  padding-bottom: var(--r-4q);
+}
+
+.root .p-y-4h {
+  padding-top: var(--r-4h);
+  padding-bottom: var(--r-4h);
+}
+
+.root .p-y-4t {
+  padding-top: var(--r-4t);
+  padding-bottom: var(--r-4t);
+}
+
+.root .p-y-5 {
+  padding-top: var(--r-5);
+  padding-bottom: var(--r-5);
+}
+
+.root .p-y-5q {
+  padding-top: var(--r-5q);
+  padding-bottom: var(--r-5q);
+}
+
+.root .p-y-5h {
+  padding-top: var(--r-5h);
+  padding-bottom: var(--r-5h);
+}
+
+.root .p-y-5t {
+  padding-top: var(--r-5t);
+  padding-bottom: var(--r-5t);
+}
+
+.root .p-t-0 {
+  padding-top: var(--r-0);
+}
+
+.root .p-t-0q {
+  padding-top: var(--r-0q);
+}
+
+.root .p-t-0h {
+  padding-top: var(--r-0h);
+}
+
+.root .p-t-0t {
+  padding-top: var(--r-0t);
+}
+
+.root .p-t-1 {
+  padding-top: var(--r-1);
+}
+
+.root .p-t-1q {
+  padding-top: var(--r-1q);
+}
+
+.root .p-t-1h {
+  padding-top: var(--r-1h);
+}
+
+.root .p-t-1t {
+  padding-top: var(--r-1t);
+}
+
+.root .p-t-2 {
+  padding-top: var(--r-2);
+}
+
+.root .p-t-2q {
+  padding-top: var(--r-2q);
+}
+
+.root .p-t-2h {
+  padding-top: var(--r-2h);
+}
+
+.root .p-t-2t {
+  padding-top: var(--r-2t);
+}
+
+.root .p-t-3 {
+  padding-top: var(--r-3);
+}
+
+.root .p-t-3q {
+  padding-top: var(--r-3q);
+}
+
+.root .p-t-3h {
+  padding-top: var(--r-3h);
+}
+
+.root .p-t-3t {
+  padding-top: var(--r-3t);
+}
+
+.root .p-t-4 {
+  padding-top: var(--r-4);
+}
+
+.root .p-t-4q {
+  padding-top: var(--r-4q);
+}
+
+.root .p-t-4h {
+  padding-top: var(--r-4h);
+}
+
+.root .p-t-4t {
+  padding-top: var(--r-4t);
+}
+
+.root .p-t-5 {
+  padding-top: var(--r-5);
+}
+
+.root .p-t-5q {
+  padding-top: var(--r-5q);
+}
+
+.root .p-t-5h {
+  padding-top: var(--r-5h);
+}
+
+.root .p-t-5t {
+  padding-top: var(--r-5t);
+}
+
+.root .p-r-0 {
+  padding-right: var(--r-0);
+}
+
+.root .p-r-0q {
+  padding-right: var(--r-0q);
+}
+
+.root .p-r-0h {
+  padding-right: var(--r-0h);
+}
+
+.root .p-r-0t {
+  padding-right: var(--r-0t);
+}
+
+.root .p-r-1 {
+  padding-right: var(--r-1);
+}
+
+.root .p-r-1q {
+  padding-right: var(--r-1q);
+}
+
+.root .p-r-1h {
+  padding-right: var(--r-1h);
+}
+
+.root .p-r-1t {
+  padding-right: var(--r-1t);
+}
+
+.root .p-r-2 {
+  padding-right: var(--r-2);
+}
+
+.root .p-r-2q {
+  padding-right: var(--r-2q);
+}
+
+.root .p-r-2h {
+  padding-right: var(--r-2h);
+}
+
+.root .p-r-2t {
+  padding-right: var(--r-2t);
+}
+
+.root .p-r-3 {
+  padding-right: var(--r-3);
+}
+
+.root .p-r-3q {
+  padding-right: var(--r-3q);
+}
+
+.root .p-r-3h {
+  padding-right: var(--r-3h);
+}
+
+.root .p-r-3t {
+  padding-right: var(--r-3t);
+}
+
+.root .p-r-4 {
+  padding-right: var(--r-4);
+}
+
+.root .p-r-4q {
+  padding-right: var(--r-4q);
+}
+
+.root .p-r-4h {
+  padding-right: var(--r-4h);
+}
+
+.root .p-r-4t {
+  padding-right: var(--r-4t);
+}
+
+.root .p-r-5 {
+  padding-right: var(--r-5);
+}
+
+.root .p-r-5q {
+  padding-right: var(--r-5q);
+}
+
+.root .p-r-5h {
+  padding-right: var(--r-5h);
+}
+
+.root .p-r-5t {
+  padding-right: var(--r-5t);
+}
+
+.root .p-b-0 {
+  padding-bottom: var(--r-0);
+}
+
+.root .p-b-0q {
+  padding-bottom: var(--r-0q);
+}
+
+.root .p-b-0h {
+  padding-bottom: var(--r-0h);
+}
+
+.root .p-b-0t {
+  padding-bottom: var(--r-0t);
+}
+
+.root .p-b-1 {
+  padding-bottom: var(--r-1);
+}
+
+.root .p-b-1q {
+  padding-bottom: var(--r-1q);
+}
+
+.root .p-b-1h {
+  padding-bottom: var(--r-1h);
+}
+
+.root .p-b-1t {
+  padding-bottom: var(--r-1t);
+}
+
+.root .p-b-2 {
+  padding-bottom: var(--r-2);
+}
+
+.root .p-b-2q {
+  padding-bottom: var(--r-2q);
+}
+
+.root .p-b-2h {
+  padding-bottom: var(--r-2h);
+}
+
+.root .p-b-2t {
+  padding-bottom: var(--r-2t);
+}
+
+.root .p-b-3 {
+  padding-bottom: var(--r-3);
+}
+
+.root .p-b-3q {
+  padding-bottom: var(--r-3q);
+}
+
+.root .p-b-3h {
+  padding-bottom: var(--r-3h);
+}
+
+.root .p-b-3t {
+  padding-bottom: var(--r-3t);
+}
+
+.root .p-b-4 {
+  padding-bottom: var(--r-4);
+}
+
+.root .p-b-4q {
+  padding-bottom: var(--r-4q);
+}
+
+.root .p-b-4h {
+  padding-bottom: var(--r-4h);
+}
+
+.root .p-b-4t {
+  padding-bottom: var(--r-4t);
+}
+
+.root .p-b-5 {
+  padding-bottom: var(--r-5);
+}
+
+.root .p-b-5q {
+  padding-bottom: var(--r-5q);
+}
+
+.root .p-b-5h {
+  padding-bottom: var(--r-5h);
+}
+
+.root .p-b-5t {
+  padding-bottom: var(--r-5t);
+}
+
+.root .p-l-0 {
+  padding-left: var(--r-0);
+}
+
+.root .p-l-0q {
+  padding-left: var(--r-0q);
+}
+
+.root .p-l-0h {
+  padding-left: var(--r-0h);
+}
+
+.root .p-l-0t {
+  padding-left: var(--r-0t);
+}
+
+.root .p-l-1 {
+  padding-left: var(--r-1);
+}
+
+.root .p-l-1q {
+  padding-left: var(--r-1q);
+}
+
+.root .p-l-1h {
+  padding-left: var(--r-1h);
+}
+
+.root .p-l-1t {
+  padding-left: var(--r-1t);
+}
+
+.root .p-l-2 {
+  padding-left: var(--r-2);
+}
+
+.root .p-l-2q {
+  padding-left: var(--r-2q);
+}
+
+.root .p-l-2h {
+  padding-left: var(--r-2h);
+}
+
+.root .p-l-2t {
+  padding-left: var(--r-2t);
+}
+
+.root .p-l-3 {
+  padding-left: var(--r-3);
+}
+
+.root .p-l-3q {
+  padding-left: var(--r-3q);
+}
+
+.root .p-l-3h {
+  padding-left: var(--r-3h);
+}
+
+.root .p-l-3t {
+  padding-left: var(--r-3t);
+}
+
+.root .p-l-4 {
+  padding-left: var(--r-4);
+}
+
+.root .p-l-4q {
+  padding-left: var(--r-4q);
+}
+
+.root .p-l-4h {
+  padding-left: var(--r-4h);
+}
+
+.root .p-l-4t {
+  padding-left: var(--r-4t);
+}
+
+.root .p-l-5 {
+  padding-left: var(--r-5);
+}
+
+.root .p-l-5q {
+  padding-left: var(--r-5q);
+}
+
+.root .p-l-5h {
+  padding-left: var(--r-5h);
+}
+
+.root .p-l-5t {
+  padding-left: var(--r-5t);
+}
+
+.root .f-n {
+  font-weight: 400;
+}
+
+.root .f-b {
+  font-weight: 800;
+}
+
+.root .mw-100 {
+  max-width: 100%;
+}
+
+.root .w-100 {
+  width: 100%;
+}
+
+.root .mh-100 {
+  max-height: 100%;
+}
+
+.root .h-100 {
+  height: 100%;
+}
+
+.root .p-rel {
+  position: relative;
+}
+
+.root .p-abs {
+  position: absolute;
+}
+
+img.res-q {
+  width: 25%;
+  height: auto;
+}
+
+img.res-h {
+  width: 50%;
+  height: auto;
+}
+
+img.res-t {
+  width: 75%;
+  height: auto;
+}
+
+img.res-f {
+  width: 100%;
+  height: auto;
+}
+
+.txt-j {
+  text-align: justify;
+}
+
+.txt-c {
+  text-align: center;
+}
+
+.txt-dec-none {
+  text-decoration: none;
+}
+
+.ov-v {
+  overflow: visible;
+}
+
+.ov-a {
+  overflow: auto;
+}
+
+.d-none {
+  display: none;
+}
+
+.bs-solid {
+  border-style: solid;
+}
+
+.ellip {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+tr:not(:hover) .show-on-row-mouse-over {
+  display: none;
+}
+
+.root, .flx {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.root.i, .flx.i {
+  display: inline-flex;
+}
+
+.root.row, .flx.row {
+  flex-direction: row;
+}
+
+.root.row.rev, .flx.row.rev {
+  flex-direction: row-reverse;
+}
+
+.root.col, .flx.col {
+  flex-direction: column;
+}
+
+.root.col.rev, .flx.col.rev {
+  flex-direction: column-reverse;
+}
+
+.root.rap, .flx.rap {
+  flex-wrap: wrap;
+}
+
+.root.child-no-shrink > *, .flx.child-no-shrink > * {
+  flex-shrink: 0;
+}
+
+.root.jc-s, .flx.jc-s {
+  justify-content: flex-start;
+}
+
+.root.jc-e, .flx.jc-e {
+  justify-content: flex-end;
+}
+
+.root.jc-c, .flx.jc-c {
+  justify-content: center;
+}
+
+.root.jc-sb, .flx.jc-sb {
+  justify-content: space-between;
+}
+
+.root.jc-sa, .flx.jc-sa {
+  justify-content: space-around;
+}
+
+.root.jc-se, .flx.jc-se {
+  justify-content: space-evenly;
+}
+
+.root.jc-stretch, .flx.jc-stretch {
+  justify-content: stretch;
+}
+
+.root.jc-stretch > *, .flx.jc-stretch > * {
+  flex-grow: 1;
+}
+
+.root.ai-s, .flx.ai-s {
+  align-items: flex-start;
+}
+
+.root.ai-e, .flx.ai-e {
+  align-items: flex-end;
+}
+
+.root.ai-c, .flx.ai-c {
+  align-items: center;
+}
+
+.root.ai-b, .flx.ai-b {
+  align-items: baseline;
+}
+
+.root.ai-stretch, .flx.ai-stretch {
+  align-items: stretch;
+}
+
+.root.ac-s, .flx.ac-s {
+  align-content: flex-start;
+}
+
+.root.ac-e, .flx.ac-e {
+  align-content: flex-end;
+}
+
+.root.ac-c, .flx.ac-c {
+  align-content: center;
+}
+
+.root.ac-sb, .flx.ac-sb {
+  align-content: space-between;
+}
+
+.root.ac-sa, .flx.ac-sa {
+  align-content: space-around;
+}
+
+.root.ac-se, .flx.ac-se {
+  align-content: space-evenly;
+}
+
+.root.ac-stretch, .flx.ac-stretch {
+  align-content: stretch;
+}
+
+.root.g-0, .flx.g-0 {
+  gap: var(--r-0);
+}
+
+.root.g-0q, .flx.g-0q {
+  gap: var(--r-0q);
+}
+
+.root.g-0h, .flx.g-0h {
+  gap: var(--r-0h);
+}
+
+.root.g-0t, .flx.g-0t {
+  gap: var(--r-0t);
+}
+
+.root.g-1, .flx.g-1 {
+  gap: var(--r-1);
+}
+
+.root.g-1q, .flx.g-1q {
+  gap: var(--r-1q);
+}
+
+.root.g-1h, .flx.g-1h {
+  gap: var(--r-1h);
+}
+
+.root.g-1t, .flx.g-1t {
+  gap: var(--r-1t);
+}
+
+.root.g-2, .flx.g-2 {
+  gap: var(--r-2);
+}
+
+.root.g-2q, .flx.g-2q {
+  gap: var(--r-2q);
+}
+
+.root.g-2h, .flx.g-2h {
+  gap: var(--r-2h);
+}
+
+.root.g-2t, .flx.g-2t {
+  gap: var(--r-2t);
+}
+
+.root.g-3, .flx.g-3 {
+  gap: var(--r-3);
+}
+
+.root.g-3q, .flx.g-3q {
+  gap: var(--r-3q);
+}
+
+.root.g-3h, .flx.g-3h {
+  gap: var(--r-3h);
+}
+
+.root.g-3t, .flx.g-3t {
+  gap: var(--r-3t);
+}
+
+.root.g-4, .flx.g-4 {
+  gap: var(--r-4);
+}
+
+.root.g-4q, .flx.g-4q {
+  gap: var(--r-4q);
+}
+
+.root.g-4h, .flx.g-4h {
+  gap: var(--r-4h);
+}
+
+.root.g-4t, .flx.g-4t {
+  gap: var(--r-4t);
+}
+
+.root.g-5, .flx.g-5 {
+  gap: var(--r-5);
+}
+
+.root.g-5q, .flx.g-5q {
+  gap: var(--r-5q);
+}
+
+.root.g-5h, .flx.g-5h {
+  gap: var(--r-5h);
+}
+
+.root.g-5t, .flx.g-5t {
+  gap: var(--r-5t);
+}
+
+.root.g-r-0, .flx.g-r-0 {
+  row-gap: var(--r-0);
+}
+
+.root.g-r-0q, .flx.g-r-0q {
+  row-gap: var(--r-0q);
+}
+
+.root.g-r-0h, .flx.g-r-0h {
+  row-gap: var(--r-0h);
+}
+
+.root.g-r-0t, .flx.g-r-0t {
+  row-gap: var(--r-0t);
+}
+
+.root.g-r-1, .flx.g-r-1 {
+  row-gap: var(--r-1);
+}
+
+.root.g-r-1q, .flx.g-r-1q {
+  row-gap: var(--r-1q);
+}
+
+.root.g-r-1h, .flx.g-r-1h {
+  row-gap: var(--r-1h);
+}
+
+.root.g-r-1t, .flx.g-r-1t {
+  row-gap: var(--r-1t);
+}
+
+.root.g-r-2, .flx.g-r-2 {
+  row-gap: var(--r-2);
+}
+
+.root.g-r-2q, .flx.g-r-2q {
+  row-gap: var(--r-2q);
+}
+
+.root.g-r-2h, .flx.g-r-2h {
+  row-gap: var(--r-2h);
+}
+
+.root.g-r-2t, .flx.g-r-2t {
+  row-gap: var(--r-2t);
+}
+
+.root.g-r-3, .flx.g-r-3 {
+  row-gap: var(--r-3);
+}
+
+.root.g-r-3q, .flx.g-r-3q {
+  row-gap: var(--r-3q);
+}
+
+.root.g-r-3h, .flx.g-r-3h {
+  row-gap: var(--r-3h);
+}
+
+.root.g-r-3t, .flx.g-r-3t {
+  row-gap: var(--r-3t);
+}
+
+.root.g-r-4, .flx.g-r-4 {
+  row-gap: var(--r-4);
+}
+
+.root.g-r-4q, .flx.g-r-4q {
+  row-gap: var(--r-4q);
+}
+
+.root.g-r-4h, .flx.g-r-4h {
+  row-gap: var(--r-4h);
+}
+
+.root.g-r-4t, .flx.g-r-4t {
+  row-gap: var(--r-4t);
+}
+
+.root.g-r-5, .flx.g-r-5 {
+  row-gap: var(--r-5);
+}
+
+.root.g-r-5q, .flx.g-r-5q {
+  row-gap: var(--r-5q);
+}
+
+.root.g-r-5h, .flx.g-r-5h {
+  row-gap: var(--r-5h);
+}
+
+.root.g-r-5t, .flx.g-r-5t {
+  row-gap: var(--r-5t);
+}
+
+.root.g-c-0, .flx.g-c-0 {
+  column-gap: var(--r-0);
+}
+
+.root.g-c-0q, .flx.g-c-0q {
+  column-gap: var(--r-0q);
+}
+
+.root.g-c-0h, .flx.g-c-0h {
+  column-gap: var(--r-0h);
+}
+
+.root.g-c-0t, .flx.g-c-0t {
+  column-gap: var(--r-0t);
+}
+
+.root.g-c-1, .flx.g-c-1 {
+  column-gap: var(--r-1);
+}
+
+.root.g-c-1q, .flx.g-c-1q {
+  column-gap: var(--r-1q);
+}
+
+.root.g-c-1h, .flx.g-c-1h {
+  column-gap: var(--r-1h);
+}
+
+.root.g-c-1t, .flx.g-c-1t {
+  column-gap: var(--r-1t);
+}
+
+.root.g-c-2, .flx.g-c-2 {
+  column-gap: var(--r-2);
+}
+
+.root.g-c-2q, .flx.g-c-2q {
+  column-gap: var(--r-2q);
+}
+
+.root.g-c-2h, .flx.g-c-2h {
+  column-gap: var(--r-2h);
+}
+
+.root.g-c-2t, .flx.g-c-2t {
+  column-gap: var(--r-2t);
+}
+
+.root.g-c-3, .flx.g-c-3 {
+  column-gap: var(--r-3);
+}
+
+.root.g-c-3q, .flx.g-c-3q {
+  column-gap: var(--r-3q);
+}
+
+.root.g-c-3h, .flx.g-c-3h {
+  column-gap: var(--r-3h);
+}
+
+.root.g-c-3t, .flx.g-c-3t {
+  column-gap: var(--r-3t);
+}
+
+.root.g-c-4, .flx.g-c-4 {
+  column-gap: var(--r-4);
+}
+
+.root.g-c-4q, .flx.g-c-4q {
+  column-gap: var(--r-4q);
+}
+
+.root.g-c-4h, .flx.g-c-4h {
+  column-gap: var(--r-4h);
+}
+
+.root.g-c-4t, .flx.g-c-4t {
+  column-gap: var(--r-4t);
+}
+
+.root.g-c-5, .flx.g-c-5 {
+  column-gap: var(--r-5);
+}
+
+.root.g-c-5q, .flx.g-c-5q {
+  column-gap: var(--r-5q);
+}
+
+.root.g-c-5h, .flx.g-c-5h {
+  column-gap: var(--r-5h);
+}
+
+.root.g-c-5t, .flx.g-c-5t {
+  column-gap: var(--r-5t);
+}
+
+.root > .grow-0, .flx > .grow-0 {
+  flex-grow: 0;
+}
+
+.root > .grow-1, .flx > .grow-1 {
+  flex-grow: 1;
+}
+
+.root > .grow-2, .flx > .grow-2 {
+  flex-grow: 2;
+}
+
+.root > .grow-3, .flx > .grow-3 {
+  flex-grow: 3;
+}
+
+.root > .grow-4, .flx > .grow-4 {
+  flex-grow: 4;
+}
+
+.root > .grow-5, .flx > .grow-5 {
+  flex-grow: 5;
+}
+
+.root > .shrink-0, .flx > .shrink-0 {
+  flex-shrink: 0;
+}
+
+.root > .shrink-1, .flx > .shrink-1 {
+  flex-shrink: 1;
+}
+
+.root > .shrink-2, .flx > .shrink-2 {
+  flex-shrink: 2;
+}
+
+.root > .shrink-3, .flx > .shrink-3 {
+  flex-shrink: 3;
+}
+
+.root > .shrink-4, .flx > .shrink-4 {
+  flex-shrink: 4;
+}
+
+.root > .shrink-5, .flx > .shrink-5 {
+  flex-shrink: 5;
+}
+
+.ptr {
+  cursor: pointer;
+}
+
+/* RADZEN STYLING OVERRIDES */
+/* custom input styling for invalid red highlighting on all inputs by default */
+input.invalid:not(:disabled):not(.rz-state-disabled) {
+  box-shadow: inset 0 0 0 1px var(--rz-danger);
+  border: var(--rz-border-danger);
+}
+
+input.invalid:not(:disabled):not(.rz-state-disabled):focus, input.invalid:not(:disabled):not(.rz-state-disabled):hover {
+  box-shadow: inset 0 0 0 2px var(--rz-danger);
+  border: var(--rz-border-danger);
+}
+
+.rz-message-popup {
+  position: relative;
+  transform: translateY(var(--r-0h));
+  border: var(--rz-border-danger);
+}
+
+.rz-message-popup.rz-messages-error {
+  color: var(--rz-notification-error-color);
+  background-color: var(--rz-notification-error-background-color);
+}
+
+div.rz-header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-item-wrapper > div.rz-navigation-item-link > i.rz-navigation-item-icon-children {
+  display: none;
+}
+
+.row-clickable tbody tr:not(.task-row) {
+  cursor: pointer;
+}
+
+.rz-grid-table thead th .rz-column-title {
+  font-weight: 600;
+}
+
+.rz-data-grid {
+  max-width: 100%;
+}
+
+.rz-dialog-titlebar {
+  padding-bottom: 0.75em;
+  padding-top: 0.75em;
+  border-bottom: 1px solid gray;
+}
+
+.rz-tabview.no-x-pad .rz-tabview-panels .rz-tabview-panel {
+  padding-left: 0;
+  padding-right: 0;
+}

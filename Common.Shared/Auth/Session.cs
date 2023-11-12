@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Str = Common.Shared.I18n.S;
 
 namespace Common.Shared.Auth;
 
@@ -33,6 +34,15 @@ public record Session(
             thousandsSeparator,
             decimalSeparator,
             false
+        );
+
+    public static Session CommonDefault() =>
+        Default(
+            Str.DefaultLang,
+            Str.DefaultDateFmt,
+            Str.DefaultTimeFmt,
+            Str.DefaultThousandsSeparator,
+            Str.DefaultDecimalSeparator
         );
 
     [JsonIgnore]

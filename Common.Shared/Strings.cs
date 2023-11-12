@@ -7,6 +7,40 @@ public class Strings : S
     private static readonly SemaphoreSlim _ss = new(1, 1);
     public static readonly FluidParser Parser = new();
 
+    public static Strings FromCommon(
+        Dictionary<string, Dictionary<string, TemplatableString>> library
+    )
+    {
+        var cmn = I18n.S.Inst;
+        var cmnKeys = cmn.Library.Keys.ToHashSet();
+        var lKeys = library.Keys.ToHashSet();
+        Throw.DataIf(
+            !lKeys.IsSubsetOf(cmnKeys),
+            "library contains languages not supported by common"
+        );
+        library.ForEach(
+            kvp => cmn.Library[kvp.Key].ForEach(cmnKvp => kvp.Value.Add(cmnKvp.Key, cmnKvp.Value))
+        );
+        return new Strings(
+            cmn.DefaultLang,
+            cmn.DefaultDateFmt,
+            cmn.DefaultTimeFmt,
+            cmn.DefaultThousandsSeparator,
+            cmn.DefaultDecimalSeparator,
+            cmn.SupportedLangs.Where(x => library.Keys.Contains(x.Code)).ToList(),
+            cmn.SupportedDateFmts,
+            cmn.SupportedTimeFmts,
+            cmn.SupportedThousandsSeparators,
+            cmn.SupportedDecimalSeparators,
+            library
+                .Select(x => x)
+                .ToDictionary(
+                    x => x.Key,
+                    x => x.Value as IReadOnlyDictionary<string, TemplatableString>
+                )
+        );
+    }
+
     public Strings(
         string defaultLang,
         string defaultDateFmt,
@@ -24,6 +58,16 @@ public class Strings : S
         Throw.DataIf(
             defaultThousandsSeparator == defaultDecimalSeparator,
             "default thousands separator is the same as default decimal separator"
+        );
+        var firstStrs = library.First();
+        var firstStrLang = firstStrs.Key;
+        var firstStrKeys = firstStrs.Value.Keys.ToHashSet();
+        library.ForEach(
+            (kvp) =>
+                Throw.DataIf(
+                    !firstStrKeys.SetEquals(kvp.Value.Keys.ToHashSet()),
+                    $"{firstStrLang} and {kvp.Key} langs don't contain matching string keys"
+                )
         );
         DefaultLang = defaultLang;
         DefaultDateFmt = defaultDateFmt;

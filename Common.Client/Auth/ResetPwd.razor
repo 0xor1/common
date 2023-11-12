@@ -1,0 +1,107 @@
+﻿@using System.Text.RegularExpressions
+@using Common.Client
+@using Common.Shared
+@using Common.Shared.Auth
+@using Radzen
+@using S = Common.Shared.I18n.S
+@using AuthValidator = Common.Client.AuthValidator
+@using ISession = Common.Shared.Auth.ISession
+<div class="root jc-c ai-c">
+    <RadzenCard class="p-3 w-25">
+            <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
+                @L.S(S.ResetPwd)
+            </RadzenText>
+            @if (_success)
+            {
+                <div class="flx col ai-stretch">
+                    <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-b-1 f-b rz-color-success-light">
+                        @L.S(S.ResetPwdSuccess)
+                    </RadzenText>
+                    <RadzenButton ButtonType="ButtonType.Button"Text="@L.S(S.SignIn)" Click="SignIn"/>
+                </div>
+            }
+            else
+            {
+                <RadzenTemplateForm
+                    TItem="Model"
+                    Data="_model"
+                    Submit="Do"
+                    class="flx col ai-stretch g-1">
+                    <div class="flx col ai-stretch">
+                        <RadzenLabel class="m-b-0q" Component="Password" Text="@L.S(S.Pwd)"/>
+                        <RadzenPassword Name="Password" @bind-Value="@_model.NewPwd" Disabled="!CanDo"/>
+                        <CommonCustomValidator Validator="AuthValidator.PwdValidator" Component="Password" Popup="true"></CommonCustomValidator>
+                    </div>
+                    <div class="flx col ai-stretch">
+                        <RadzenLabel class="m-b-0q" Component="ConfirmPassword" Text="@L.S(S.ConfirmPwd)"/>
+                        <RadzenPassword Name="ConfirmPassword" @bind-Value="@_model.ConfirmNewPwd" Disabled="!CanDo"/>
+                        <CommonCustomValidator Validator="ConfirmPasswordValidator" Component="ConfirmPassword" Popup="true"></CommonCustomValidator>
+                    </div>
+                    <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.Resetting)" IsBusy="_doing" Text="@L.S(S.ResetPwd)" Disabled="!CanDo"/>
+                </RadzenTemplateForm>
+            }
+        </RadzenCard>
+</div>
+
+@inject NavigationManager Nav;
+@inject L L;
+@inject IApi Api;
+@code{
+
+    [Parameter]
+    public string Email { get; set; } = "";
+
+    [Parameter]
+    public string Code { get; set; } = "";
+
+    class Model
+    {
+        public string NewPwd { get; set; } = "";
+        public string ConfirmNewPwd { get; set; } = "";
+    }
+
+    private Model _model = new();
+    private bool CanDo => !_doing && !_success;
+    private bool _doing = false;
+    private bool _success = false;
+
+    [CascadingParameter]
+    public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt, S.DefaultThousandsSeparator, S.DefaultDecimalSeparator);
+    
+    protected override void OnInitialized()
+    {
+        if (Session.IsAuthed)
+        {
+            Nav.NavigateTo("/");
+        }
+    }
+
+    private async Task Do()
+    {
+        _doing = true;
+        try
+        {
+            await Api.Auth.ResetPwd(new (Email, Code, _model.NewPwd));
+            _success = true;
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+    }
+
+    private void SignIn()
+    {
+        Nav.NavigateTo("sign_in");
+    }
+
+    private ValidationResult ConfirmPasswordValidator(IRadzenFormComponent component)
+    {
+        var res = ValidationResult.New(S.PwdsDontMatch);
+        res.InvalidIf((component.GetValue() as string ?? "") != _model.NewPwd);
+        return res;
+    }
+
+}

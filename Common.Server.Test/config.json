@@ -21,12 +21,14 @@
     ]
   },
   "email": {
+    "type": "log",
     "region": "eu-west-1",
     "key": "abc",
     "secret": "123",
     "noReplyAddress": "noreply@yolo.solo"
   },
   "store": {
+    "type": "minio",
     "host": "localhost:9000",
     "key": "localtest",
     "secret": "localtest"

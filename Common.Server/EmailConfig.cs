@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Runtime.Serialization;
 using Amazon;
 using Newtonsoft.Json;
 
@@ -17,6 +19,11 @@ public record EmailConfig
 
 public enum EmailType
 {
+    [EnumMember(Value = "log")]
+    [Description("log")]
     Log,
+
+    [EnumMember(Value = "ses")]
+    [Description("ses")]
     Ses
 }

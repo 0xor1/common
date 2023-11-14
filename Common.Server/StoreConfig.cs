@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using Amazon;
 using Newtonsoft.Json;
+
 namespace Common.Server;
 
 public record StoreConfig
@@ -21,6 +22,7 @@ public enum StoreType
     [EnumMember(Value = "minio")]
     [Description("minio")]
     Minio,
+
     [EnumMember(Value = "s3")]
     [Description("s3")]
     S3

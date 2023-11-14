@@ -5,7 +5,8 @@
     "repoUrl": "https://github.com/0xor1/common"    
   },
   "server": {
-    "listen": "https://localhost:9500"
+    "listen": "http://localhost:9500",
+    "useHttpsRedirection": false
   },
   "db": {
     "connection": "Server=localhost;Database=Common;Uid=Common;Pwd=C0-Mm-0n-C0-Mm-0n"

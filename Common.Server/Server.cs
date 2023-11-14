@@ -29,7 +29,8 @@ public static class Server
             app.UseWebAssemblyDebugging();
         else
             app.UseHsts();
-        app.UseHttpsRedirection();
+        if (config.Server.UseHttpsRedirection)
+            app.UseHttpsRedirection();
         app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
         app.UseRpcEndpoints(eps);

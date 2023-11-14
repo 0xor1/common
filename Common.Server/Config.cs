@@ -7,6 +7,7 @@ public record Config : IConfig
     public Env Env { get; init; } = Env.Lcl;
 
     public ClientConfig Client { get; init; }
+    public AuthConfig Auth { get; init; }
     public ServerConfig Server { get; init; }
     public DbConfig Db { get; init; }
     public SessionConfig Session { get; init; }

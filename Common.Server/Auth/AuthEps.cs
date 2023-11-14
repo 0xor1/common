@@ -72,7 +72,7 @@ public class AuthEps<TDbCtx>
                                 var emailClient = ctx.Get<IEmailClient>();
                                 var model = new
                                 {
-                                    BaseHref = config.Server.Listen,
+                                    BaseHref = config.Auth.BaseHref,
                                     auth.Email,
                                     Code = auth.VerifyEmailCode
                                 };
@@ -170,7 +170,7 @@ public class AuthEps<TDbCtx>
                             var config = ctx.Get<IConfig>();
                             var model = new
                             {
-                                BaseHref = config.Server.Listen,
+                                BaseHref = config.Auth.BaseHref,
                                 existing.Email,
                                 Code = existing.ResetPwdCode
                             };
@@ -260,7 +260,7 @@ public class AuthEps<TDbCtx>
                             var config = ctx.Get<IConfig>();
                             var model = new
                             {
-                                BaseHref = config.Server.Listen,
+                                BaseHref = config.Auth.BaseHref,
                                 auth.Email,
                                 Code = auth.MagicLinkCode,
                                 req.RememberMe

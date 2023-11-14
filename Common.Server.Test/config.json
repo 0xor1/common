@@ -2,7 +2,10 @@
   "env": "lcl",
   "client": {
     "demoMode": true,
-    "repoUrl": "https://github.com/0xor1/common"    
+    "repoUrl": "https://github.com/0xor1/common"
+  },
+  "auth": {
+    "baseHref": "http://localhost:9500"
   },
   "server": {
     "listen": "http://localhost:9500",

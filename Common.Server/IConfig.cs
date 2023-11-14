@@ -4,6 +4,7 @@ public interface IConfig
 {
     public Env Env { get; }
     public ClientConfig Client { get; }
+    public AuthConfig Auth { get; }
     public ServerConfig Server { get; }
     public DbConfig Db { get; }
     public SessionConfig Session { get; }

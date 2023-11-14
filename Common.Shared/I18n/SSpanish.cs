@@ -10,7 +10,12 @@ public static partial class S
     >()
     {
         { Demo, new("Manifestación") },
-        { DemoTitle, new("Esta aplicación es sólo para fines de demostración.") },
+        {
+            DemoTitle,
+            new(
+                "Esta aplicación es solo para fines de demostración.\nTodos los datos pueden borrarse en cualquier momento sin previo aviso."
+            )
+        },
         { Invalid, new("Inválido") },
         { RpcUnknownEndpoint, new("Extremo de RPC desconocido") },
         { UnexpectedError, new("Ocurrió un error inesperado") },

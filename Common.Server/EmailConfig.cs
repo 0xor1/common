@@ -5,6 +5,7 @@ namespace Common.Server;
 
 public record EmailConfig
 {
+    public EmailType Type { get; init; }
     public string Region { get; init; }
     public string Key { get; init; }
     public string Secret { get; init; }
@@ -12,4 +13,10 @@ public record EmailConfig
 
     [JsonIgnore]
     public RegionEndpoint RegionEndpoint => Region.GetRegionEndpoint();
+}
+
+public enum EmailType
+{
+    Log,
+    Ses
 }

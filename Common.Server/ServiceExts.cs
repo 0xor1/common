@@ -33,54 +33,67 @@ public static class ServiceExts
         services.AddSingleton<IRpcHttpSessionManager>(
             new RpcHttpSessionManager(config.Session.SignatureKeys, s)
         );
-        if (config.Env == Env.Lcl)
+        switch (config.Email.Type)
         {
-            services.AddScoped<IEmailClient, LogEmailClient>();
-            services.AddScoped<AmazonS3Client>(
-                sp =>
-                    new AmazonS3Client(
-                        new BasicAWSCredentials(config.Store.Key, config.Store.Secret),
-                        // this is needed to work with minio locally
-                        new AmazonS3Config()
-                        {
-                            ServiceURL = $"http://{config.Store.Host}",
-                            ForcePathStyle = true
-                        }
-                    )
-            );
-            services.AddScoped<IMinioClient>(
-                sp =>
-                    new MinioClient()
-                        .WithEndpoint(config.Store.Host)
-                        .WithCredentials(config.Store.Key, config.Store.Secret)
-                        .Build()
-            );
+            case EmailType.Log:
+                services.AddScoped<IEmailClient, LogEmailClient>();
+                break;
+            case EmailType.Ses:
+                services.AddScoped<AmazonSimpleEmailServiceClient>(
+                    sp =>
+                        new AmazonSimpleEmailServiceClient(
+                            new BasicAWSCredentials(config.Email.Key, config.Email.Secret),
+                            config.Email.RegionEndpoint
+                        )
+                );
+                services.AddScoped<IEmailClient, SesEmailClient>();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
-        else
+
+        switch (config.Store.Type)
         {
-            services.AddScoped<AmazonSimpleEmailServiceClient>(
-                sp =>
-                    new AmazonSimpleEmailServiceClient(
-                        new BasicAWSCredentials(config.Email.Key, config.Email.Secret),
-                        config.Email.RegionEndpoint
-                    )
-            );
-            services.AddScoped<IEmailClient, SesEmailClient>();
-            services.AddScoped<AmazonS3Client>(
-                sp =>
-                    // this is for running in prod against actual aws s3
-                    new AmazonS3Client(
-                        new BasicAWSCredentials(config.Store.Key, config.Store.Secret),
-                        config.Store.RegionEndpoint
-                    )
-            );
-            services.AddScoped<IMinioClient>(
-                sp =>
-                    new MinioClient()
-                        .WithRegion(config.Store.Region)
-                        .WithCredentials(config.Store.Key, config.Store.Secret)
-                        .Build()
-            );
+            case StoreType.Minio:
+                services.AddScoped<AmazonS3Client>(
+                    sp =>
+                        new AmazonS3Client(
+                            new BasicAWSCredentials(config.Store.Key, config.Store.Secret),
+                            // this is needed to work with minio locally
+                            new AmazonS3Config()
+                            {
+                                ServiceURL = $"http://{config.Store.Host}",
+                                ForcePathStyle = true
+                            }
+                        )
+                );
+                services.AddScoped<IMinioClient>(
+                    sp =>
+                        new MinioClient()
+                            .WithEndpoint(config.Store.Host)
+                            .WithCredentials(config.Store.Key, config.Store.Secret)
+                            .Build()
+                );
+                break;
+            case StoreType.S3:
+                services.AddScoped<AmazonS3Client>(
+                    sp =>
+                        // this is for running in prod against actual aws s3
+                        new AmazonS3Client(
+                            new BasicAWSCredentials(config.Store.Key, config.Store.Secret),
+                            config.Store.RegionEndpoint
+                        )
+                );
+                services.AddScoped<IMinioClient>(
+                    sp =>
+                        new MinioClient()
+                            .WithRegion(config.Store.Region)
+                            .WithCredentials(config.Store.Key, config.Store.Secret)
+                            .Build()
+                );
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
         services.AddScoped<IStoreClient, S3StoreClient>();
 

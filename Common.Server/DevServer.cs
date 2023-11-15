@@ -19,7 +19,6 @@ public static class DevServer
 
         var app = builder.Build();
         app.UseWebAssemblyDebugging();
-        app.UseHttpsRedirection();
         app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
         app.UseRpcHost(config.DevServer.RpcHost);

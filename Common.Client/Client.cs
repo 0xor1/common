@@ -1,11 +1,11 @@
 using Common.Shared;
-using CS = Common.Shared.I18n.S;
 using Common.Shared.Auth;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Radzen;
+using CS = Common.Shared.I18n.S;
 
 namespace Common.Client;
 

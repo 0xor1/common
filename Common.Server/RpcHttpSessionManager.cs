@@ -144,17 +144,19 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
         // get final cookie bytes
         var cookieBytes = MessagePackSerializer.Serialize(signedSes);
         // create cookie
-        ctx.Response.Cookies.Append(
-            SessionKey,
-            cookieBytes.ToB64(),
-            new CookieOptions
-            {
-                Secure = true,
-                HttpOnly = true,
-                IsEssential = true,
-                Expires = ses.RememberMe ? DateTime.UtcNow.AddDays(7) : null,
-                SameSite = SameSiteMode.Strict
-            }
-        );
+        ctx.Response
+            .Cookies
+            .Append(
+                SessionKey,
+                cookieBytes.ToB64(),
+                new CookieOptions
+                {
+                    Secure = true,
+                    HttpOnly = true,
+                    IsEssential = true,
+                    Expires = ses.RememberMe ? DateTime.UtcNow.AddDays(7) : null,
+                    SameSite = SameSiteMode.Strict
+                }
+            );
     }
 }

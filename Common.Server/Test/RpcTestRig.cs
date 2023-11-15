@@ -2,11 +2,11 @@ using System.Net;
 using System.Reflection;
 using Common.Server.Auth;
 using Common.Shared;
-using S = Common.Shared.I18n.S;
 using Common.Shared.Auth;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using S = Common.Shared.I18n.S;
 
 namespace Common.Server.Test;
 
@@ -139,7 +139,9 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
                         DecimalSeparator = _s.DefaultDecimalSeparator
                     }
                 )
-            ).Auth.Delete();
+            )
+                .Auth
+                .Delete();
             t.Wait();
             if (t.Exception != null)
             {

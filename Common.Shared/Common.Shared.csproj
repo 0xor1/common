@@ -13,6 +13,7 @@
         <Description>Common classes I use in all of my projects for both client and server side use</Description>
         <RepositoryUrl>https://github.com/0xor1/Common</RepositoryUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <InvariantGlobalization>true</InvariantGlobalization>
     </PropertyGroup>
 
     <ItemGroup>

@@ -16,7 +16,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="0xor1.Common.Shared" Version="3.0.0" />
+<!--        <PackageReference Include="0xor1.Common.Shared" Version="3.0.0" />-->
         <PackageReference Include="AWSSDK.S3" Version="3.7.300.2" />
         <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.300.2" />
         <PackageReference Include="CSharpier.MsBuild" Version="0.26.1">
@@ -29,10 +29,13 @@
         <PackageReference Include="MessagePack" Version="2.5.129" />
         <PackageReference Include="Minio" Version="6.0.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0-beta.1" />
     </ItemGroup>
     <ItemGroup>
         <None Include="..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Common.Shared/Common.Shared.csproj"/>
     </ItemGroup>
     
 </Project>

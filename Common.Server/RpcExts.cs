@@ -56,7 +56,7 @@ public static class RpcExts
                     {
                         var cl = ctx.RequestServices
                             .GetRequiredService<IHttpClientFactory>()
-                            .CreateClient();
+                            .CreateClient("dev_server");
                         var req = CreateProxyHttpRequest(ctx, baseHref);
                         var res = await cl.SendAsync(req, ctx.RequestAborted);
                         await CopyProxyHttpResponse(ctx, res);

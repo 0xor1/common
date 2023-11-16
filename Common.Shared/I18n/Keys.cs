@@ -8,6 +8,8 @@ public static partial class S
     public const string RpcUnknownEndpoint = "cmn_rpc_unknown_endpoint";
     public const string UnexpectedError = "cmn_unexpected_error";
     public const string EntityNotFound = "cmn_entity_not_found";
+    public const string NotFound = "cmn_not_found";
+    public const string NothingAtAddress = "cmn_nothing_at_address";
     public const string InsufficientPermission = "cmn_insufficient_permission";
     public const string ApiError = "cmn_api_error";
     public const string MinMaxNullArgs = "cmn_min_max_null_args";

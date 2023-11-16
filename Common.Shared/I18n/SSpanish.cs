@@ -20,6 +20,8 @@ public static partial class S
         { RpcUnknownEndpoint, new("Extremo de RPC desconocido") },
         { UnexpectedError, new("Ocurrió un error inesperado") },
         { EntityNotFound, new("Entidad no encontrada") },
+        { NotFound, new("No encontrado") },
+        { NothingAtAddress, new("Lo sentimos, nada en esta dirección.") },
         { InsufficientPermission, new("Permiso insuficiente") },
         { ApiError, new("Error de API") },
         { MinMaxNullArgs, new("Los argumentos min y max son nulos") },

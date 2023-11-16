@@ -9,7 +9,7 @@ namespace Common.Server;
 
 public static class Server
 {
-    public static void Run<TDbCtx, THost>(
+    public static void Run<TDbCtx>(
         string[] args,
         S s,
         IReadOnlyList<IRpcEndpoint> eps,
@@ -32,9 +32,10 @@ public static class Server
             app.UseHsts();
         if (config.Server.UseHttpsRedirection)
             app.UseHttpsRedirection();
+        app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
         app.UseRpcEndpoints(eps);
-        app.MapRazorComponents<THost>().AddInteractiveWebAssemblyRenderMode();
+        app.MapFallbackToFile("index.html");
         app.Run(config.Server.Listen);
     }
 }

@@ -9,13 +9,12 @@ namespace Common.Server;
 
 public static class DevServer
 {
-    public static void Run<THost>(string[] args)
+    public static void Run(string[] args)
     {
         var config = DevConfig.FromJson(
             File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
         );
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddRazorComponents().AddInteractiveWebAssemblyComponents();
         builder.Services.AddHttpClient();
 
         var app = builder.Build();
@@ -23,7 +22,7 @@ public static class DevServer
         app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
         app.UseRpcHost(config.DevServer.RpcHost);
-        app.MapRazorComponents<THost>().AddInteractiveWebAssemblyRenderMode();
+        app.MapFallbackToFile("index.html");
         app.Run(config.DevServer.Listen);
     }
 }

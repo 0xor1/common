@@ -22,6 +22,7 @@ public static class Client
     {
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
         builder.RootComponents.Add<TApp>("#app");
+        builder.RootComponents.Add<HeadOutlet>("head::after");
 
         var httpClient = new HttpClient();
         var l = new Localizer(s);

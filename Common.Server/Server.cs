@@ -22,7 +22,6 @@ public static class Server
             File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
         );
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddRazorComponents().AddInteractiveWebAssemblyComponents();
         builder.Services.AddApiServices<TDbCtx>(config, s, addServies, initApp);
 
         var app = builder.Build();

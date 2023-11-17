@@ -18,6 +18,7 @@ public static partial class S
         },
         { Invalid, new("Ungültig") },
         { RpcUnknownEndpoint, new("Unbekannter RPC-Endpunkt") },
+        { LoadingSession, new("Ladesitzung") },
         { UnexpectedError, new("Ein unerwarteter Fehler ist aufgetreten") },
         { EntityNotFound, new("Entität nicht gefunden") },
         { NotFound, new("Nicht gefunden") },

@@ -6,6 +6,7 @@ public static partial class S
     public const string DemoTitle = "cmn_demo_title";
     public const string Invalid = "cmn_invalid";
     public const string RpcUnknownEndpoint = "cmn_rpc_unknown_endpoint";
+    public const string LoadingSession = "cmn_loading_session";
     public const string UnexpectedError = "cmn_unexpected_error";
     public const string EntityNotFound = "cmn_entity_not_found";
     public const string NotFound = "cmn_not_found";

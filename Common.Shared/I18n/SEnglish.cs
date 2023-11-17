@@ -18,6 +18,7 @@ public static partial class S
         },
         { Invalid, new("Invalid") },
         { RpcUnknownEndpoint, new("Unknown RPC endpoint") },
+        { LoadingSession, new("Loading Session") },
         { UnexpectedError, new("An unexpected error occurred") },
         { EntityNotFound, new("{{Name}} not found") },
         { NotFound, new("Not found") },

@@ -1,7 +1,6 @@
 using System.Net;
 using Common.Shared;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
 
 namespace Common.Server;
 

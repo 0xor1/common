@@ -1,6 +1,4 @@
-﻿using Common.Shared;
-
-namespace Common.Shared.I18n;
+﻿namespace Common.Shared.I18n;
 
 public static partial class S
 {

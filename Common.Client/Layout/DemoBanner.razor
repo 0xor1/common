@@ -1,0 +1,24 @@
+@if (_config.DemoMode)
+{
+    <a class="txt-dec-none" href="@_config.RepoUrl" target="_blank">
+    <div title="@L.S(CS.DemoTitle)" class="flx jc-c rz-background-color-danger-light rz-color-black f-b ptr h-1h">
+        <span class="m-r-0h">@L.S(CS.Demo).ToUpper()</span>
+        @if (!_config.RepoUrl.IsNullOrEmpty())
+        {
+            <img src="_content/0xor1.Common.Client/github-mark.png"/>
+        }
+    </div>
+    </a>
+}
+@using Common.Shared.Auth
+@using Common.Shared
+@using CS = Common.Shared.I18n.S;
+@inject L L;
+@inject IApi Api;
+@code {
+    private Config _config = new (false, null);
+    protected override async Task OnInitializedAsync()
+    {
+        _config = await Api.App.GetConfig();
+    }
+}

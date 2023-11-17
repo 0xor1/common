@@ -1,0 +1,73 @@
+<RadzenHeader class="flx jc-sb">
+    <RadzenSidebarToggle class="flx jc-c ai-c sq-4t" Click="@ToggleLeftExpanded"/>
+    <RadzenProfileMenu class="m-t-0t">
+        <Template>
+            <RadzenIcon Icon="account_circle" IconStyle="@(Session.IsAuthed ? IconStyle.Success : IconStyle.Danger)"></RadzenIcon>
+        </Template>
+        <ChildContent>
+            @if (Session.IsAuthed)
+            {
+                <RadzenProfileMenuItem Text="@L.S(CS.SignOut)" Path="sign_out" Icon="account_circle"></RadzenProfileMenuItem>
+            }
+            else
+            {
+                <RadzenProfileMenuItem Text="@L.S(CS.SignIn)" Path="sign_in" Icon="account_circle"></RadzenProfileMenuItem>
+            }
+            <RadzenProfileMenuItem Text="@L.S(CS.L10n)" Path="l10n" Icon="translate"></RadzenProfileMenuItem>
+            @if (Session.IsAuthed)
+            {
+                // manually build a custom nav menu item to have full
+                // control over the content
+                <li class="rz-navigation-item" onclick="@ToggleLiveUI" title="@L.S(CS.ToggleLiveUpdates)">
+                    <div class="rz-navigation-item-wrapper">
+                        <div class="rz-navigation-item-link">
+                            @if (Session.FcmEnabled)
+                            {
+                                <i class="rzi rz-navigation-item-icon rz-color-success">monitor_heart</i>
+                                <span class="rz-navigation-item-text">
+                                    @L.S(CS.Live) <strong class="rz-color-success">@L.S(@CS.On)</strong>
+                                </span>
+                            }
+                            else
+                            {
+                                <i class="rzi rz-navigation-item-icon rz-color-danger">monitor_heart</i>
+                                <span class="rz-navigation-item-text">
+                                    @L.S(CS.Live) <strong class="rz-color-danger">@L.S(CS.Off)</strong>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+        </ChildContent>
+    </RadzenProfileMenu>
+</RadzenHeader>
+
+@using Common.Shared.Auth
+@using Common.Shared
+@using CS = Common.Shared.I18n.S;
+@inject L L;
+@inject IApi Api;
+@inject IAuthService Auth;
+@code {
+
+    [Parameter]
+    public bool LeftExpanded { get; set; }
+    [Parameter]
+    public EventCallback<bool>? LeftExpandedChanged { get; set; }
+
+    [CascadingParameter]
+    public ISession Session { get; set; } = Common.Shared.Auth.Session.CommonDefault();
+
+
+    private async void ToggleLiveUI()
+    {
+        await Auth.FcmEnabled(!Session.FcmEnabled);
+    }
+
+    private async Task ToggleLeftExpanded()
+    {
+        LeftExpanded = !LeftExpanded;
+        await (LeftExpandedChanged?.InvokeAsync(LeftExpanded) ?? Task.CompletedTask);
+    }
+}

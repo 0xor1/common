@@ -1,0 +1,90 @@
+key,en,es,fr,de,it
+api_error,Api Error,Error de API,Erreur API,API-Fehler,Errore API
+auth_account_not_verified,"Account not verified, please check your emails for verification link","Cuenta no verificada, revise sus correos electrónicos para ver el enlace de verificación","Compte non vérifié, veuillez vérifier vos e-mails pour le lien de vérification","Konto nicht bestätigt, bitte überprüfen Sie Ihre E-Mails auf den Bestätigungslink","Account non verificato, controlla le tue e-mail per il link di verifica"
+auth_already_authenticated,Already in authenticated session,Ya en sesión autenticada,Déjà en session authentifiée,Bereits in authentifizierter Sitzung,Già in sessione autenticata
+auth_attempt_rate_limit,Authentication attempts cannot be made more frequently than every {{Seconds}} seconds,Los intentos de autenticación no se pueden realizar con más frecuencia que cada {{Seconds}} segundos,Les tentatives d'authentification ne peuvent pas être effectuées plus fréquemment que toutes les {{Seconds}} secondes,Authentifizierungsversuche können nicht häufiger als alle {{Seconds}} Sekunden durchgeführt werden,I tentativi di autenticazione non possono essere effettuati più frequentemente di ogni {{Seconds}} secondi
+auth_confirm_email_html,"<div><a href=""{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"">Please click this link to verify your email address</a></div >","<div><a href=""{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"">Haga clic en este enlace para verificar su dirección de correo electrónico</a></div>","<div><a href=""{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"">Veuillez cliquer sur ce lien pour vérifier votre adresse e-mail</a></div>","<div><a href=""{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"">Bitte klicken Sie auf diesen Link, um Ihre E-Mail-Adresse zu bestätigen</a></div>","<div><a href=""{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"">Fai clic su questo link per verificare il tuo indirizzo email</a></div>"
+auth_confirm_email_subject,Confirm Email Address,Confirmar el correo,Confirmez votre adresse email,e-Mail-Adresse bestätigen,Conferma l'indirizzo e-mail
+auth_confirm_email_text,Please use this link to verify your email address: {{BaseHref}}/verify_email?email={{Email}}&code={{Code}},Utilice este enlace para verificar su dirección de correo electrónico: {{BaseHref}}/verify_email?email={{Email}}&code={{Code}},Veuillez utiliser ce lien pour vérifier votre adresse e-mail: {{BaseHref}}/verify_email?email={{Email}}&code={{Code}},"Bitte verwenden Sie diesen Link, um Ihre E-Mail-Adresse zu bestätigen: {{BaseHref}}/verify_email?email={{Email}}&code={{Code}}",Utilizza questo link per verificare il tuo indirizzo email: {{BaseHref}}/verify_email?email={{Email}}&code={{Code}}
+auth_fcm_message_invalid,Fcm message invalid,Mensaje fcm inválido,Message Fcm invalide,Fcm-Nachricht ungültig,Messaggio Fcm non valido
+auth_fcm_not_enabled,Fcm not enabled,Fcm no habilitado,FCM non activé,FCM nicht aktiviert,Fcm non abilitato
+auth_fcm_token_invalid,Fcm token invalid,Token de Fcm no válido,Jeton Fcm invalide,Fcm-Token ungültig,Token Fcm non valido
+auth_fcm_topic_invalid,"Fcm topic invalid Min: {{Min}}, Max: {{Max}}","Tema de Fcm no válido Min: {{Min}}, Max: {{Max}}","Sujet Fcm invalide Min: {{Min}}, Max: {{Max}}","FCM-Thema ungültig Min: {{Min}}, Max: {{Max}}","Argomento Fcm non valido Min: {{Min}}, Max: {{Max}}"
+auth_invalid_email,Invalid email,Email inválido,Email invalide,Ungültige E-Mail,E-mail non valido
+auth_invalid_email_code,Invalid email code,Código de correo electrónico no válido,Code e-mail invalide,Ungültiger E-Mail-Code,Codice e-mail non valido
+auth_invalid_pwd,Invalid password,Contraseña invalida,Mot de passe incorrect,Ungültiges Passwort,Password non valida
+auth_invalid_reset_pwd_code,Invalid reset password code,Código de restablecimiento de contraseña no válido,Code de mot de passe de réinitialisation invalide,Ungültiger Passwort-Reset-Code,Codice di reimpostazione della password non valido
+auth_less_than_8_chars,Less than 8 characters,Menos de 8 caracteres,Moins de 8 caractères,Weniger als 8 Zeichen,Meno di 8 caratteri
+auth_magic_link_html,"<div><a href=""{{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}"">Please click this link to login</a></div>","<div><a href=""{{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}"">Fai clic su questo link per accedere</a </div>","<div><a href=""{{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}"">Veuillez cliquer sur ce lien pour vous connecter</a ></div>","<div><a href=""{{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}"">Bitte klicken Sie auf diesen Link, um sich anzumelden</a ></div>","<div><a href=""{{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}"">Fai clic su questo link per accedere</a </div>"
+auth_magic_link_subject,Magic Login Link,Collegamento di accesso magico,Lien de connexion magique,Magic-Login-Link,Collegamento di accesso magico
+auth_magic_link_text,Please click this link to login: {{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}},Fai clic su questo link per accedere: {{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}},Veuillez cliquer sur ce lien pour vous connecter : {{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}},"Bitte klicken Sie auf diesen Link, um sich anzumelden: {{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}",Fai clic su questo link per accedere: {{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}
+auth_no_digit,No digit,Sin dígito,Aucun chiffre,Keine Ziffer,Nessuna cifra
+auth_no_lower_case_char,No lowercase character,Sin carácter en minúsculas,Pas de caractère minuscule,Kein Kleinbuchstabe,Nessun carattere minuscolo
+auth_no_special_char,No special character,Sin carácter especial,Aucun caractère spécial,Kein Sonderzeichen,Nessun carattere speciale
+auth_no_upper_case_char,No uppercase character,Sin carácter en mayúscula,Pas de caractère majuscule,Kein Großbuchstabe,Nessun carattere maiuscolo
+auth_not_authenticated,Not in authenticated session,No en sesión autenticada,Pas en session authentifiée,Nicht in authentifizierter Sitzung,Non in sessione autenticata
+auth_reset_pwd_html,"<div><a href=""{{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"">Please click this link to reset your password</a></div>","<div><a href=""{{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"">Haga clic en este enlace para restablecer su contraseña</a></div>","<div><a href=""{{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"">Veuillez cliquer sur ce lien pour réinitialiser votre mot de passe</a></div>","<div><a href=""{{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"">klicken Sie bitte auf diesen Link, um Ihr Passwort zurückzusetzen</a></div>","<div><a href=""{{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"">Fai clic su questo link per reimpostare la tua password</a></div>"
+auth_reset_pwd_subject,Reset Password,Restablecer la contraseña,Réinitialiser le mot de passe,Passwort zurücksetzen,Resetta la password
+auth_reset_pwd_text,Please click this link to reset your password: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}},Haga clic en este enlace para restablecer su contraseña: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}},Veuillez cliquer sur ce lien pour réinitialiser votre mot de passe: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}},"Bitte klicken Sie auf diesen Link, um Ihr Passwort zurückzusetzen: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}",Fai clic su questo link per reimpostare la tua password: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}
+auth_thousands_and_decimal_separators_match,Thousands and decimal separator characters match,Los caracteres del separador de miles y decimales coinciden,Les milliers et les caractères séparateurs décimaux correspondent,Tausender- und Dezimaltrennzeichen stimmen überein,Le migliaia e i caratteri separatori decimali corrispondono
+bad_request,Bad request,Solicitud incorrecta,Mauvaise demande,Ungültige Anforderung,Brutta richiesta
+confirm_pwd,Confirm Password,Confirmar Contraseña,Confirmez le mot de passe,Bestätige das Passwort,Conferma password
+date_fmt,Date Format,Formato de fecha,Format de date,Datumsformat,Formato data
+decimal_separator,Decimal Separator,Separador decimal,Séparateur décimal,Dezimaltrennzeichen,Separatore decimale
+demo,Demo,Manifestación,Démo,Demo,Dimostrazione
+demo_title,"This app is for demonstration purposes only.
+All Data may be erased at anytime with no warning.","Esta aplicación es solo para fines de demostración.
+Todos los datos pueden borrarse en cualquier momento sin previo aviso.","Cette application est uniquement destinée à des fins de démonstration.
+Toutes les données peuvent être effacées à tout moment et sans avertissement.","Diese App dient nur zu Demonstrationszwecken.
+Alle Daten können jederzeit und ohne Vorwarnung gelöscht werden.","Questa app è solo a scopo dimostrativo.
+Tutti i dati potrebbero essere cancellati in qualsiasi momento senza preavviso."
+email,Email,Correo electrónico,E-mail,Email,E-mail
+entity_not_found,{{Name}} not found,Entidad no encontrada,Entité introuvable,Entität nicht gefunden,Entità non trovata
+error,Error,Error,Erreur,Fehler,Errore
+insufficient_permission,Insufficient permission,Permiso insuficiente,Permission insuffisante,Unzureichende Erlaubnis,Autorizzazione insufficiente
+invalid,Invalid,Inválido,Invalide,Ungültig,Non valido
+l10n,Localization,Localización,Localisation,Lokalisierung,Localizzazione
+language,Language,Idioma,Langue,Sprache,Lingua
+live,Live:,Vivo:,En direct:,Direkt:,Vivo:
+loading_session,Loading Session,Cargando sesión,Session de chargement,Ladesitzung,Caricamento sessione
+magic_link,Magic Link,Collegamento magico,Lien magique,Magischer Link,Collegamento magico
+magic_link_sign_in,Magic Link Sign In,Accedi al collegamento magico,Lien magique Se connecter,Magic Link-Anmeldung,Accedi al collegamento magico
+min_max_null_args,Both min and  max arguments are null,Los argumentos min y max son nulos,Les arguments min et max sont nuls,Sowohl das Min- als auch das Max-Argument sind null,Entrambi gli argomenti min e max sono nulli
+min_max_reversed_args,Min {{Min}} and Max {{Max}} values are out of ordered,Los valores Min {{Min}} y Max {{Max}} están fuera de orden,Les valeurs Min {{Min}} et Max {{Max}} ne sont pas ordonnées,Min. {{Min}}- und Max. {{Max}}-Werte sind nicht geordnet,I valori Min {{Min}} e Max {{Max}} non sono ordinati
+not_found,Not found,No encontrado,Pas trouvé,Nicht gefunden,Non trovato
+nothing_at_address,"Sorry, nothing at this address.","Lo sentimos, nada en esta dirección.","Désolé, rien à cette adresse.",Leider ist an dieser Adresse nichts zu finden.,"Mi spiace, niente a questo indirizzo."
+off,Off,De,Désactivé,Aus,Spento
+on,On,En,Sur,An,SU
+or,Or,O,Ou,Oder,O
+processing,Processing,Procesando,Traitement,wird bearbeitet,in lavorazione
+pwd,Password,Contraseña,Mot de passe,Passwort,Parola d'ordine
+pwds_dont_match,Passwords don't match,Las contraseñas no coinciden,Les mots de passe ne correspondent pas,Passwörter stimmen nicht überein,Le password non corrispondono
+register,Register,Registro,Enregistrer,Registrieren,Registrati
+register_success,Please check your emails for a confirmation link to complete registration.,Revise sus correos electrónicos para obtener un enlace de confirmación para completar el registro.,Veuillez vérifier vos e-mails pour un lien de confirmation pour terminer l'inscription.,"Bitte überprüfen Sie Ihre E-Mails auf einen Bestätigungslink, um die Registrierung abzuschließen.",Controlla le tue e-mail per un link di conferma per completare la registrazione.
+registering,Registering,Registrarse,Enregistrement,Registrieren,Registrazione
+remember_me,Remember Me,Acuérdate de mí,Souviens-toi de moi,Mich erinnern,Ricordati di me
+request_body_too_large,"Request body too large, limit {{MaxSize}} bytes",El cuerpo de la solicitud es demasiado grande; limite {{MaxSize}} bytes,"Corps de la requête trop volumineux, limitez {{MaxSize}} octets","Anfragetext zu groß, maximal {{MaxSize}} Byte","Corpo della richiesta troppo grande, limite {{MaxSize}} byte"
+reset_pwd,Reset Password,Restablecer la contraseña,Réinitialiser le mot de passe,Passwort zurücksetzen,Resetta la password
+reset_pwd_success,You can now sign in with your new password.,Ahora puede iniciar sesión con su nueva contraseña.,Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.,Sie können sich jetzt mit Ihrem neuen Passwort anmelden.,Ora puoi accedere con la tua nuova password.
+resetting,Resetting,Restablecer,Réinitialisation,Zurücksetzen,Ripristino
+rpc_unknown_endpoint,Unknown RPC endpoint,Extremo de RPC desconocido,Point de terminaison RPC inconnu,Unbekannter RPC-Endpunkt,Endpoint RPC sconosciuto
+send,Send,Enviar,Envoyer,Schicken,Inviare
+send_magic_link,Send Magic Link,Invia collegamento magico,Envoyer un lien magique,Senden Sie einen magischen Link,Invia collegamento magico
+send_magic_link_success,If this email matches an account an email will have been sent with your magic login link.,"Se questa email corrisponde a un account, verrà inviata un'email con il tuo collegamento di accesso magico.","Si cet email correspond à un compte, un email vous aura été envoyé avec votre lien de connexion magique.","Wenn diese E-Mail mit einem Konto übereinstimmt, wird eine E-Mail mit Ihrem Magic-Login-Link gesendet.","Se questa email corrisponde a un account, verrà inviata un'email con il tuo collegamento di accesso magico."
+send_reset_pwd_link,Send Reset Password Link,Enviar enlace de restablecimiento de contraseña,Envoyer le lien de réinitialisation du mot de passe,Link zum Zurücksetzen des Passworts senden,Invia collegamento per reimpostare la password
+send_reset_pwd_link_success,If this email matches an account an email will have been sent to reset your password.,"Si este correo electrónico coincide con una cuenta, se habrá enviado un correo electrónico para restablecer su contraseña.","Si cet e-mail correspond à un compte, un e-mail vous aura été envoyé pour réinitialiser votre mot de passe.","Wenn diese E-Mail mit einem Konto übereinstimmt, wurde eine E-Mail zum Zurücksetzen Ihres Passworts gesendet.","Se questa e-mail corrisponde a un account, sarà stata inviata un'e-mail per reimpostare la password."
+sign_in,Sign In,Iniciar sesión,S'identifier,Anmelden,Registrazione
+sign_out,Sign Out,Desconectar,Se déconnecter,Austragen,Disconnessione
+signing_in,Signing In,Iniciando sesión,Connectez-vous,Anmelden,Registrarsi
+signing_out,Signing Out,Cerrando sesión,Déconnecter,Abmelden,Disconnessione
+success,Success,Éxito,Succès,Erfolg,Successo
+thousands_separator,Thousands Separator,Separador de miles,Séparateur de milliers,Tausendertrennzeichen,Separatore delle migliaia
+time_fmt,Time Format,Formato de tiempo,Format de l'heure,Zeitformat,Formato orario
+toggle_live_updates,Toggle live updates,Alternar actualizaciones en vivo,Basculer les mises à jour en direct,Live-Updates umschalten,Attiva/disattiva gli aggiornamenti in tempo reale
+unexpected_error,An unexpected error occurred,Ocurrió un error inesperado,Une erreur inattendue est apparue,Ein unerwarteter Fehler ist aufgetreten,Si è verificato un errore imprevisto
+update,Update,Actualizar,Mise à jour,Aktualisieren,Aggiornamento
+updating,Updating,Actualizando,Mise à jour,Aktualisierung,In aggiornamento
+verify_email,Verify Email,Verificar correo electrónico,Vérifier les courriels,E-Mail bestätigen,Verifica Email
+verify_email_success,Thank you for verifying your email.,Gracias por verificar tu e-mail.,Merci d'avoir vérifié votre adresse e-mail.,Danke für das Verifizieren deiner E-Mail.,Grazie per aver verificato la tua email.
+verifying,Verifying,Verificando,Vérification,Überprüfung,Verifica
+verifying_email,Verifying your email,Verificando tu correo electrónico,Vérification de votre e-mail,Überprüfung Ihrer E-Mail,Verifica della tua email

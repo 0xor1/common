@@ -1,9 +1,9 @@
 using System.Net;
 using Common.Shared;
-using S = Common.Shared.I18n.S;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using S = Common.Shared.I18n.S;
 
 namespace Common.Server;
 
@@ -56,7 +56,7 @@ public static class RpcExts
                     {
                         var cl = ctx.RequestServices
                             .GetRequiredService<IHttpClientFactory>()
-                            .CreateClient();
+                            .CreateClient("dev_server");
                         var req = CreateProxyHttpRequest(ctx, baseHref);
                         var res = await cl.SendAsync(req, ctx.RequestAborted);
                         await CopyProxyHttpResponse(ctx, res);
@@ -116,9 +116,9 @@ public static class RpcExts
             resp.Headers[header.Key] = header.Value.ToArray();
         }
 
-        await using var responseStream = await respMsg.Content.ReadAsStreamAsync(
-            ctx.RequestAborted
-        );
+        await using var responseStream = await respMsg
+            .Content
+            .ReadAsStreamAsync(ctx.RequestAborted);
         await responseStream.CopyToAsync(resp.Body, ctx.RequestAborted);
     }
 }

@@ -1,7 +1,6 @@
 using System.Net;
 using Common.Shared;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
 
 namespace Common.Server;
 
@@ -25,8 +24,9 @@ public class RpcHttpCtx : IRpcCtxInternal
         bool isAuthed,
         bool rememberMe,
         string lang,
-        string dateFmt,
+        DateFmt dateFmt,
         string timeFmt,
+        string dateSeparator,
         string thousandsSeparator,
         string decimalSeparator,
         bool fcmEnabled
@@ -39,6 +39,7 @@ public class RpcHttpCtx : IRpcCtxInternal
             lang,
             dateFmt,
             timeFmt,
+            dateSeparator,
             thousandsSeparator,
             decimalSeparator,
             fcmEnabled

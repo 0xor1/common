@@ -60,7 +60,7 @@
     private bool _success = false;
     
     [CascadingParameter]
-    public ISession Session { get; set; } = Common.Shared.Auth.Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt, S.DefaultThousandsSeparator, S.DefaultDecimalSeparator);
+    public ISession Session { get; set; } = Common.Shared.Auth.Session.CommonDefault();
 
     protected override void OnInitialized()
     {

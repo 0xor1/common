@@ -1,9 +1,5 @@
-using Common.Server.Auth;
-using Common.Shared;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Common.Server;
 
@@ -15,11 +11,34 @@ public static class DevServer
             File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "config.json"))
         );
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddHttpClient();
+        builder
+            .Services
+            .AddHttpClient("dev_server")
+            .ConfigurePrimaryHttpMessageHandler(
+                _ =>
+                    new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (
+                            sender,
+                            cert,
+                            chain,
+                            sslPolicyErrors
+                        ) =>
+                        {
+                            // I dont know why this is needed, when pointing
+                            // at my current demo sites:
+                            // https://dnsk.dans-demos.com
+                            // https://oak.dans-demos.com
+                            // they have valid ssl certs that all major browsers are
+                            // happy to trust, but this http client doesnt trust them
+                            // for some reason.
+                            return true;
+                        }
+                    }
+            );
 
         var app = builder.Build();
         app.UseWebAssemblyDebugging();
-        app.UseHttpsRedirection();
         app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
         app.UseRpcHost(config.DevServer.RpcHost);

@@ -1,6 +1,4 @@
-﻿using Common.Shared;
-
-namespace Common.Shared.I18n;
+﻿namespace Common.Shared.I18n;
 
 public static partial class S
 {
@@ -9,10 +7,10 @@ public static partial class S
         IReadOnlyDictionary<string, TemplatableString>
     > Library = new Dictionary<string, IReadOnlyDictionary<string, TemplatableString>>()
     {
-        { EN, English },
-        { ES, Spanish },
-        { FR, French },
-        { DE, German },
-        { IT, Italian }
+        { EN, EN_Strings },
+        { ES, ES_Strings },
+        { FR, FR_Strings },
+        { DE, DE_Strings },
+        { IT, IT_Strings }
     };
 }

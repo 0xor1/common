@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Common.Shared;
+using Microsoft.AspNetCore.Components;
 
 namespace Common.Client;
 
@@ -7,8 +8,9 @@ public interface L
 {
     void Config(
         string lang,
-        string date,
+        DateFmt date,
         string time,
+        string dateSeparator,
         string thousandsSeparator,
         string decimalSeparator
     );

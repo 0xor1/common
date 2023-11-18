@@ -9,4 +9,4 @@ Common classes I use in all of my projects:
 
 ### Prerequisites
 
-To build and run this project you need `.net core 7`, `docker` and `docker-compose` installed.
+To build and run this project you need `.net core 8`, `docker` and `docker-compose` installed.

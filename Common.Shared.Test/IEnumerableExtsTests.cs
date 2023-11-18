@@ -17,7 +17,9 @@ public class IEnumerableExtsTests
         Assert.Empty(new List<string> { "one", "two", "three" }.GetDuplicates());
         Assert.Equal(
             "one",
-            new List<string> { "one", "two", "three", "one" }.GetDuplicates().Single()
+            new List<string> { "one", "two", "three", "one" }
+                .GetDuplicates()
+                .Single()
         );
     }
 

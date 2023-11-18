@@ -1,9 +1,9 @@
 using System.Net;
 using Common.Shared;
-using S = Common.Shared.I18n.S;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
+using S = Common.Shared.I18n.S;
 
 namespace Common.Server;
 
@@ -44,7 +44,8 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, T
                 message = rex.Message;
             }
             else if (
-                ex is BadHttpRequestException bre && bre.Message.Contains("Request body too large")
+                ex is BadHttpRequestException bre
+                && bre.Message.Contains("Request body too large")
             )
             {
                 code = bre.StatusCode;

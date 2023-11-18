@@ -21,19 +21,22 @@ public partial record Key
     public static partial Regex NoDoubleUnderscores();
 
     [GeneratedRegex(@"^[a-z]")]
-    public static partial Regex StartLetter();
+    private static partial Regex StartLetter();
 
     [GeneratedRegex(@"_$")]
-    public static partial Regex EndUnderscore();
+    private static partial Regex EndUnderscore();
 
     [GeneratedRegex(@"^[a-z0-9_]+$")]
-    public static partial Regex ValidChars();
+    private static partial Regex ValidChars();
 
     [GeneratedRegex(@"[^a-z0-9]")]
-    public static partial Regex NotLowerAlphaNumeric();
+    private static partial Regex NotLowerAlphaNumeric();
 
     [GeneratedRegex(@"_+")]
-    public static partial Regex ConsecutiveUnderscores();
+    private static partial Regex ConsecutiveUnderscores();
+
+    [GeneratedRegex(@"(^|_)[a-z]")]
+    private static partial Regex ToPascalRx();
 
     private static void Validate(string str)
     {
@@ -87,6 +90,9 @@ public partial record Key
     {
         return b is null ? null : new Key(b);
     }
+
+    public string ToPascal() =>
+        ToPascalRx().Replace(Value, m => m.ToString().ToUpper()).Replace("_", "");
 
     public override string ToString()
     {

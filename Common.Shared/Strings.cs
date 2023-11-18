@@ -25,11 +25,12 @@ public class Strings : S
             cmn.DefaultLang,
             cmn.DefaultDateFmt,
             cmn.DefaultTimeFmt,
+            cmn.DefaultDateSeparator,
             cmn.DefaultThousandsSeparator,
             cmn.DefaultDecimalSeparator,
             cmn.SupportedLangs.Where(x => library.Keys.Contains(x.Code)).ToList(),
-            cmn.SupportedDateFmts,
             cmn.SupportedTimeFmts,
+            cmn.SupportedDateSeparators,
             cmn.SupportedThousandsSeparators,
             cmn.SupportedDecimalSeparators,
             library
@@ -43,13 +44,14 @@ public class Strings : S
 
     public Strings(
         string defaultLang,
-        string defaultDateFmt,
+        DateFmt defaultDateFmt,
         string defaultTimeFmt,
+        string defaultDateSeparator,
         string defaultThousandsSeparator,
         string defaultDecimalSeparator,
         IReadOnlyList<Lang> supportedLangs,
-        IReadOnlyList<DateTimeFmt> supportedDateFmts,
         IReadOnlyList<DateTimeFmt> supportedTimeFmts,
+        IReadOnlyList<string> supportedDateSeparators,
         IReadOnlyList<string> supportedThousandsSeparators,
         IReadOnlyList<string> supportedDecimalSeparators,
         IReadOnlyDictionary<string, IReadOnlyDictionary<string, TemplatableString>> library
@@ -72,26 +74,28 @@ public class Strings : S
         DefaultLang = defaultLang;
         DefaultDateFmt = defaultDateFmt;
         DefaultTimeFmt = defaultTimeFmt;
+        DefaultDateSeparator = defaultDateSeparator;
         DefaultThousandsSeparator = defaultThousandsSeparator;
         DefaultDecimalSeparator = defaultDecimalSeparator;
         SupportedLangs = supportedLangs;
         SupportedLangCodes = supportedLangs.Select(x => x.Code).ToList();
-        SupportedDateFmts = supportedDateFmts;
         SupportedTimeFmts = supportedTimeFmts;
+        SupportedDateSeparators = supportedDateSeparators;
         SupportedThousandsSeparators = supportedThousandsSeparators;
         SupportedDecimalSeparators = supportedDecimalSeparators;
         Library = library;
     }
 
     public string DefaultLang { get; }
-    public string DefaultDateFmt { get; }
+    public DateFmt DefaultDateFmt { get; }
     public string DefaultTimeFmt { get; }
+    public string DefaultDateSeparator { get; }
     public string DefaultThousandsSeparator { get; }
     public string DefaultDecimalSeparator { get; }
     public IReadOnlyList<Lang> SupportedLangs { get; }
     public IReadOnlyList<string> SupportedLangCodes { get; }
-    public IReadOnlyList<DateTimeFmt> SupportedDateFmts { get; }
     public IReadOnlyList<DateTimeFmt> SupportedTimeFmts { get; }
+    public IReadOnlyList<string> SupportedDateSeparators { get; }
     public IReadOnlyList<string> SupportedThousandsSeparators { get; }
     public IReadOnlyList<string> SupportedDecimalSeparators { get; }
 

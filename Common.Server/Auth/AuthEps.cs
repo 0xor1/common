@@ -49,6 +49,7 @@ public class AuthEps<TDbCtx>
                                 ses.Lang,
                                 ses.DateFmt,
                                 ses.TimeFmt,
+                                ses.DateSeparator,
                                 ses.ThousandsSeparator,
                                 ses.DecimalSeparator
                             );
@@ -323,6 +324,7 @@ public class AuthEps<TDbCtx>
                                     auth.Lang,
                                     auth.DateFmt,
                                     auth.TimeFmt,
+                                    auth.DateSeparator,
                                     auth.ThousandsSeparator,
                                     auth.DecimalSeparator,
                                     auth.FcmEnabled
@@ -371,6 +373,7 @@ public class AuthEps<TDbCtx>
                                     auth.Lang,
                                     auth.DateFmt,
                                     auth.TimeFmt,
+                                    auth.DateSeparator,
                                     auth.ThousandsSeparator,
                                     auth.DecimalSeparator,
                                     auth.FcmEnabled
@@ -424,8 +427,8 @@ public class AuthEps<TDbCtx>
                 {
                     ctx.BadRequestIf(
                         req.Lang.IsNullOrEmpty()
-                            || req.DateFmt.IsNullOrEmpty()
                             || req.TimeFmt.IsNullOrEmpty()
+                            || req.DateSeparator.IsNullOrEmpty()
                             || req.ThousandsSeparator.IsNullOrEmpty()
                             || req.DecimalSeparator.IsNullOrEmpty()
                     );
@@ -438,6 +441,7 @@ public class AuthEps<TDbCtx>
                         ses.Lang == req.Lang
                         && ses.DateFmt == req.DateFmt
                         && ses.TimeFmt == req.TimeFmt
+                        && ses.DateSeparator == req.DateSeparator
                         && ses.ThousandsSeparator == req.ThousandsSeparator
                         && ses.DecimalSeparator == req.DecimalSeparator
                     )
@@ -453,6 +457,7 @@ public class AuthEps<TDbCtx>
                         s.BestLang(req.Lang),
                         req.DateFmt,
                         req.TimeFmt,
+                        req.DateSeparator,
                         req.ThousandsSeparator,
                         req.DecimalSeparator,
                         ses.FcmEnabled
@@ -474,6 +479,7 @@ public class AuthEps<TDbCtx>
                                 auth.Lang = ses.Lang;
                                 auth.DateFmt = ses.DateFmt;
                                 auth.TimeFmt = ses.TimeFmt;
+                                auth.DateSeparator = ses.DateSeparator;
                                 auth.ThousandsSeparator = ses.ThousandsSeparator;
                                 auth.DecimalSeparator = ses.DecimalSeparator;
                                 return Nothing.Inst;
@@ -502,6 +508,7 @@ public class AuthEps<TDbCtx>
                                 ses.Lang,
                                 ses.DateFmt,
                                 ses.TimeFmt,
+                                ses.DateSeparator,
                                 ses.ThousandsSeparator,
                                 ses.DecimalSeparator,
                                 req.Val
@@ -645,8 +652,9 @@ public class AuthEps<TDbCtx>
         Register req,
         string id,
         string lang,
-        string dateFmt,
+        DateFmt dateFmt,
         string timeFmt,
+        string dateSeparator,
         string thousandsSeparator,
         string decimalSeparator
     )
@@ -681,6 +689,7 @@ public class AuthEps<TDbCtx>
                 Lang = lang,
                 DateFmt = dateFmt,
                 TimeFmt = timeFmt,
+                DateSeparator = dateSeparator,
                 ThousandsSeparator = thousandsSeparator,
                 DecimalSeparator = decimalSeparator,
                 PwdVersion = pwd.PwdVersion,

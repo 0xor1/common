@@ -35,6 +35,7 @@ public class AuthService<TApi> : IAuthService, IDisposable
                 _ses.Lang,
                 _ses.DateFmt,
                 _ses.TimeFmt,
+                _ses.DateSeparator,
                 _ses.ThousandsSeparator,
                 _ses.DecimalSeparator
             );
@@ -131,14 +132,15 @@ public class AuthService<TApi> : IAuthService, IDisposable
 
     public async Task<ISession> SetL10n(
         string lang,
-        string dateFmt,
+        DateFmt dateFmt,
         string timeFmt,
+        string dateSeparator,
         string thousandsSeparator,
         string decimalSeparator,
         CancellationToken ctkn = default
     ) =>
         Session = await _api.Auth.SetL10n(
-            new(lang, dateFmt, timeFmt, thousandsSeparator, decimalSeparator),
+            new(lang, dateFmt, timeFmt, dateSeparator, thousandsSeparator, decimalSeparator),
             ctkn
         );
 

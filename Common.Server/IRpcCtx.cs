@@ -1,3 +1,5 @@
+using Common.Shared;
+
 namespace Common.Server;
 
 public interface IRpcCtx
@@ -15,8 +17,9 @@ public interface IRpcCtx
         bool isAuthed,
         bool rememberMe,
         string lang,
-        string dateFmt,
+        DateFmt dateFmt,
         string timeFmt,
+        string dateSeparator,
         string thousandsSeparator,
         string decimalSeparator,
         bool fcmEnabled

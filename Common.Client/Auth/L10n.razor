@@ -1,9 +1,11 @@
 ﻿@using System.Text.RegularExpressions
 @using Common.Client
+@using Common.Shared
 @using Common.Shared.Auth
 @using Lang = Common.Shared.Lang
-@using Common.Shared.I18n
 @using AuthValidator = Common.Client.AuthValidator
+@using S = Common.Shared.I18n.S
+@using System.Globalization
 <div class="root col g-1 p-1">
     <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
         @L.S(S.L10n)
@@ -12,38 +14,45 @@
         TItem="Model"
         Data="_model"
         Submit="Do"
-        class="flx col g-1 ai-s">
-        <div class="flx col ai-s">
+        class="flx col g-1 ai-stretch w-15">
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Lang" Text="@L.S(S.Language)"/>
             <RadzenDropDown Name="Lang" AllowClear="false" TValue="string" 
                             Data="S.SupportedLangs" 
                             TextProperty="NativeName" ValueProperty="Code"
                             @bind-Value="_model.Lang" />
         </div>
-        <div class="flx col ai-s">
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Date" Text="@L.S(S.DateFmt)"/>
-            <RadzenDropDown Name="Date" AllowClear="false" TValue="string" 
-                            Data="S.SupportedDateFmts" 
-                            ValueProperty="Value"
-                            @bind-Value="_model.DateFmt" />
+            <div class="flx row jc-s g-0h">
+                <RadzenDropDown class="w-4" Name="DateSeparator" AllowClear="false" TValue="string" 
+                                Data="S.SupportedDateSeparators"
+                                @bind-Value="_model.DateSeparator" />
+                <RadzenDropDown class="grow-1" Name="Date" AllowClear="false" TValue="DateFmt" 
+                                Data="DateFmtExt.GetFmts(_model.DateSeparator)" 
+                                ValueProperty="DateFmtValue"
+                                @bind-Value="_model.DateFmt" />
+            </div>
         </div>
-        <div class="flx col ai-s">
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Time" Text="@L.S(S.TimeFmt)"/>
             <RadzenDropDown Name="Time" AllowClear=false TValue=string 
                             Data="S.SupportedTimeFmts" 
                             ValueProperty="Value"
                             @bind-Value="@_model.TimeFmt" />
         </div>
-        <div class="flx col ai-s">
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="ThousandsSeparator" Text="@L.S(S.ThousandsSeparator)"/>
             <RadzenDropDown Name="ThousandsSeparator" AllowClear=false TValue=string 
-                            Data="S.SupportedThousandsSeparators"
+                            Data="_model.ThousandSeparators"
+                            ValueProperty="TSep"
                             @bind-Value="@_model.ThousandsSeparator" />
         </div>
-        <div class="flx col ai-s">
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="DecimalSeparator" Text="@L.S(S.DecimalSeparator)"/>
             <RadzenDropDown Name="DecimalSeparator" AllowClear=false TValue=string 
-                            Data="S.SupportedDecimalSeparators"
+                            Data="_model.DecimalSeparators"
+                            ValueProperty="DSep"
                             @bind-Value="@_model.DecimalSeparator" />
         </div>
         <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.Updating)" IsBusy="_doing" Text="@L.S(S.Update)" Disabled="!CanDo"/>
@@ -54,11 +63,25 @@
 @inject L L;
 @code{
 
+    public record NumberSeparator(string TSep, string DSep)
+    {
+        private static decimal V = 12345678.99m;
+
+        public override string ToString()
+        => V.ToString("N", new NumberFormatInfo()
+            {
+                NumberGroupSeparator = TSep, 
+                NumberDecimalSeparator = DSep
+            });
+    }
+
+    
     record Model
     {
         public string Lang { get; set; } = S.DefaultLang;
-        public string DateFmt { get; set; } = S.DefaultDateFmt;
+        public DateFmt DateFmt { get; set; } = S.DefaultDateFmt;
         public string TimeFmt { get; set; } = S.DefaultTimeFmt;
+        public string DateSeparator = S.DefaultDateSeparator;
         private string _thousands = S.DefaultThousandsSeparator;
         public string ThousandsSeparator
         {
@@ -85,11 +108,23 @@
                 _decimal = value;
             }
         }
+        public IEnumerable<NumberSeparator> ThousandSeparators => S.SupportedThousandsSeparators.Select(t =>
+        {
+            if(t != _decimal)
+                return new NumberSeparator(t, _decimal);
+            return new NumberSeparator(t, S.SupportedDecimalSeparators.First(d => t != d));
+        });
+        public IEnumerable<NumberSeparator> DecimalSeparators => S.SupportedDecimalSeparators.Select(d =>
+        {
+            if(d != _thousands)
+                return new NumberSeparator(_thousands, d);
+            return new NumberSeparator(S.SupportedThousandsSeparators.First(t => t != d), d);
+        });
     }
 
     private bool CanDo => _model != _initialValues && !_doing;
 
-    private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt, S.DefaultThousandsSeparator, S.DefaultDecimalSeparator); 
+    private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt, S.DefaultDateSeparator, S.DefaultThousandsSeparator, S.DefaultDecimalSeparator); 
     private Model _model = new (); 
     private Model _initialValues = new (); 
     private bool _doing = false;
@@ -100,11 +135,13 @@
         _model.Lang = _session.Lang;
         _model.DateFmt = _session.DateFmt;
         _model.TimeFmt = _session.TimeFmt;
+        _model.DateSeparator = _session.DateSeparator;
         _model.ThousandsSeparator = _session.ThousandsSeparator;
         _model.DecimalSeparator = _session.DecimalSeparator;
         _initialValues.Lang = _session.Lang;
         _initialValues.DateFmt = _session.DateFmt;
         _initialValues.TimeFmt = _session.TimeFmt;
+        _initialValues.DateSeparator = _session.DateSeparator;
         _initialValues.ThousandsSeparator = _session.ThousandsSeparator;
         _initialValues.DecimalSeparator = _session.DecimalSeparator;
     }
@@ -114,7 +151,7 @@
         _doing = true;
         try
         {
-            var ses = await Auth.SetL10n(_model.Lang, _model.DateFmt, _model.TimeFmt, _model.ThousandsSeparator, _model.DecimalSeparator);
+            var ses = await Auth.SetL10n(_model.Lang, _model.DateFmt, _model.TimeFmt, _model.DateSeparator, _model.ThousandsSeparator, _model.DecimalSeparator);
             _initialValues.Lang = ses.Lang;
             _initialValues.DateFmt = ses.DateFmt;
             _initialValues.TimeFmt = ses.TimeFmt;

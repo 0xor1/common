@@ -1,3 +1,4 @@
+using Common.Shared;
 using Common.Shared.Auth;
 
 namespace Common.Client;
@@ -23,8 +24,9 @@ public interface IAuthService
     Task<ISession> Delete(CancellationToken ctkn = default);
     Task<ISession> SetL10n(
         string lang,
-        string dateFmt,
+        DateFmt dateFmt,
         string timeFmt,
+        string dateSeparator,
         string thousandsSeparator,
         string decimalSeparator,
         CancellationToken ctkn = default

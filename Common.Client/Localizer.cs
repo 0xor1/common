@@ -50,7 +50,8 @@ internal class Localizer : L
         new(_s.GetOrAddress(_lang, key, model));
 
     // D for Date
-    public string D(DateTime dt) => dt.ToLocalTime().ToString(DateFmtExt.ToString(_dateFmt, _dateSeparator));
+    public string D(DateTime dt) =>
+        dt.ToLocalTime().ToString(DateFmtExt.ToString(_dateFmt, _dateSeparator));
 
     // T for Time
     public string T(DateTime dt) => dt.ToLocalTime().ToString(_timeFmt);

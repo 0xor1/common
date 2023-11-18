@@ -14,8 +14,6 @@ internal class Localizer : L
     private string _thousandsSeparator;
     private string _decimalSeparator;
 
-    private string _dateFmtStr;
-
     public Localizer(S s)
     {
         _s = s;
@@ -25,7 +23,6 @@ internal class Localizer : L
         _dateSeparator = s.DefaultDateSeparator;
         _thousandsSeparator = s.DefaultThousandsSeparator;
         _decimalSeparator = s.DefaultDecimalSeparator;
-        _dateFmtStr = new DateTimeFmt(_dateFmt, _dateSeparator.NotNull()).Value;
     }
 
     public void Config(
@@ -43,7 +40,6 @@ internal class Localizer : L
         _dateSeparator = dateSeparator;
         _thousandsSeparator = thousandsSeparator;
         _decimalSeparator = decimalSeparator;
-        _dateFmtStr = new DateTimeFmt(_dateFmt, _dateSeparator.NotNull()).Value;
     }
 
     // S for String
@@ -54,7 +50,7 @@ internal class Localizer : L
         new(_s.GetOrAddress(_lang, key, model));
 
     // D for Date
-    public string D(DateTime dt) => dt.ToLocalTime().ToString(_dateFmtStr);
+    public string D(DateTime dt) => dt.ToLocalTime().ToString(DateFmtExt.ToString(_dateSeparator));
 
     // T for Time
     public string T(DateTime dt) => dt.ToLocalTime().ToString(_timeFmt);

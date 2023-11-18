@@ -5,6 +5,7 @@ public interface ISession
     string Id { get; }
     bool IsAuthed { get; }
     bool IsAnon => !IsAuthed;
+    string DateFmtStr => DateFmtExt.ToString(DateFmt, DateSeparator);
     string Lang { get; }
     DateFmt DateFmt { get; }
     string TimeFmt { get; }

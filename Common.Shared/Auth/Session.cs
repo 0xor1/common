@@ -48,7 +48,4 @@ public record Session(
             Str.DefaultThousandsSeparator,
             Str.DefaultDecimalSeparator
         );
-
-    [JsonIgnore]
-    public bool IsAnon => !IsAuthed;
 }

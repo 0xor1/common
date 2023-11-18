@@ -14,13 +14,7 @@ public record DateTimeFmt
     public DateTimeFmt(DateFmt fmt, string sep)
     {
         DateFmtValue = fmt;
-        Value = fmt switch
-        {
-            DateFmt.YMD => $"yyyy{sep}MM{sep}dd",
-            DateFmt.DMY => $"dd{sep}MM{sep}yyyy",
-            DateFmt.MDY => $"MM{sep}dd{sep}yyyy",
-            _ => throw new ArgumentOutOfRangeException(nameof(fmt), fmt, null)
-        };
+        Value = DateFmtExt.ToString(fmt, sep);
     }
 
     public override string ToString()
@@ -47,4 +41,13 @@ public static class DateFmtExt
             new(DateFmt.MDY, sep)
         };
     }
+
+    public static string ToString(this DateFmt fmt, string sep) =>
+        fmt switch
+        {
+            DateFmt.YMD => $"yyyy{sep}MM{sep}dd",
+            DateFmt.DMY => $"dd{sep}MM{sep}yyyy",
+            DateFmt.MDY => $"MM{sep}dd{sep}yyyy",
+            _ => throw new ArgumentOutOfRangeException(nameof(fmt), fmt, null)
+        };
 }

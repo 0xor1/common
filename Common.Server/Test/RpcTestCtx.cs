@@ -51,8 +51,9 @@ public record RpcTestCtx : IRpcCtxInternal
         bool isAuthed,
         bool rememberMe,
         string lang,
-        string dateFmt,
+        DateFmt dateFmt,
         string timeFmt,
+        string dateSeparator,
         string thousandsSeparator,
         string decimalSeparator,
         bool fcmEnabled
@@ -67,6 +68,7 @@ public record RpcTestCtx : IRpcCtxInternal
             Lang = lang,
             DateFmt = dateFmt,
             TimeFmt = timeFmt,
+            DateSeparator = dateSeparator,
             ThousandsSeparator = thousandsSeparator,
             DecimalSeparator = decimalSeparator,
             FcmEnabled = fcmEnabled
@@ -84,6 +86,7 @@ public record RpcTestCtx : IRpcCtxInternal
             Lang = _s.DefaultLang,
             DateFmt = _s.DefaultDateFmt,
             TimeFmt = _s.DefaultTimeFmt,
+            DateSeparator = _s.DefaultDateSeparator,
             ThousandsSeparator = _s.DefaultThousandsSeparator,
             DecimalSeparator = _s.DefaultDecimalSeparator
         };

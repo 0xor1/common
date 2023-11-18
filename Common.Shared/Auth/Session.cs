@@ -9,8 +9,9 @@ public record Session(
     DateTime StartedOn,
     bool RememberMe,
     string Lang,
-    string DateFmt,
+    DateFmt DateFmt,
     string TimeFmt,
+    string DateSeparator,
     string ThousandsSeparator,
     string DecimalSeparator,
     bool FcmEnabled
@@ -18,8 +19,9 @@ public record Session(
 {
     public static Session Default(
         string lang,
-        string dateFmt,
+        DateFmt dateFmt,
         string timeFmt,
+        string dateSeparator,
         string thousandsSeparator,
         string decimalSeparator
     ) =>
@@ -31,6 +33,7 @@ public record Session(
             lang,
             dateFmt,
             timeFmt,
+            dateSeparator,
             thousandsSeparator,
             decimalSeparator,
             false
@@ -41,6 +44,7 @@ public record Session(
             Str.DefaultLang,
             Str.DefaultDateFmt,
             Str.DefaultTimeFmt,
+            Str.DefaultDateSeparator,
             Str.DefaultThousandsSeparator,
             Str.DefaultDecimalSeparator
         );

@@ -135,6 +135,7 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
                         Lang = _s.DefaultLang,
                         DateFmt = _s.DefaultDateFmt,
                         TimeFmt = _s.DefaultTimeFmt,
+                        DateSeparator = _s.DefaultDateSeparator,
                         ThousandsSeparator = _s.DefaultThousandsSeparator,
                         DecimalSeparator = _s.DefaultDecimalSeparator
                     }

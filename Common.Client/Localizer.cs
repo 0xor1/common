@@ -7,11 +7,14 @@ namespace Common.Client;
 internal class Localizer : L
 {
     private readonly S _s;
-    private string _dateFmt;
+    private DateFmt _dateFmt;
     private string _lang;
     private string _timeFmt;
+    private string _dateSeparator;
     private string _thousandsSeparator;
     private string _decimalSeparator;
+
+    private string _dateFmtStr;
 
     public Localizer(S s)
     {
@@ -19,14 +22,17 @@ internal class Localizer : L
         _lang = s.DefaultLang;
         _dateFmt = s.DefaultDateFmt;
         _timeFmt = s.DefaultTimeFmt;
+        _dateSeparator = s.DefaultDateSeparator;
         _thousandsSeparator = s.DefaultThousandsSeparator;
         _decimalSeparator = s.DefaultDecimalSeparator;
+        _dateFmtStr = new DateTimeFmt(_dateFmt, _dateSeparator.NotNull()).Value;
     }
 
     public void Config(
         string lang,
-        string date,
+        DateFmt date,
         string time,
+        string dateSeparator,
         string thousandsSeparator,
         string decimalSeparator
     )
@@ -34,8 +40,10 @@ internal class Localizer : L
         _lang = lang;
         _dateFmt = date;
         _timeFmt = time;
+        _dateSeparator = dateSeparator;
         _thousandsSeparator = thousandsSeparator;
         _decimalSeparator = decimalSeparator;
+        _dateFmtStr = new DateTimeFmt(_dateFmt, _dateSeparator.NotNull()).Value;
     }
 
     // S for String
@@ -46,7 +54,7 @@ internal class Localizer : L
         new(_s.GetOrAddress(_lang, key, model));
 
     // D for Date
-    public string D(DateTime dt) => dt.ToLocalTime().ToString(_dateFmt);
+    public string D(DateTime dt) => dt.ToLocalTime().ToString(_dateFmtStr);
 
     // T for Time
     public string T(DateTime dt) => dt.ToLocalTime().ToString(_timeFmt);

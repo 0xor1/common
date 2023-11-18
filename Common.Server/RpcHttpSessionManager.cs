@@ -49,8 +49,9 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
         bool isAuthed,
         bool rememberMe,
         string lang,
-        string dateFmt,
+        DateFmt dateFmt,
         string timeFmt,
+        string dateSeparator,
         string thousandsSeparator,
         string decimalSeparator,
         bool fcmEnabled
@@ -65,6 +66,7 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
             Lang = lang,
             DateFmt = dateFmt,
             TimeFmt = timeFmt,
+            DateSeparator = dateSeparator,
             ThousandsSeparator = thousandsSeparator,
             DecimalSeparator = decimalSeparator,
             FcmEnabled = fcmEnabled
@@ -91,6 +93,7 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
             _s.BestLang(ctx.Request.Headers.AcceptLanguage.ToArray().FirstOrDefault() ?? ""),
             _s.DefaultDateFmt,
             _s.DefaultTimeFmt,
+            _s.DefaultDateSeparator,
             _s.DefaultThousandsSeparator,
             _s.DefaultDecimalSeparator,
             false

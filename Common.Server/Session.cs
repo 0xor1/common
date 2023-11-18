@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Common.Shared;
+using MessagePack;
 
 namespace Common.Server;
 
@@ -21,18 +22,21 @@ public record Session
     public string Lang { get; init; }
 
     [Key(5)]
-    public string DateFmt { get; init; }
+    public DateFmt DateFmt { get; init; }
 
     [Key(6)]
     public string TimeFmt { get; init; }
 
     [Key(7)]
-    public string ThousandsSeparator { get; init; }
+    public string DateSeparator { get; init; }
 
     [Key(8)]
-    public string DecimalSeparator { get; init; }
+    public string ThousandsSeparator { get; init; }
 
     [Key(9)]
+    public string DecimalSeparator { get; init; }
+
+    [Key(10)]
     public bool FcmEnabled { get; init; }
 
     [IgnoreMember]
@@ -48,6 +52,7 @@ public record Session
             Lang,
             DateFmt,
             TimeFmt,
+            DateSeparator,
             ThousandsSeparator,
             DecimalSeparator,
             FcmEnabled

@@ -3,19 +3,21 @@ namespace Common.Shared.Test;
 public class STests
 {
     const string lang = "en";
-    const string dateFmt = "yyyy-MM-dd";
+    const DateFmt dateFmt = DateFmt.YMD;
     const string timeFmt = "hh:mm";
+    const string dateSeparator = "-";
     const string thousandsSeparator = ",";
     const string decimalSeparator = ".";
     static readonly S S = new Strings(
         lang,
         dateFmt,
         timeFmt,
+        dateSeparator,
         thousandsSeparator,
         decimalSeparator,
         new List<Lang>() { new(lang, "English"), new("es", "Español") },
-        new List<DateTimeFmt>() { new(dateFmt), new("dd-MM-yyyy"), new("MM-dd-yyyy") },
         new List<DateTimeFmt>() { new(timeFmt), new("h:mmtt") },
+        new List<string>() { dateSeparator, "/", "." },
         new List<string>() { thousandsSeparator, decimalSeparator },
         new List<string>() { decimalSeparator, thousandsSeparator },
         new Dictionary<string, IReadOnlyDictionary<string, TemplatableString>>()

@@ -20,8 +20,9 @@ public class Auth : Pwd
     public string MagicLinkCode { get; set; } = "";
     public bool Use2FA { get; set; }
     public string Lang { get; set; }
-    public string DateFmt { get; set; }
+    public DateFmt DateFmt { get; set; }
     public string TimeFmt { get; set; }
+    public string DateSeparator { get; set; }
     public string ThousandsSeparator { get; set; }
     public string DecimalSeparator { get; set; }
     public bool FcmEnabled { get; set; }

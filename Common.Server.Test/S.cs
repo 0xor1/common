@@ -7,8 +7,9 @@ public static class S
     public const string EN = "en";
     public const string ES = "es";
     public const string DefaultLang = EN;
-    public const string DefaultDateFmt = "yyyy-MM-dd";
+    public const DateFmt DefaultDateFmt = DateFmt.YMD;
     public const string DefaultTimeFmt = "HH:mm";
+    public const string DefaultDateSeparator = "-";
     public const string DefaultThousandsSeparator = ",";
     public const string DefaultDecimalSeparator = ".";
 
@@ -18,17 +19,17 @@ public static class S
         new(ES, "Español")
     };
 
-    public static readonly IReadOnlyList<DateTimeFmt> SupportedDateFmts = new List<DateTimeFmt>()
-    {
-        new(DefaultDateFmt),
-        new("dd-MM-yyyy"),
-        new("MM-dd-yyyy")
-    };
-
     public static readonly IReadOnlyList<DateTimeFmt> SupportedTimeFmts = new List<DateTimeFmt>()
     {
         new(DefaultTimeFmt),
         new("h:mmtt")
+    };
+
+    public static readonly IReadOnlyList<string> SupportedDateSeparators = new List<string>()
+    {
+        new(DefaultDateSeparator),
+        new("/"),
+        new(".")
     };
 
     public static readonly IReadOnlyList<string> SupportedThousandsSeparators = new List<string>()
@@ -51,11 +52,12 @@ public static class S
             DefaultLang,
             DefaultDateFmt,
             DefaultTimeFmt,
+            DefaultDateSeparator,
             DefaultThousandsSeparator,
             DefaultDecimalSeparator,
             SupportedLangs,
-            SupportedDateFmts,
             SupportedTimeFmts,
+            SupportedDateSeparators,
             SupportedThousandsSeparators,
             SupportedDecimalSeparators,
             new Dictionary<string, IReadOnlyDictionary<string, TemplatableString>>()

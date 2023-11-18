@@ -6,8 +6,9 @@ public interface ISession
     bool IsAuthed { get; }
     bool IsAnon => !IsAuthed;
     string Lang { get; }
-    string DateFmt { get; }
+    DateFmt DateFmt { get; }
     string TimeFmt { get; }
+    string DateSeparator { get; }
     string ThousandsSeparator { get; }
     string DecimalSeparator { get; }
     bool FcmEnabled { get; }

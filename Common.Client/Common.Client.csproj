@@ -27,7 +27,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-<!--        <PackageReference Include="0xor1.Common.Shared" Version="3.0.0" />-->
+        <PackageReference Include="0xor1.Common.Shared" Version="3.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.0" />
@@ -40,8 +40,5 @@
     </ItemGroup>
     <ItemGroup>
         <None Include="..\README.md" Pack="true" PackagePath="\" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="../Common.Shared/Common.Shared.csproj"/>
     </ItemGroup>
 </Project>

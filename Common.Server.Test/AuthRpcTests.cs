@@ -98,7 +98,7 @@ public class AuthRpcTests : IDisposable
     public async Task SetL10n_Success()
     {
         var (ali, _, _) = await _rpcTestRig.NewApi("ali");
-        var ses = await ali.Auth.SetL10n(new("es", DateFmt.MDY, "/", "h:mmtt", ".", ","));
+        var ses = await ali.Auth.SetL10n(new("es", DateFmt.MDY, "h:mmtt", "/", ".", ","));
         Assert.Equal("es", ses.Lang);
         Assert.Equal(DateFmt.MDY, ses.DateFmt);
         Assert.Equal("h:mmtt", ses.TimeFmt);

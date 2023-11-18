@@ -7,7 +7,6 @@ using CS = Common.Shared.I18n.S;
 var rows = new List<Row>();
 var s = CS.Inst;
 
-var langs = CS.SupportedLangs;
 s.Library.Values.First().Keys.Order().ForEach(key =>
 {
     Throw.DataIf(!Key.IsValid(key), "invalid key");

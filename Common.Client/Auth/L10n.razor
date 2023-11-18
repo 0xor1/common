@@ -5,6 +5,7 @@
 @using Lang = Common.Shared.Lang
 @using AuthValidator = Common.Client.AuthValidator
 @using S = Common.Shared.I18n.S
+@using System.Globalization
 <div class="root col g-1 p-1">
     <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
         @L.S(S.L10n)
@@ -13,18 +14,18 @@
         TItem="Model"
         Data="_model"
         Submit="Do"
-        class="flx col g-1 ai-s">
-        <div class="flx col ai-s">
+        class="flx col g-1 ai-stretch w-15">
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Lang" Text="@L.S(S.Language)"/>
             <RadzenDropDown Name="Lang" AllowClear="false" TValue="string" 
                             Data="S.SupportedLangs" 
                             TextProperty="NativeName" ValueProperty="Code"
                             @bind-Value="_model.Lang" />
         </div>
-        <div class="flx col ai-s">
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Date" Text="@L.S(S.DateFmt)"/>
-            <div class="flx row jc-s g-1">
-                <RadzenDropDown class="w-3" Name="DateSeparator" AllowClear="false" TValue="string" 
+            <div class="flx row jc-s g-0h">
+                <RadzenDropDown class="w-4" Name="DateSeparator" AllowClear="false" TValue="string" 
                                 Data="S.SupportedDateSeparators"
                                 @bind-Value="_model.DateSeparator" />
                 <RadzenDropDown class="grow-1" Name="Date" AllowClear="false" TValue="DateFmt" 
@@ -33,23 +34,25 @@
                                 @bind-Value="_model.DateFmt" />
             </div>
         </div>
-        <div class="flx col ai-s">
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Time" Text="@L.S(S.TimeFmt)"/>
             <RadzenDropDown Name="Time" AllowClear=false TValue=string 
                             Data="S.SupportedTimeFmts" 
                             ValueProperty="Value"
                             @bind-Value="@_model.TimeFmt" />
         </div>
-        <div class="flx col ai-s">
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="ThousandsSeparator" Text="@L.S(S.ThousandsSeparator)"/>
             <RadzenDropDown Name="ThousandsSeparator" AllowClear=false TValue=string 
-                            Data="S.SupportedThousandsSeparators"
+                            Data="_model.ThousandSeparators"
+                            ValueProperty="TSep"
                             @bind-Value="@_model.ThousandsSeparator" />
         </div>
-        <div class="flx col ai-s">
+        <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="DecimalSeparator" Text="@L.S(S.DecimalSeparator)"/>
             <RadzenDropDown Name="DecimalSeparator" AllowClear=false TValue=string 
-                            Data="S.SupportedDecimalSeparators"
+                            Data="_model.DecimalSeparators"
+                            ValueProperty="DSep"
                             @bind-Value="@_model.DecimalSeparator" />
         </div>
         <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.Updating)" IsBusy="_doing" Text="@L.S(S.Update)" Disabled="!CanDo"/>
@@ -60,6 +63,19 @@
 @inject L L;
 @code{
 
+    public record NumberSeparator(string TSep, string DSep)
+    {
+        private static decimal V = 12345678.99m;
+
+        public override string ToString()
+        => V.ToString("N", new NumberFormatInfo()
+            {
+                NumberGroupSeparator = TSep, 
+                NumberDecimalSeparator = DSep
+            });
+    }
+
+    
     record Model
     {
         public string Lang { get; set; } = S.DefaultLang;
@@ -92,6 +108,18 @@
                 _decimal = value;
             }
         }
+        public IEnumerable<NumberSeparator> ThousandSeparators => S.SupportedThousandsSeparators.Select(t =>
+        {
+            if(t != _decimal)
+                return new NumberSeparator(t, _decimal);
+            return new NumberSeparator(t, S.SupportedDecimalSeparators.First(d => t != d));
+        });
+        public IEnumerable<NumberSeparator> DecimalSeparators => S.SupportedDecimalSeparators.Select(d =>
+        {
+            if(d != _thousands)
+                return new NumberSeparator(_thousands, d);
+            return new NumberSeparator(S.SupportedThousandsSeparators.First(t => t != d), d);
+        });
     }
 
     private bool CanDo => _model != _initialValues && !_doing;

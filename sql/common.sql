@@ -20,7 +20,7 @@ CREATE TABLE Auths (
     MagicLinkCode VARCHAR(50) NOT NULL,
     Use2FA       BOOLEAN NOT NULL,
     Lang VARCHAR(7) NOT NULL,
-    DateFmt TINYINT NOT NULL,
+    DateFmt TINYINT UNSIGNED NOT NULL,
     TimeFmt VARCHAR(10) NOT NULL,
     DateSeparator VARCHAR(10) NOT NULL,
     ThousandsSeparator VARCHAR(10) NOT NULL,

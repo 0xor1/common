@@ -33,7 +33,7 @@
         <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.0" />
         <PackageReference Include="Radzen.Blazor" Version="4.21.1" />
         <PackageReference Include="LibSassBuilder" Version="3.0.0" />
-        <PackageReference Include="CSharpier.MsBuild" Version="0.26.1">
+        <PackageReference Include="CSharpier.MsBuild" Version="0.26.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

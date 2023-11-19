@@ -6,13 +6,18 @@ namespace Common.Shared;
 public record RpcHttpClient : IRpcClient
 {
     private static readonly HttpRequestOptionsKey<bool> WebAssemblyEnableStreamingRequestKey =
-        new ("WebAssemblyEnableStreamingRequest");
+        new("WebAssemblyEnableStreamingRequest");
     private readonly string _baseHref;
     private readonly HttpClient _client;
     private readonly Action<string> _rpcExceptionHandler;
     private readonly bool _enableStreaming;
 
-    public RpcHttpClient(string baseHref, HttpClient client, Action<string> reh, bool enableStreaming = false)
+    public RpcHttpClient(
+        string baseHref,
+        HttpClient client,
+        Action<string> reh,
+        bool enableStreaming = false
+    )
     {
         _baseHref = baseHref + "api";
         _client = client;

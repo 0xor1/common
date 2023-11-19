@@ -110,23 +110,32 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
 
         // there is a session so lets get it from the cookie
 
-        var signedSes = MessagePackSerializer.Deserialize<SignedSession>(c.FromB64());
-        var i = 0;
-        foreach (var signatureKey in SignatureKeys)
-            using (var hmac = new HMACSHA256(signatureKey))
-            {
-                var sesSig = hmac.ComputeHash(signedSes.Session);
-                if (sesSig.SequenceEqual(signedSes.Signature))
+        try
+        {
+            var signedSes = MessagePackSerializer.Deserialize<SignedSession>(c.FromB64());
+            var i = 0;
+            foreach (var signatureKey in SignatureKeys)
+                using (var hmac = new HMACSHA256(signatureKey))
                 {
-                    var ses = MessagePackSerializer.Deserialize<Session>(signedSes.Session);
-                    if (i > 0)
-                        // if it wasnt signed using the latest key, resign the cookie using the latest key
-                        SetCookie(ctx, ses);
-                    return ses;
-                }
+                    var sesSig = hmac.ComputeHash(signedSes.Session);
+                    if (sesSig.SequenceEqual(signedSes.Signature))
+                    {
+                        var ses = MessagePackSerializer.Deserialize<Session>(signedSes.Session);
+                        if (i > 0)
+                            // if it wasnt signed using the latest key, resign the cookie using the latest key
+                            SetCookie(ctx, ses);
+                        return ses;
+                    }
 
-                i++;
-            }
+                    i++;
+                }
+        }
+        catch (MessagePackSerializationException ex)
+        {
+            // session failed to deserialize so clear the session
+            // so the user doesnt become blocked
+            return _Clear(ctx);
+        }
 
         throw new SecurityException("Session signature verification failed");
     }

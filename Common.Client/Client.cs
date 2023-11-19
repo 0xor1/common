@@ -15,7 +15,8 @@ public static class Client
         string[] args,
         S s,
         Func<IRpcClient, TApi> apiFactory,
-        Action<IServiceCollection>? addServices = null
+        Action<IServiceCollection>? addServices = null,
+        bool enableRequestStreaming = false
     )
         where TApp : IComponent
         where TApi : class, IApi
@@ -31,7 +32,8 @@ public static class Client
             builder.HostEnvironment.BaseAddress,
             httpClient,
             (message) =>
-                ns.Notify(NotificationSeverity.Error, l.S(CS.ApiError), message, duration: 6000D)
+                ns.Notify(NotificationSeverity.Error, l.S(CS.ApiError), message, duration: 6000D),
+            enableRequestStreaming
         );
         var api = apiFactory(rpcClient);
         builder.Services.AddSingleton(httpClient);

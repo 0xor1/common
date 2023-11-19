@@ -5,15 +5,19 @@ namespace Common.Shared;
 
 public record RpcHttpClient : IRpcClient
 {
+    private static readonly HttpRequestOptionsKey<bool> WebAssemblyEnableStreamingRequestKey =
+        new ("WebAssemblyEnableStreamingRequest");
     private readonly string _baseHref;
     private readonly HttpClient _client;
     private readonly Action<string> _rpcExceptionHandler;
+    private readonly bool _enableStreaming;
 
-    public RpcHttpClient(string baseHref, HttpClient client, Action<string> reh)
+    public RpcHttpClient(string baseHref, HttpClient client, Action<string> reh, bool enableStreaming = false)
     {
         _baseHref = baseHref + "api";
         _client = client;
         _rpcExceptionHandler = reh;
+        _enableStreaming = enableStreaming;
     }
 
     public async Task<TRes> Do<TArg, TRes>(
@@ -27,6 +31,12 @@ public record RpcHttpClient : IRpcClient
         using var req = new HttpRequestMessage(HttpMethod.Post, _baseHref + rpc.Path);
         if (RpcHttp.HasStream<TArg>())
         {
+            if (_enableStreaming)
+            {
+                // https://github.com/dotnet/runtime/pull/91295
+                // req.SetBrowserRequestStreamingEnabled(true);
+                req.Options.Set(WebAssemblyEnableStreamingRequestKey, true);
+            }
             var stream = (arg as HasStream).NotNull().Stream;
             req.Content = new StreamContent(stream.Data);
             req.Headers.Add(RpcHttp.DataHeader, RpcHttp.Serialize(arg).ToB64());

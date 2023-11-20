@@ -16,6 +16,10 @@
 @inject L L;
 @inject IApi Api;
 @code {
+    
+    [CascadingParameter]
+    public ISession Session { get; set; } = Common.Shared.Auth.Session.CommonDefault();
+
     private Config _config = new (false, null);
     protected override async Task OnInitializedAsync()
     {

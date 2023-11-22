@@ -1,6 +1,8 @@
 // Generated Code File, Do Not Edit.
 // This file is generated with Common.I18nCodeGen.
 
+using Common.Shared;
+
 namespace Common.Shared.I18n;
 
 public static partial class S
@@ -25,14 +27,14 @@ public static partial class S
             {
                 AuthConfirmEmailHtml,
                 new(
-                    "<div><a href=\"{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}\">Haga clic en este enlace para verificar su dirección de correo electrónico</a></div>"
+                    "<div><a href=\"{{BaseHref}}/cmn/auth/verify_email?email={{Email}}&code={{Code}}\">Haga clic en este enlace para verificar su dirección de correo electrónico</a></div>"
                 )
             },
             { AuthConfirmEmailSubject, new("Confirmar el correo") },
             {
                 AuthConfirmEmailText,
                 new(
-                    "Utilice este enlace para verificar su dirección de correo electrónico: {{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
+                    "Utilice este enlace para verificar su dirección de correo electrónico: {{BaseHref}}/cmn/auth/verify_email?email={{Email}}&code={{Code}}"
                 )
             },
             { AuthFcmMessageInvalid, new("Mensaje fcm inválido") },
@@ -47,14 +49,14 @@ public static partial class S
             {
                 AuthMagicLinkHtml,
                 new(
-                    "<div><a href=\"{{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}\">Fai clic su questo link per accedere</a </div>"
+                    "<div><a href=\"{{BaseHref}}/cmn/auth/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}\">Fai clic su questo link per accedere</a </div>"
                 )
             },
             { AuthMagicLinkSubject, new("Collegamento di accesso magico") },
             {
                 AuthMagicLinkText,
                 new(
-                    "Fai clic su questo link per accedere: {{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}"
+                    "Fai clic su questo link per accedere: {{BaseHref}}/cmn/auth/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}"
                 )
             },
             { AuthNoDigit, new("Sin dígito") },
@@ -65,14 +67,14 @@ public static partial class S
             {
                 AuthResetPwdHtml,
                 new(
-                    "<div><a href=\"{{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}\">Haga clic en este enlace para restablecer su contraseña</a></div>"
+                    "<div><a href=\"{{BaseHref}}/cmn/auth/reset_pwd?email={{Email}}&code={{Code}}\">Haga clic en este enlace para restablecer su contraseña</a></div>"
                 )
             },
             { AuthResetPwdSubject, new("Restablecer la contraseña") },
             {
                 AuthResetPwdText,
                 new(
-                    "Haga clic en este enlace para restablecer su contraseña: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
+                    "Haga clic en este enlace para restablecer su contraseña: {{BaseHref}}/cmn/auth/reset_pwd?email={{Email}}&code={{Code}}"
                 )
             },
             {
@@ -83,6 +85,15 @@ public static partial class S
             { ConfirmPwd, new("Confirmar Contraseña") },
             { DateFmt, new("Formato de fecha") },
             { DecimalSeparator, new("Separador decimal") },
+            { DeleteAccount, new("Borrar cuenta") },
+            { DeleteAccountSuccess, new("Tu cuenta ha sido eliminada.") },
+            {
+                DeleteAccountWarning,
+                new(
+                    "Esto eliminará su cuenta y todos los datos asociados a ella. ¿Aún quieres eliminar tu cuenta?"
+                )
+            },
+            { Deleting, new("Eliminando") },
             { Demo, new("Manifestación") },
             {
                 DemoTitle,
@@ -106,6 +117,7 @@ public static partial class S
                 MinMaxReversedArgs,
                 new("Los valores Min {{Min}} y Max {{Max}} están fuera de orden")
             },
+            { No, new("No") },
             { NotFound, new("No encontrado") },
             { NothingAtAddress, new("Lo sentimos, nada en esta dirección.") },
             { Off, new("De") },
@@ -161,5 +173,6 @@ public static partial class S
             { VerifyEmailSuccess, new("Gracias por verificar tu e-mail.") },
             { Verifying, new("Verificando") },
             { VerifyingEmail, new("Verificando tu correo electrónico") },
+            { Yes, new("Sí") },
         };
 }

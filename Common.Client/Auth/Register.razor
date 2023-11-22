@@ -39,7 +39,7 @@
                     <CommonCustomValidator Validator="ConfirmPasswordValidator" Component="ConfirmPassword" Popup="true"></CommonCustomValidator>
                 </div>
                 <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.Registering)" IsBusy="_doing" Text="@L.S(S.Register)" Disabled="!CanDo"/>
-                <RadzenLink Path="sign_in" Text="@L.S(S.SignIn)"></RadzenLink>
+                <RadzenLink Path="cmn/auth/sign_in" Text="@L.S(S.SignIn)"></RadzenLink>
             </RadzenTemplateForm>
         }
     </RadzenCard>

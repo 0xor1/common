@@ -24,7 +24,7 @@
                 <RadzenLabel class="m-b-0q" Component="Password" Text="@L.S(S.Pwd)"/>
                 <RadzenPassword Name="Password" @bind-Value="@_model.Pwd"/>
                 <CommonCustomValidator Validator="AuthValidator.PwdValidator" Component="Password" Popup="true"></CommonCustomValidator>
-                <RadzenLink class="f-0t" Path="send_reset_pwd_email" Text="@L.S(S.ResetPwd)"></RadzenLink>
+                <RadzenLink class="f-0t" Path="cmn/auth/send_reset_pwd_email" Text="@L.S(S.ResetPwd)"></RadzenLink>
             </div>
             <div class="flx g-0h">
                 <RadzenCheckBox Name="RememberMe" @bind-Value="@_model.RememberMe"/>
@@ -32,8 +32,8 @@
             </div>
             <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.SigningIn)" IsBusy="_doing" Text="@L.S(S.SignIn)"/>
             <div class="flx jc-sb">
-                <RadzenLink Path="register" Text="@L.S(S.Register)"></RadzenLink>
-                <RadzenLink Path="send_magic_link_email" Text="@L.S(S.MagicLink)"></RadzenLink>
+                <RadzenLink Path="cmn/auth/register" Text="@L.S(S.Register)"></RadzenLink>
+                <RadzenLink Path="cmn/auth/send_magic_link_email" Text="@L.S(S.MagicLink)"></RadzenLink>
             </div>
         </RadzenTemplateForm>
     </RadzenCard>

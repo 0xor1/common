@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using System.Web;
 
 namespace Common.Shared;
 
@@ -68,4 +69,6 @@ public static class StringAndBytesExt
 
         return Convert.FromBase64String(s); // Standard base64 decoder
     }
+
+    public static string UrlEncode(this string s) => HttpUtility.UrlEncode(s);
 }

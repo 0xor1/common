@@ -1,6 +1,8 @@
 // Generated Code File, Do Not Edit.
 // This file is generated with Common.I18nCodeGen.
 
+using Common.Shared;
+
 namespace Common.Shared.I18n;
 
 public static partial class S
@@ -25,14 +27,14 @@ public static partial class S
             {
                 AuthConfirmEmailHtml,
                 new(
-                    "<div><a href=\"{{BaseHref}}/verify_email?email={{Email}}&code={{Code}}\">Veuillez cliquer sur ce lien pour vérifier votre adresse e-mail</a></div>"
+                    "<div><a href=\"{{BaseHref}}/cmn/auth/verify_email?email={{Email}}&code={{Code}}\">Veuillez cliquer sur ce lien pour vérifier votre adresse e-mail</a></div>"
                 )
             },
             { AuthConfirmEmailSubject, new("Confirmez votre adresse email") },
             {
                 AuthConfirmEmailText,
                 new(
-                    "Veuillez utiliser ce lien pour vérifier votre adresse e-mail: {{BaseHref}}/verify_email?email={{Email}}&code={{Code}}"
+                    "Veuillez utiliser ce lien pour vérifier votre adresse e-mail: {{BaseHref}}/cmn/auth/verify_email?email={{Email}}&code={{Code}}"
                 )
             },
             { AuthFcmMessageInvalid, new("Message Fcm invalide") },
@@ -47,14 +49,14 @@ public static partial class S
             {
                 AuthMagicLinkHtml,
                 new(
-                    "<div><a href=\"{{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}\">Veuillez cliquer sur ce lien pour vous connecter</a ></div>"
+                    "<div><a href=\"{{BaseHref}}/cmn/auth/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}\">Veuillez cliquer sur ce lien pour vous connecter</a ></div>"
                 )
             },
             { AuthMagicLinkSubject, new("Lien de connexion magique") },
             {
                 AuthMagicLinkText,
                 new(
-                    "Veuillez cliquer sur ce lien pour vous connecter : {{BaseHref}}/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}"
+                    "Veuillez cliquer sur ce lien pour vous connecter : {{BaseHref}}/cmn/auth/magic_link_sign_in?email={{Email}}&code={{Code}}&remember_me={{RememberMe}}"
                 )
             },
             { AuthNoDigit, new("Aucun chiffre") },
@@ -65,14 +67,14 @@ public static partial class S
             {
                 AuthResetPwdHtml,
                 new(
-                    "<div><a href=\"{{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}\">Veuillez cliquer sur ce lien pour réinitialiser votre mot de passe</a></div>"
+                    "<div><a href=\"{{BaseHref}}/cmn/auth/reset_pwd?email={{Email}}&code={{Code}}\">Veuillez cliquer sur ce lien pour réinitialiser votre mot de passe</a></div>"
                 )
             },
             { AuthResetPwdSubject, new("Réinitialiser le mot de passe") },
             {
                 AuthResetPwdText,
                 new(
-                    "Veuillez cliquer sur ce lien pour réinitialiser votre mot de passe: {{BaseHref}}/reset_pwd?email={{Email}}&code={{Code}}"
+                    "Veuillez cliquer sur ce lien pour réinitialiser votre mot de passe: {{BaseHref}}/cmn/auth/reset_pwd?email={{Email}}&code={{Code}}"
                 )
             },
             {
@@ -83,6 +85,15 @@ public static partial class S
             { ConfirmPwd, new("Confirmez le mot de passe") },
             { DateFmt, new("Format de date") },
             { DecimalSeparator, new("Séparateur décimal") },
+            { DeleteAccount, new("Supprimer le compte") },
+            { DeleteAccountSuccess, new("Votre compte a été supprimé.") },
+            {
+                DeleteAccountWarning,
+                new(
+                    "Cela supprimera votre compte et toutes les données qui y sont associées. Voulez-vous toujours supprimer votre compte ?"
+                )
+            },
+            { Deleting, new("Suppression") },
             { Demo, new("Démo") },
             {
                 DemoTitle,
@@ -106,6 +117,7 @@ public static partial class S
                 MinMaxReversedArgs,
                 new("Les valeurs Min {{Min}} et Max {{Max}} ne sont pas ordonnées")
             },
+            { No, new("Non") },
             { NotFound, new("Pas trouvé") },
             { NothingAtAddress, new("Désolé, rien à cette adresse.") },
             { Off, new("Désactivé") },
@@ -164,5 +176,6 @@ public static partial class S
             { VerifyEmailSuccess, new("Merci d'avoir vérifié votre adresse e-mail.") },
             { Verifying, new("Vérification") },
             { VerifyingEmail, new("Vérification de votre e-mail") },
+            { Yes, new("Oui") },
         };
 }

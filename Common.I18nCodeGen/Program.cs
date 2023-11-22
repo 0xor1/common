@@ -32,7 +32,7 @@ const string LangFile =
 
     public static partial class S
     {
-        private static readonly Dictionary<string, TemplatableString> {{Lang}}_Strings = new ()
+        private static readonly {%if ReadOnly %}IReadOnly{% endif %}Dictionary<string, TemplatableString> {{Lang}}_Strings = new Dictionary<string, TemplatableString>()
         { {% for str in Strings %}
             {{str}}{% endfor %}
         };
@@ -41,10 +41,11 @@ const string LangFile =
 
 var csvDirPath = args[0];
 var @namespace = args[1];
+var @readonly = bool.Parse(args[2]);
 var prefix = "";
-if (args.Length == 3)
+if (args.Length == 4)
 {
-    prefix = args[2];
+    prefix = args[3];
 }
 var fParser = new FluidParser();
 var keyFileTpl = fParser.Parse(KeysFile).NotNull();
@@ -59,7 +60,7 @@ using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
     var lfms = new Dictionary<string, LangFileModel>();
     foreach (var lang in langs)
     {
-        lfms.Add(lang, new LangFileModel(@namespace, lang.ToUpper()));
+        lfms.Add(lang, new LangFileModel(@namespace, @readonly, lang.ToUpper()));
     }
 
     while (csv.Read())
@@ -92,7 +93,7 @@ public record ContentKey(string Key, string prefix)
     
     public override string ToString() => $"public const string {Pascal} = \"{prefix}{Key}\";";
 }
-public record LangFileModel(string Namespace, string Lang)
+public record LangFileModel(string Namespace, bool ReadOnly, string Lang)
 {
     public List<StringContent> Strings { get; } = new();
 

@@ -7,13 +7,13 @@
         <ChildContent>
             @if (Session.IsAuthed)
             {
-                <RadzenProfileMenuItem Text="@L.S(CS.SignOut)" Path="sign_out" Icon="account_circle"></RadzenProfileMenuItem>
+                <RadzenProfileMenuItem Text="@L.S(CS.SignOut)" Path="cmn/auth/sign_out" Icon="account_circle"></RadzenProfileMenuItem>
             }
             else
             {
-                <RadzenProfileMenuItem Text="@L.S(CS.SignIn)" Path="sign_in" Icon="account_circle"></RadzenProfileMenuItem>
+                <RadzenProfileMenuItem Text="@L.S(CS.SignIn)" Path="cmn/auth/sign_in" Icon="account_circle"></RadzenProfileMenuItem>
             }
-            <RadzenProfileMenuItem Text="@L.S(CS.L10n)" Path="l10n" Icon="translate"></RadzenProfileMenuItem>
+            <RadzenProfileMenuItem Text="@L.S(CS.L10n)" Path="cmn/auth/l10n" Icon="translate"></RadzenProfileMenuItem>
             @if (Session.IsAuthed)
             {
                 // manually build a custom nav menu item to have full
@@ -38,6 +38,10 @@
                         </div>
                     </div>
                 </li>
+            }
+            @if (Session.IsAuthed)
+            {
+                <RadzenProfileMenuItem  Text="@L.S(CS.DeleteAccount)" Path="cmn/auth/delete" Icon="delete_forever"/>
             }
         </ChildContent>
     </RadzenProfileMenu>

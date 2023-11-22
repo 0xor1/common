@@ -74,7 +74,7 @@ public class AuthEps<TDbCtx>
                                 var model = new
                                 {
                                     BaseHref = config.Auth.BaseHref,
-                                    auth.Email,
+                                    Email = auth.Email.UrlEncode(),
                                     Code = auth.VerifyEmailCode
                                 };
                                 await emailClient.SendEmailAsync(
@@ -172,7 +172,7 @@ public class AuthEps<TDbCtx>
                             var model = new
                             {
                                 BaseHref = config.Auth.BaseHref,
-                                existing.Email,
+                                Email = existing.Email.UrlEncode(),
                                 Code = existing.ResetPwdCode
                             };
                             var emailClient = ctx.Get<IEmailClient>();
@@ -262,7 +262,7 @@ public class AuthEps<TDbCtx>
                             var model = new
                             {
                                 BaseHref = config.Auth.BaseHref,
-                                auth.Email,
+                                Email = auth.Email.UrlEncode(),
                                 Code = auth.MagicLinkCode,
                                 req.RememberMe
                             };

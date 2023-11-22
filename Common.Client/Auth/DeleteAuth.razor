@@ -1,0 +1,70 @@
+﻿@using Common.Client
+@using Common.Shared.Auth
+@using S = Common.Shared.I18n.S
+<div class="root jc-c ai-c">
+    <RadzenCard class="flx col jc-c ai-c p-3 w-25">
+        <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
+            @L.S(S.DeleteAccount)
+        </RadzenText>
+        @if (_success)
+        {
+            <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-b-1 rz-color-success">
+                @L.S(S.DeleteAccountSuccess)
+            </RadzenText>
+        }
+        else
+        {
+            <RadzenText TextStyle="TextStyle.Body1" TagName="TagName.P" class="m-b-1 rz-color-danger">
+                @L.S(S.DeleteAccountWarning)
+            </RadzenText>
+            <div class="flx row jc-sb w-100 g-1">
+                <RadzenButton class="grow-1" ButtonStyle="ButtonStyle.Secondary" Text="@L.S(S.No)" Click="No"/>
+                <RadzenButton class="grow-1" ButtonStyle="ButtonStyle.Primary" BusyText="@L.S(S.Deleting)" IsBusy="_doing" Disabled="_success" Text="@L.S(S.Yes)" Click="Yes"/>
+            </div>
+        }
+    </RadzenCard>
+</div>
+
+@inject NavigationManager Nav;
+@inject IAuthService Auth;
+@inject L L;
+@code{
+
+    
+    [CascadingParameter]
+    public ISession Session { get; set; } = Common.Shared.Auth.Session.CommonDefault();
+    
+    protected override void OnInitialized()
+    {
+        if (!Session.IsAuthed)
+        {
+            Nav.NavigateTo("/");
+        }
+    }
+
+    private bool _doing = false;
+
+    private bool _success = false;
+
+    private async Task Yes()
+    {
+        _doing = true;
+        try
+        {
+            await Auth.Delete();
+            _success = true;
+        }
+        catch
+        {
+            // use empty catch to avoid having to
+            // call StatHasChanged on errors
+        }
+        _doing = false;
+    }
+
+    private void No()
+    {
+        Nav.NavigateTo("/");
+    }
+
+}

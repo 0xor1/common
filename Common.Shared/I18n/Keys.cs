@@ -1,6 +1,8 @@
 // Generated Code File, Do Not Edit.
 // This file is generated with Common.I18nCodeGen.
 
+using Common.Shared;
+
 namespace Common.Shared.I18n;
 
 public static partial class S
@@ -38,6 +40,10 @@ public static partial class S
     public const string ConfirmPwd = "cmn_confirm_pwd";
     public const string DateFmt = "cmn_date_fmt";
     public const string DecimalSeparator = "cmn_decimal_separator";
+    public const string DeleteAccount = "cmn_delete_account";
+    public const string DeleteAccountSuccess = "cmn_delete_account_success";
+    public const string DeleteAccountWarning = "cmn_delete_account_warning";
+    public const string Deleting = "cmn_deleting";
     public const string Demo = "cmn_demo";
     public const string DemoTitle = "cmn_demo_title";
     public const string Email = "cmn_email";
@@ -53,6 +59,7 @@ public static partial class S
     public const string MagicLinkSignIn = "cmn_magic_link_sign_in";
     public const string MinMaxNullArgs = "cmn_min_max_null_args";
     public const string MinMaxReversedArgs = "cmn_min_max_reversed_args";
+    public const string No = "cmn_no";
     public const string NotFound = "cmn_not_found";
     public const string NothingAtAddress = "cmn_nothing_at_address";
     public const string Off = "cmn_off";
@@ -90,4 +97,5 @@ public static partial class S
     public const string VerifyEmailSuccess = "cmn_verify_email_success";
     public const string Verifying = "cmn_verifying";
     public const string VerifyingEmail = "cmn_verifying_email";
+    public const string Yes = "cmn_yes";
 }

@@ -45,6 +45,7 @@ Tutti i dati potrebbero essere cancellati in qualsiasi momento senza preavviso."
 email,Email,Correo electrónico,E-mail,Email,E-mail
 entity_not_found,{{Name}} not found,Entidad no encontrada,Entité introuvable,Entität nicht gefunden,Entità non trovata
 error,Error,Error,Erreur,Fehler,Errore
+file_too_large,"File too large, limit {{MaxSize}}","Archivo demasiado grande, limite {{MaxSize}}","Fichier trop volumineux, limite {{MaxSize}}","Datei zu groß, begrenzen Sie {{MaxSize}}","File troppo grande, limite {{MaxSize}}"
 insufficient_permission,Insufficient permission,Permiso insuficiente,Permission insuffisante,Unzureichende Erlaubnis,Autorizzazione insufficiente
 invalid,Invalid,Inválido,Invalide,Ungültig,Non valido
 l10n,Localization,Localización,Localisation,Lokalisierung,Localizzazione

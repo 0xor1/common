@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <PackageId>0xor1.Common.Shared</PackageId>
-        <Version>3.0.4</Version>
+        <Version>3.0.10</Version>
         <Authors>Daniel Robinson</Authors>
         <Company>Personal</Company>
         <Product>Personal</Product>

@@ -102,6 +102,7 @@ public static partial class S
             { Email, new("E-mail") },
             { EntityNotFound, new("Entità non trovata") },
             { Error, new("Errore") },
+            { FileTooLarge, new("File troppo grande, limite {{MaxSize}}") },
             { InsufficientPermission, new("Autorizzazione insufficiente") },
             { Invalid, new("Non valido") },
             { L10n, new("Localizzazione") },

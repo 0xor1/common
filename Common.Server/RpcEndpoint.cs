@@ -13,13 +13,13 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, T
     where TRes : class
 {
     public string Path => Def.Path;
-    public long? MaxSize => Def.MaxSize;
+    public ulong? MaxSize => Def.MaxSize;
 
     public async Task Execute(IRpcCtxInternal ctx)
     {
         try
         {
-            ctx.GetFeature<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = MaxSize;
+            ctx.GetFeature<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = (long?)MaxSize;
             var arg = await ctx.GetArg<TArg>();
             var res = await Fn(ctx, arg);
             await ctx.WriteResp(res);

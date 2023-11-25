@@ -49,6 +49,7 @@ public static partial class S
     public const string Email = "cmn_email";
     public const string EntityNotFound = "cmn_entity_not_found";
     public const string Error = "cmn_error";
+    public const string FileTooLarge = "cmn_file_too_large";
     public const string InsufficientPermission = "cmn_insufficient_permission";
     public const string Invalid = "cmn_invalid";
     public const string L10n = "cmn_l10n";

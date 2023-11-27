@@ -72,5 +72,6 @@ public static class StringAndBytesExt
 
     public static string UrlEncode(this string s) => HttpUtility.UrlEncode(s);
 
-    public static string ContentType(this string t) => t.IsNullOrWhiteSpace() ? "application/octet-stream" : t;
+    public static string ContentType(this string t) =>
+        t.IsNullOrWhiteSpace() ? "application/octet-stream" : t;
 }

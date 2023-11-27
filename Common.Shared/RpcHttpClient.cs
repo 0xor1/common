@@ -46,7 +46,7 @@ public record RpcHttpClient : IRpcClient
             req.Content = new StreamContent(stream.Data);
             req.Headers.Add(RpcHttp.DataHeader, RpcHttp.Serialize(arg).ToB64());
             req.Headers.Add(RpcHttp.ContentNameHeader, stream.Name);
-            req.Content.Headers.Add(RpcHttp.ContentTypeHeader, stream.Type);
+            req.Content.Headers.Add(RpcHttp.ContentTypeHeader, stream.Type.ContentType());
             req.Content.Headers.Add(RpcHttp.ContentLengthHeader, stream.Size.ToString());
         }
         else if (typeof(TArg) != Nothing.Type)
@@ -94,7 +94,7 @@ public record RpcHttpClient : IRpcClient
         sub.Stream = new RpcStream(
             await resp.Content.ReadAsStreamAsync(ctkn),
             cd.FileName ?? "unnamed_file",
-            cd.DispositionType,
+            cd.DispositionType.ContentType(),
             true,
             (ulong)cd.Size
         );

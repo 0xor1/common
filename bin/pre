@@ -15,7 +15,7 @@ docker-compose -f docker/docker-compose.yml up -d
 docker ps -a
 
 dotnet build
-dotnet test -p:CollectCoverage="true" -p:CoverletOutputFormat="cobertura" -p:Exclude="[*]System.Text.RegularExpressions.Generated.*"
+dotnet test -p:CollectCoverage="true" -p:CoverletOutputFormat="cobertura" -p:Exclude="[*]System.Text.RegularExpressions.Generated.*" -p:ExcludeByFile="**/RegexGenerator.g.cs"
 
 if [ "$1" == "gh-actions" ]; then 
   curl -L https://coveralls.io/coveralls-linux.tar.gz | tar -xz

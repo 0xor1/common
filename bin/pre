@@ -10,13 +10,19 @@ docker-compose -f docker/docker-compose.yml up -d
 
 ./bin/wait-for-it -t 5 127.0.0.1:6379 -- echo "redis ready"
 ./bin/wait-for-it -t 5 127.0.0.1:9000 -- echo "minio ready"
-./bin/wait-for-it -t 5 127.0.0.1:3306 -- echo "mariadb ready"
+./bin/wait-for-it -t 60 127.0.0.1:3306 -- echo "mariadb ready"
 
 dotnet build
 dotnet test --collect:"XPlat Code Coverage"
-dotnet tool install -g dotnet-reportgenerator-globaltool
-rm -r test_coverage
-reportgenerator -reports:"*\TestResults\*\coverage.cobertura.xml " -classfilters:"-System.Text.RegularExpressions.Generated" -targetdir:"test_coverage" -reporttypes:Html
-rm -r */TestResults
+
+if [ "$1" == "gh-actions" ]; then 
+  curl -L https://coveralls.io/coveralls-linux.tar.gz | tar -xz
+  ./coveralls report */TestResults/*/coverage.cobertura.xml
+else
+  dotnet tool install -g dotnet-reportgenerator-globaltool
+  rm -r test_coverage
+  reportgenerator -reports:"*\TestResults\*\coverage.cobertura.xml " -classfilters:"-System.Text.RegularExpressions.Generated" -targetdir:"test_coverage" -reporttypes:Html
+  rm -r */TestResults
+fi
 
 docker-compose -f docker/docker-compose.yml stop

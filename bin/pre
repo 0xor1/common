@@ -12,10 +12,8 @@ docker-compose -f docker/docker-compose.yml up -d
 ./bin/wait-for-it -t 5 127.0.0.1:9000 -- echo "minio ready"
 ./bin/wait-for-it -t 5 127.0.0.1:3306 -- echo "mariadb ready"
 
-docker ps -a
-
 dotnet build
-dotnet test -p:CollectCoverage="true" -p:CoverletOutputFormat="cobertura" -p:Exclude="[*]System.Text.RegularExpressions.Generated.*" -p:ExcludeByFile="**/RegexGenerator.g.cs"
+dotnet test --no-build --blame-hang-timeout 600000 -v n -p:CollectCoverage="true" -p:CoverletOutputFormat="cobertura" -p:Exclude="[*]System.Text.RegularExpressions.Generated.*" -p:ExcludeByFile="**/RegexGenerator.g.cs"
 
 if [ "$1" == "gh-actions" ]; then 
   curl -L https://coveralls.io/coveralls-linux.tar.gz | tar -xz

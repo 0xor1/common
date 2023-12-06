@@ -1,4 +1,5 @@
 using Common.Shared;
+using Common.Shared.Auth;
 
 namespace Common.Server;
 
@@ -10,9 +11,9 @@ public interface IRpcCtx
     public T GetFeature<T>()
         where T : notnull;
 
-    public Session GetSession();
+    public ISession GetSession();
 
-    public Session CreateSession(
+    public ISession CreateSession(
         string userId,
         bool isAuthed,
         bool rememberMe,
@@ -24,7 +25,7 @@ public interface IRpcCtx
         string decimalSeparator,
         bool fcmEnabled
     );
-    public Session ClearSession();
+    public ISession ClearSession();
 
     public string? GetHeader(string name);
 

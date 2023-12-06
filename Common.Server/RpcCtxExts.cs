@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using CS = Common.Shared.I18n.S;
+using ISession = Common.Shared.Auth.ISession;
 
 namespace Common.Server;
 
@@ -17,7 +18,7 @@ public static class RpcCtxExts
     public static T GetFeature<T>(this HttpContext ctx)
         where T : notnull => ctx.Features.GetRequiredFeature<T>();
 
-    public static Session GetAuthedSession(this IRpcCtx ctx)
+    public static ISession GetAuthedSession(this IRpcCtx ctx)
     {
         var ses = ctx.GetSession();
         ctx.ErrorIf(ses.IsAnon, CS.AuthNotAuthenticated, null, HttpStatusCode.Unauthorized);
@@ -26,7 +27,7 @@ public static class RpcCtxExts
 
     public static async Task<TRes> DbTx<TDbCtx, TRes>(
         this IRpcCtx ctx,
-        Func<TDbCtx, Session, Task<TRes>> fn,
+        Func<TDbCtx, ISession, Task<TRes>> fn,
         bool mustBeAuthedSession = true
     )
         where TDbCtx : DbContext

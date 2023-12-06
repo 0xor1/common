@@ -1,13 +1,14 @@
 using Common.Shared;
 using Microsoft.AspNetCore.Http;
+using ISession = Common.Shared.Auth.ISession;
 
 namespace Common.Server;
 
 public interface IRpcHttpSessionManager
 {
-    internal Session Get(HttpContext ctx);
+    internal ISession Get(HttpContext ctx);
 
-    internal Session Create(
+    internal ISession Create(
         HttpContext ctx,
         string userId,
         bool isAuthed,
@@ -21,5 +22,5 @@ public interface IRpcHttpSessionManager
         bool fcmEnabled
     );
 
-    internal Session Clear(HttpContext ctx);
+    internal ISession Clear(HttpContext ctx);
 }

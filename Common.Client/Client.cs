@@ -35,19 +35,33 @@ public static class Client
                 ns.Notify(NotificationSeverity.Error, l.S(CS.ApiError), message, duration: 6000D),
             enableRequestStreaming
         );
-        var api = apiFactory(rpcClient);
         builder.Services.AddSingleton(httpClient);
-        builder.Services.AddSingleton<IRpcClient>(rpcClient);
-        builder.Services.AddSingleton(s);
-        builder.Services.AddSingleton<L>(l);
-        builder.Services.AddSingleton(api);
-        builder.Services.AddSingleton<IApi>(api);
-        builder.Services.AddSingleton<IAuthService, AuthService<TApi>>();
-        builder.Services.AddSingleton(ns);
-        builder.Services.AddSingleton<DialogService>();
-        builder.Services.AddSingleton<TooltipService>();
-        builder.Services.AddSingleton<ContextMenuService>();
-        addServices?.Invoke(builder.Services);
+        await Setup(builder.Services, rpcClient, l, s, ns, apiFactory, addServices);
         await builder.Build().RunAsync();
+    }
+
+    public static async Task Setup<TApi>(
+        IServiceCollection services,
+        IRpcClient rpcClient,
+        L l,
+        S s,
+        NotificationService ns,
+        Func<IRpcClient, TApi> apiFactory,
+        Action<IServiceCollection>? addServices = null
+    )
+        where TApi : class, IApi
+    {
+        var api = apiFactory(rpcClient);
+        services.AddSingleton(rpcClient);
+        services.AddSingleton(s);
+        services.AddSingleton(l);
+        services.AddSingleton(api);
+        services.AddSingleton<IApi>(api);
+        services.AddSingleton<IAuthService, AuthService<TApi>>();
+        services.AddSingleton(ns);
+        services.AddSingleton<DialogService>();
+        services.AddSingleton<TooltipService>();
+        services.AddSingleton<ContextMenuService>();
+        addServices?.Invoke(services);
     }
 }

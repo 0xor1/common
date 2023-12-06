@@ -1,6 +1,7 @@
 using System.Net;
 using Common.Shared;
 using Microsoft.AspNetCore.Http;
+using ISession = Common.Shared.Auth.ISession;
 
 namespace Common.Server;
 
@@ -17,9 +18,9 @@ public class RpcHttpCtx : IRpcCtxInternal
 
     public CancellationToken Ctkn => _ctx.RequestAborted;
 
-    public Session GetSession() => _sessionManager.Get(_ctx);
+    public ISession GetSession() => _sessionManager.Get(_ctx);
 
-    public Session CreateSession(
+    public ISession CreateSession(
         string userId,
         bool isAuthed,
         bool rememberMe,
@@ -45,7 +46,7 @@ public class RpcHttpCtx : IRpcCtxInternal
             fcmEnabled
         );
 
-    public Session ClearSession() => _sessionManager.Clear(_ctx);
+    public ISession ClearSession() => _sessionManager.Clear(_ctx);
 
     public string? GetHeader(string name) =>
         _ctx.Request.Headers.ContainsKey(name) ? _ctx.Request.Headers[name].ToString() : null;

@@ -10,7 +10,7 @@ public record RpcTestCtx : IRpcCtxInternal
     private readonly IServiceProvider _services;
     private readonly IFeatureCollection _features;
     private readonly S _s;
-    public Session Session { get; set; }
+    public ISession Session { get; set; }
     public object Arg { get; set; }
     public object? Res { get; set; }
     public RpcTestException? Exception { get; set; }
@@ -20,7 +20,7 @@ public record RpcTestCtx : IRpcCtxInternal
     public RpcTestCtx(
         IServiceProvider services,
         IFeatureCollection features,
-        Session? session,
+        ISession? session,
         S s,
         Dictionary<string, string> headers,
         object arg,
@@ -44,9 +44,9 @@ public record RpcTestCtx : IRpcCtxInternal
     public T GetFeature<T>()
         where T : notnull => _features.GetRequiredFeature<T>();
 
-    public Session GetSession() => Session;
+    public ISession GetSession() => Session;
 
-    public Session CreateSession(
+    public ISession CreateSession(
         string userId,
         bool isAuthed,
         bool rememberMe,
@@ -76,9 +76,9 @@ public record RpcTestCtx : IRpcCtxInternal
         return Session;
     }
 
-    public Session ClearSession()
+    public ISession ClearSession()
     {
-        Session = new()
+        Session = new Session()
         {
             Id = Id.New(),
             IsAuthed = false,

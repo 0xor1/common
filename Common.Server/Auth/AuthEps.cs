@@ -11,14 +11,14 @@ public class AuthEps<TDbCtx>
 {
     private readonly int _maxAuthAttemptsPerSecond;
     private readonly Func<IRpcCtx, TDbCtx, string, string, Task> _onActivation;
-    private readonly Func<IRpcCtx, TDbCtx, Session, Task> _onDelete;
-    private readonly Func<IRpcCtx, TDbCtx, Session, IReadOnlyList<string>, Task> _validateFcmTopic;
+    private readonly Func<IRpcCtx, TDbCtx, ISession, Task> _onDelete;
+    private readonly Func<IRpcCtx, TDbCtx, ISession, IReadOnlyList<string>, Task> _validateFcmTopic;
 
     public AuthEps(
         int maxAuthAttemptsPerSecond,
         Func<IRpcCtx, TDbCtx, string, string, Task> onActivation,
-        Func<IRpcCtx, TDbCtx, Session, Task> onDelete,
-        Func<IRpcCtx, TDbCtx, Session, IReadOnlyList<string>, Task> validateFcmTopic
+        Func<IRpcCtx, TDbCtx, ISession, Task> onDelete,
+        Func<IRpcCtx, TDbCtx, ISession, IReadOnlyList<string>, Task> validateFcmTopic
     )
     {
         _maxAuthAttemptsPerSecond = maxAuthAttemptsPerSecond;

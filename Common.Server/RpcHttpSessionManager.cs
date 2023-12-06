@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Common.Shared;
 using MessagePack;
 using Microsoft.AspNetCore.Http;
+using ISession = Common.Shared.Auth.ISession;
 
 namespace Common.Server;
 
@@ -27,9 +28,9 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
             );
     }
 
-    public Session Get(HttpContext ctx)
+    public ISession Get(HttpContext ctx)
     {
-        Session ses;
+        ISession ses;
         if (!ctx.Items.ContainsKey(SessionKey))
         {
             ses = GetCookie(ctx);
@@ -43,7 +44,7 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
         return ses;
     }
 
-    public Session Create(
+    public ISession Create(
         HttpContext ctx,
         string userId,
         bool isAuthed,
@@ -76,14 +77,14 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
         return ses;
     }
 
-    public Session Clear(HttpContext ctx)
+    public ISession Clear(HttpContext ctx)
     {
         var ses = _Clear(ctx);
         ctx.Items[SessionKey] = ses;
         return ses;
     }
 
-    private Session _Clear(HttpContext ctx)
+    private ISession _Clear(HttpContext ctx)
     {
         return Create(
             ctx,
@@ -100,7 +101,7 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
         );
     }
 
-    private Session GetCookie(HttpContext ctx)
+    private ISession GetCookie(HttpContext ctx)
     {
         var c = ctx.Request.Cookies[SessionKey];
         if (c.IsNull())

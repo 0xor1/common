@@ -5,6 +5,7 @@ public interface ISession
     string Id { get; }
     bool IsAuthed { get; }
     bool IsAnon => !IsAuthed;
+    bool RememberMe { get; }
     string DateFmtStr => DateFmtExt.ToString(DateFmt, DateSeparator);
     string Lang { get; }
     DateFmt DateFmt { get; }
@@ -13,4 +14,6 @@ public interface ISession
     string ThousandsSeparator { get; }
     string DecimalSeparator { get; }
     bool FcmEnabled { get; }
+
+    public Session ToApi();
 }

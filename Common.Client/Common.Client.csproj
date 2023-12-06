@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <PackageId>0xor1.Common.Client</PackageId>
-        <Version>3.0.12</Version>
+        <Version>3.0.13</Version>
         <Authors>Daniel Robinson</Authors>
         <Company>Personal</Company>
         <Product>Personal</Product>
@@ -18,7 +18,7 @@
 
     <ItemGroup>
         <PackageReference Include="DartSassBuilder" Version="1.0.0" />
-        <PackageReference Include="0xor1.Common.Shared" Version="3.0.12" />
+        <PackageReference Include="0xor1.Common.Shared" Version="3.0.13" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.0" />
@@ -30,8 +30,5 @@
     </ItemGroup>
     <ItemGroup>
         <None Include="..\README.md" Pack="true" PackagePath="\" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\Common.Shared\Common.Shared.csproj" />
     </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@ public interface IFcmClient
     Task SendTopic<TDbCtx>(
         IRpcCtx ctx,
         TDbCtx db,
-        Session ses,
+        ISession ses,
         IReadOnlyList<string> topic,
         object? data,
         bool fnf = true

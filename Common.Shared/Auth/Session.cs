@@ -47,4 +47,6 @@ public record Session(
             Str.DefaultThousandsSeparator,
             Str.DefaultDecimalSeparator
         );
+
+    public Session ToApi() => this;
 }

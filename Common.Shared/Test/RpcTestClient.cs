@@ -1,30 +1,30 @@
-using Common.Shared;
+using Common.Shared.Auth;
 
-namespace Common.Server.Test;
+namespace Common.Shared.Test;
 
 public class RpcTestClient : IRpcClient
 {
-    private Session? _session;
+    private ISession? _session;
     private Dictionary<string, string> _headers = new();
     private Func<
         string,
-        Session?,
+        ISession?,
         Dictionary<string, string>,
         object,
         CancellationToken,
-        Task<(Session, object)>
+        Task<(ISession, object)>
     > _exe;
 
     public RpcTestClient(
         Func<
             string,
-            Session?,
+            ISession?,
             Dictionary<string, string>,
             object,
             CancellationToken,
-            Task<(Session, object)>
+            Task<(ISession, object)>
         > exe,
-        Session? session = null
+        ISession? session = null
     )
     {
         _exe = exe;

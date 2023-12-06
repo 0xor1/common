@@ -1,10 +1,11 @@
 ﻿using Common.Shared;
+using Common.Shared.Auth;
 using MessagePack;
 
 namespace Common.Server;
 
 [MessagePackObject]
-public record Session
+public record Session : ISession
 {
     [Key(0)]
     public string Id { get; init; }

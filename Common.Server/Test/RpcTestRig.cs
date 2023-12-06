@@ -3,6 +3,7 @@ using System.Reflection;
 using Common.Server.Auth;
 using Common.Shared;
 using Common.Shared.Auth;
+using Common.Shared.Test;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -58,9 +59,9 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
         return fn(db);
     }
 
-    private async Task<(Session, object)> Exe(
+    private async Task<(ISession, object)> Exe(
         string path,
-        Session? session,
+        ISession? session,
         Dictionary<string, string> headers,
         object arg,
         CancellationToken ctkn = default

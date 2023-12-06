@@ -36,7 +36,7 @@ public class FcmClient : IFcmClient
     public async Task SendTopic<TDbCtx>(
         IRpcCtx ctx,
         TDbCtx db,
-        Session ses,
+        ISession ses,
         IReadOnlyList<string> topic,
         object? data,
         bool fnf = true

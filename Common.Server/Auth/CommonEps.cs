@@ -1,3 +1,4 @@
+using Common.Shared.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace Common.Server.Auth;
@@ -10,8 +11,8 @@ public class CommonEps<TDbCtx>
     public CommonEps(
         int maxAuthAttemptsPerSecond,
         Func<IRpcCtx, TDbCtx, string, string, Task> onActivation,
-        Func<IRpcCtx, TDbCtx, Session, Task> onDelete,
-        Func<IRpcCtx, TDbCtx, Session, IReadOnlyList<string>, Task> validateFcmTopic
+        Func<IRpcCtx, TDbCtx, ISession, Task> onDelete,
+        Func<IRpcCtx, TDbCtx, ISession, IReadOnlyList<string>, Task> validateFcmTopic
     )
     {
         _authEps = new AuthEps<TDbCtx>(

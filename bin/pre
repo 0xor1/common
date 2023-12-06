@@ -23,6 +23,7 @@ else
   rm -r test_coverage
   reportgenerator -reports:"*\coverage.cobertura.xml" -targetdir:"test_coverage" -reporttypes:Html
   rm */coverage.cobertura.xml
+  rm -r */TestResults
 fi
 
 docker-compose -f docker/docker-compose.yml stop

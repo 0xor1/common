@@ -20,7 +20,7 @@ public record RpcTestCtx : IRpcCtxInternal
     public RpcTestCtx(
         IServiceProvider services,
         IFeatureCollection features,
-        Session? session,
+        ISession? session,
         S s,
         Dictionary<string, string> headers,
         object arg,
@@ -30,7 +30,7 @@ public record RpcTestCtx : IRpcCtxInternal
         _services = services;
         _features = features;
         _s = s;
-        Session = session ?? ClearSession();
+        Session = (Session)(session ?? ClearSession());
         Headers = headers;
         Arg = arg;
         Ctkn = ctkn;
@@ -44,9 +44,9 @@ public record RpcTestCtx : IRpcCtxInternal
     public T GetFeature<T>()
         where T : notnull => _features.GetRequiredFeature<T>();
 
-    public Session GetSession() => Session;
+    public ISession GetSession() => Session;
 
-    public Session CreateSession(
+    public ISession CreateSession(
         string userId,
         bool isAuthed,
         bool rememberMe,
@@ -76,9 +76,9 @@ public record RpcTestCtx : IRpcCtxInternal
         return Session;
     }
 
-    public Session ClearSession()
+    public ISession ClearSession()
     {
-        Session = new()
+        Session = new Session()
         {
             Id = Id.New(),
             IsAuthed = false,

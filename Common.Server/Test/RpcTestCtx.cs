@@ -10,7 +10,7 @@ public record RpcTestCtx : IRpcCtxInternal
     private readonly IServiceProvider _services;
     private readonly IFeatureCollection _features;
     private readonly S _s;
-    public ISession Session { get; set; }
+    public Session Session { get; set; }
     public object Arg { get; set; }
     public object? Res { get; set; }
     public RpcTestException? Exception { get; set; }
@@ -30,7 +30,7 @@ public record RpcTestCtx : IRpcCtxInternal
         _services = services;
         _features = features;
         _s = s;
-        Session = session ?? ClearSession();
+        Session = (Session)(session ?? ClearSession());
         Headers = headers;
         Arg = arg;
         Ctkn = ctkn;

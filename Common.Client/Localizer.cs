@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Common.Client;
 
-internal class Localizer : L
+public class Localizer : L
 {
     private readonly S _s;
     private DateFmt _dateFmt;

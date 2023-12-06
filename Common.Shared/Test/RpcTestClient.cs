@@ -1,4 +1,3 @@
-using Common.Shared;
 using Common.Shared.Auth;
 
 namespace Common.Shared.Test;

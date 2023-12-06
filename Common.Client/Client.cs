@@ -36,23 +36,20 @@ public static class Client
             enableRequestStreaming
         );
         builder.Services.AddSingleton(httpClient);
-        await Setup(builder.Services, rpcClient, l, s, ns, apiFactory, addServices);
+        Setup(builder.Services, l, s, ns, apiFactory(rpcClient), addServices);
         await builder.Build().RunAsync();
     }
 
-    public static async Task Setup<TApi>(
+    public static void Setup<TApi>(
         IServiceCollection services,
-        IRpcClient rpcClient,
         L l,
         S s,
         NotificationService ns,
-        Func<IRpcClient, TApi> apiFactory,
+        TApi api,
         Action<IServiceCollection>? addServices = null
     )
         where TApi : class, IApi
     {
-        var api = apiFactory(rpcClient);
-        services.AddSingleton(rpcClient);
         services.AddSingleton(s);
         services.AddSingleton(l);
         services.AddSingleton(api);

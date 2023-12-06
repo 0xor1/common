@@ -84,9 +84,9 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
         return ses;
     }
 
-    private ISession _Clear(HttpContext ctx)
+    private Session _Clear(HttpContext ctx)
     {
-        return Create(
+        return (Session)Create(
             ctx,
             Id.New(),
             false,
@@ -101,7 +101,7 @@ internal record RpcHttpSessionManager : IRpcHttpSessionManager
         );
     }
 
-    private ISession GetCookie(HttpContext ctx)
+    private Session GetCookie(HttpContext ctx)
     {
         var c = ctx.Request.Cookies[SessionKey];
         if (c.IsNull())

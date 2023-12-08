@@ -12,7 +12,7 @@
     "useHttpsRedirection": false
   },
   "db": {
-    "connection": "Server=localhost;Database=Common;Uid=Common;Pwd=C0-Mm-0n-C0-Mm-0n"
+    "connection": "Server=localhost;Database=Common;Uid=Common;Pwd=C0-Mm-0n-C0-Mm-0n;default command timeout=10"
   },
   "session": {
     "signatureKeys": [

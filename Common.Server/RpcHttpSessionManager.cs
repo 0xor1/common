@@ -7,7 +7,7 @@ using ISession = Common.Shared.Auth.ISession;
 
 namespace Common.Server;
 
-internal record RpcHttpSessionManager : IRpcHttpSessionManager
+public record RpcHttpSessionManager : IRpcHttpSessionManager
 {
     private const string SessionKey = "s";
     private readonly byte[][] SignatureKeys;

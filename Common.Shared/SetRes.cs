@@ -11,7 +11,7 @@ public record SetRes<T>(IReadOnlyList<T> Set, bool More)
     {
         if (set.Count == qryLimit)
         {
-            set.RemoveAt(qryLimit);
+            set.RemoveAt(qryLimit - 1);
             return new SetRes<T>(set, true);
         }
         return new SetRes<T>(set, false);

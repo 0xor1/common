@@ -6,7 +6,7 @@ USE Common;
 
 DROP TABLE IF EXISTS Auths;
 CREATE TABLE Auths (
-    Id CHAR(22) NOT NULL,
+    Id VARCHAR(22) NOT NULL,
     Email VARCHAR(250) NOT NULL,
     LastSignedInOn DATETIME(3) NOT NULL,
     LastSignInAttemptOn DATETIME(3) NOT NULL,

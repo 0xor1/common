@@ -2,7 +2,9 @@ using System.Net;
 using Common.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ISession = Common.Shared.Auth.ISession;
 using S = Common.Shared.I18n.S;
 
 namespace Common.Server;
@@ -12,6 +14,23 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, T
     where TArg : class
     where TRes : class
 {
+    public static RpcEndpoint<TArg, TRes> DbTx<TDb, TArg, TRes>(
+        Rpc<TArg, TRes> def,
+        Func<IRpcCtx, TDb, ISession, TArg, Task<TRes>> fn,
+        bool mustBeAuthedSes = true
+    )
+        where TDb : DbContext
+        where TArg : class
+        where TRes : class =>
+        new(
+            def,
+            async (ctx, arg) =>
+                await ctx.DbTx<TDb, TRes>(
+                    async (db, ses) => await fn(ctx, db, ses, arg),
+                    mustBeAuthedSes
+                )
+        );
+
     public string Path => Def.Path;
     public ulong? MaxSize => Def.MaxSize;
 

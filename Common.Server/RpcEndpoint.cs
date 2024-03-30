@@ -14,14 +14,12 @@ public record RpcEndpoint<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, T
     where TArg : class
     where TRes : class
 {
-    public static RpcEndpoint<TArg, TRes> DbTx<TDb, TArg, TRes>(
+    public static RpcEndpoint<TArg, TRes> DbTx<TDb>(
         Rpc<TArg, TRes> def,
         Func<IRpcCtx, TDb, ISession, TArg, Task<TRes>> fn,
         bool mustBeAuthedSes = true
     )
-        where TDb : DbContext
-        where TArg : class
-        where TRes : class =>
+        where TDb : DbContext =>
         new(
             def,
             async (ctx, arg) =>

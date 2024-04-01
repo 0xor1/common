@@ -25,13 +25,13 @@ public class AuthEps<TDbCtx>
         _onActivation = onActivation;
         _onDelete = onDelete;
         _validateFcmTopic = validateFcmTopic;
-        Eps = new List<IRpcEndpoint>
+        Eps = new List<IEp>
         {
-            new RpcEndpoint<Nothing, ApiSession>(
+            new Ep<Nothing, ApiSession>(
                 AuthRpcs.GetSession,
                 (ctx, _) => ctx.GetSession().ToApi().AsTask()
             ),
-            new RpcEndpoint<Register, Nothing>(
+            new Ep<Register, Nothing>(
                 AuthRpcs.Register,
                 async (ctx, req) =>
                 {
@@ -94,7 +94,7 @@ public class AuthEps<TDbCtx>
                     );
                 }
             ),
-            new RpcEndpoint<VerifyEmail, Nothing>(
+            new Ep<VerifyEmail, Nothing>(
                 AuthRpcs.VerifyEmail,
                 async (ctx, req) =>
                 {
@@ -139,7 +139,7 @@ public class AuthEps<TDbCtx>
                     );
                 }
             ),
-            new RpcEndpoint<SendResetPwdEmail, Nothing>(
+            new Ep<SendResetPwdEmail, Nothing>(
                 AuthRpcs.SendResetPwdEmail,
                 async (ctx, req) =>
                 {
@@ -192,7 +192,7 @@ public class AuthEps<TDbCtx>
                     );
                 }
             ),
-            new RpcEndpoint<ResetPwd, Nothing>(
+            new Ep<ResetPwd, Nothing>(
                 AuthRpcs.ResetPwd,
                 async (ctx, req) =>
                 {
@@ -229,7 +229,7 @@ public class AuthEps<TDbCtx>
                     );
                 }
             ),
-            new RpcEndpoint<SendMagicLinkEmail, Nothing>(
+            new Ep<SendMagicLinkEmail, Nothing>(
                 AuthRpcs.SendMagicLinkEmail,
                 async (ctx, req) =>
                 {
@@ -283,7 +283,7 @@ public class AuthEps<TDbCtx>
                     );
                 }
             ),
-            new RpcEndpoint<MagicLinkSignIn, ApiSession>(
+            new Ep<MagicLinkSignIn, ApiSession>(
                 AuthRpcs.MagicLinkSignIn,
                 async (ctx, req) =>
                 {
@@ -335,7 +335,7 @@ public class AuthEps<TDbCtx>
                     );
                 }
             ),
-            new RpcEndpoint<SignIn, ApiSession>(
+            new Ep<SignIn, ApiSession>(
                 AuthRpcs.SignIn,
                 async (ctx, req) =>
                 {
@@ -384,7 +384,7 @@ public class AuthEps<TDbCtx>
                     );
                 }
             ),
-            new RpcEndpoint<Nothing, ApiSession>(
+            new Ep<Nothing, ApiSession>(
                 AuthRpcs.SignOut,
                 async (ctx, _) =>
                 {
@@ -405,7 +405,7 @@ public class AuthEps<TDbCtx>
                     return ses.ToApi();
                 }
             ),
-            new RpcEndpoint<Nothing, ApiSession>(
+            new Ep<Nothing, ApiSession>(
                 AuthRpcs.Delete,
                 async (ctx, _) =>
                     await ctx.DbTx<TDbCtx, ApiSession>(
@@ -421,7 +421,7 @@ public class AuthEps<TDbCtx>
                         }
                     )
             ),
-            new RpcEndpoint<SetL10n, ApiSession>(
+            new Ep<SetL10n, ApiSession>(
                 AuthRpcs.SetL10n,
                 async (ctx, req) =>
                 {
@@ -490,7 +490,7 @@ public class AuthEps<TDbCtx>
                     return ses.ToApi();
                 }
             ),
-            new RpcEndpoint<FcmEnabled, ApiSession>(
+            new Ep<FcmEnabled, ApiSession>(
                 AuthRpcs.FcmEnabled,
                 async (ctx, req) =>
                     await ctx.DbTx<TDbCtx, ApiSession>(
@@ -547,7 +547,7 @@ public class AuthEps<TDbCtx>
                         }
                     )
             ),
-            new RpcEndpoint<FcmRegister, FcmRegisterRes>(
+            new Ep<FcmRegister, FcmRegisterRes>(
                 AuthRpcs.FcmRegister,
                 async (ctx, req) =>
                     await ctx.DbTx<TDbCtx, FcmRegisterRes>(
@@ -620,7 +620,7 @@ public class AuthEps<TDbCtx>
                         }
                     )
             ),
-            new RpcEndpoint<FcmUnregister, Nothing>(
+            new Ep<FcmUnregister, Nothing>(
                 AuthRpcs.FcmUnregister,
                 async (ctx, req) =>
                     await ctx.DbTx<TDbCtx, Nothing>(
@@ -636,7 +636,7 @@ public class AuthEps<TDbCtx>
         };
     }
 
-    public IReadOnlyList<IRpcEndpoint> Eps { get; }
+    public IReadOnlyList<IEp> Eps { get; }
 
     private void RateLimitAuthAttempts(IRpcCtx ctx, Auth auth)
     {

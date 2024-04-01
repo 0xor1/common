@@ -20,11 +20,11 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
     private readonly IConfig _config;
     private readonly Shared.S _s;
     private readonly Func<IRpcClient, TApi> _apiFactory;
-    private readonly IReadOnlyDictionary<string, IRpcEndpoint> _eps;
+    private readonly IReadOnlyDictionary<string, IEp> _eps;
 
     public RpcTestRig(
         Shared.S s,
-        IReadOnlyList<IRpcEndpoint> eps,
+        IReadOnlyList<IEp> eps,
         Func<IRpcClient, TApi> apiFactory,
         Action<IServiceCollection>? addServices = null,
         Func<IServiceProvider, Task>? initApp = null

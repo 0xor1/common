@@ -1,6 +1,6 @@
 namespace Common.Server;
 
-public interface IRpcEndpoint
+public interface IEp
 {
     string Path { get; }
 

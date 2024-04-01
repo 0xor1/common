@@ -11,7 +11,7 @@ public static class RpcExts
 {
     public static IApplicationBuilder UseRpcEndpoints(
         this IApplicationBuilder app,
-        IReadOnlyList<IRpcEndpoint> eps
+        IReadOnlyList<IEp> eps
     )
     {
         // validate all endpoints start /api/ and there are no duplicates

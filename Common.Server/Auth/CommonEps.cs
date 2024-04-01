@@ -23,7 +23,7 @@ public class CommonEps<TDbCtx>
         );
     }
 
-    public IReadOnlyList<IRpcEndpoint> Eps
+    public IReadOnlyList<IEp> Eps
     {
         get
         {

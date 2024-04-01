@@ -8,7 +8,7 @@ public record Rpc<TArg, TRes>
 
     public ulong? MaxSize { get; }
 
-    public Rpc(string path, ulong? maxSize = Size.KB)
+    public Rpc(string path, ulong? maxSize = Size.MB)
     {
         Path = path.ToLower();
         MaxSize = maxSize;

@@ -11,7 +11,7 @@ public static class Server
     public static void Run<TDbCtx>(
         string[] args,
         S s,
-        IReadOnlyList<IRpcEndpoint> eps,
+        IReadOnlyList<IEp> eps,
         Action<IServiceCollection>? addServies = null,
         Func<IServiceProvider, Task>? initApp = null
     )

@@ -5,10 +5,10 @@ namespace Common.Server.Auth;
 
 public static class AppEps
 {
-    public static IReadOnlyList<IRpcEndpoint> Eps { get; } =
-        new List<IRpcEndpoint>()
+    public static IReadOnlyList<IEp> Eps { get; } =
+        new List<IEp>()
         {
-            new RpcEndpoint<Nothing, Shared.Auth.Config>(
+            new Ep<Nothing, Shared.Auth.Config>(
                 AppRpcs.GetConfig,
                 async (ctx, _) =>
                 {

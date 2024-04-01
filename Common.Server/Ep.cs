@@ -9,8 +9,7 @@ using S = Common.Shared.I18n.S;
 
 namespace Common.Server;
 
-public record Ep<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, Task<TRes>> Fn)
-    : IEp
+public record Ep<TArg, TRes>(Rpc<TArg, TRes> Rpc, Func<IRpcCtx, TArg, Task<TRes>> Fn) : IEp
     where TArg : class
     where TRes : class
 {
@@ -29,8 +28,8 @@ public record Ep<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, Task<TRes>
                 )
         );
 
-    public string Path => Def.Path;
-    public ulong? MaxSize => Def.MaxSize;
+    public string Path => Rpc.Path;
+    public ulong? MaxSize => Rpc.MaxSize;
 
     public async Task Execute(IRpcCtxInternal ctx)
     {
@@ -70,7 +69,7 @@ public record Ep<TArg, TRes>(Rpc<TArg, TRes> Def, Func<IRpcCtx, TArg, Task<TRes>
             }
             else
             {
-                ctx.Get<ILogger<IRpcCtx>>().LogError(ex, $"Error thrown by {Def.Path}");
+                ctx.Get<ILogger<IRpcCtx>>().LogError(ex, $"Error thrown by {Rpc.Path}");
             }
             await ctx.HandleException(ex, message, code);
         }

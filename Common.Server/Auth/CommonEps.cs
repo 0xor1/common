@@ -10,6 +10,8 @@ public class CommonEps<TDbCtx>
 
     public CommonEps(
         int maxAuthAttemptsPerSecond,
+        bool fcmRequiresAuth,
+        int maxFcmRegs,
         Func<IRpcCtx, TDbCtx, string, string, Task> onActivation,
         Func<IRpcCtx, TDbCtx, ISession, Task> onDelete,
         Func<IRpcCtx, TDbCtx, ISession, IReadOnlyList<string>, Task> validateFcmTopic
@@ -17,6 +19,8 @@ public class CommonEps<TDbCtx>
     {
         _authEps = new AuthEps<TDbCtx>(
             maxAuthAttemptsPerSecond,
+            fcmRequiresAuth,
+            maxFcmRegs,
             onActivation,
             onDelete,
             validateFcmTopic

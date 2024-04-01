@@ -14,6 +14,8 @@ public class FcmClientTests : IDisposable
             S.Inst,
             new CommonEps<CommonTestDb>(
                 0,
+                true,
+                5,
                 (_, _, _, _) => Task.CompletedTask,
                 (_, _, _) => Task.CompletedTask,
                 (_, _, _, _) => Task.CompletedTask

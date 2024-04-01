@@ -10,18 +10,29 @@ public class AuthEps<TDbCtx>
     where TDbCtx : DbContext, IAuthDb
 {
     private readonly int _maxAuthAttemptsPerSecond;
+    private readonly bool _fcmRequiresAuth;
+    private readonly int _maxFcmRegs;
     private readonly Func<IRpcCtx, TDbCtx, string, string, Task> _onActivation;
     private readonly Func<IRpcCtx, TDbCtx, ISession, Task> _onDelete;
     private readonly Func<IRpcCtx, TDbCtx, ISession, IReadOnlyList<string>, Task> _validateFcmTopic;
 
     public AuthEps(
         int maxAuthAttemptsPerSecond,
+        bool fcmRequiresAuth,
+        int maxFcmRegs,
         Func<IRpcCtx, TDbCtx, string, string, Task> onActivation,
         Func<IRpcCtx, TDbCtx, ISession, Task> onDelete,
         Func<IRpcCtx, TDbCtx, ISession, IReadOnlyList<string>, Task> validateFcmTopic
     )
     {
+        Throw.DataIf(
+            maxAuthAttemptsPerSecond < 0,
+            $"{nameof(maxAuthAttemptsPerSecond)} must be >= 0"
+        );
+        Throw.DataIf(maxFcmRegs < 1, $"{nameof(maxFcmRegs)} must be >= 1");
         _maxAuthAttemptsPerSecond = maxAuthAttemptsPerSecond;
+        _fcmRequiresAuth = fcmRequiresAuth;
+        _maxFcmRegs = maxFcmRegs;
         _onActivation = onActivation;
         _onDelete = onDelete;
         _validateFcmTopic = validateFcmTopic;
@@ -531,7 +542,8 @@ public class AuthEps<TDbCtx>
                         null
                     );
                     return ses.ToApi();
-                }
+                },
+                _fcmRequiresAuth
             ),
             Ep<FcmRegister, FcmRegisterRes>.DbTx<TDbCtx>(
                 AuthRpcs.FcmRegister,
@@ -578,10 +590,11 @@ public class AuthEps<TDbCtx>
                     }
                     else
                     {
-                        if (fcmRegs.Count > 4)
+                        if (fcmRegs.Count > _maxFcmRegs - 1)
                         {
-                            // only allow a user to have 5 fcm tokens registered at any one time
-                            db.FcmRegs.RemoveRange(fcmRegs.GetRange(4, fcmRegs.Count - 4));
+                            db.FcmRegs.RemoveRange(
+                                fcmRegs.GetRange(_maxFcmRegs - 1, fcmRegs.Count - (_maxFcmRegs - 1))
+                            );
                         }
                         await db.FcmRegs.AddAsync(
                             new FcmReg()
@@ -598,7 +611,8 @@ public class AuthEps<TDbCtx>
                     }
 
                     return new FcmRegisterRes(client);
-                }
+                },
+                _fcmRequiresAuth
             ),
             Ep<FcmUnregister, Nothing>.DbTx<TDbCtx>(
                 AuthRpcs.FcmUnregister,
@@ -608,7 +622,8 @@ public class AuthEps<TDbCtx>
                         .Where(x => x.User == ses.Id && x.Client == req.Client)
                         .ExecuteDeleteAsync(ctx.Ctkn);
                     return Nothing.Inst;
-                }
+                },
+                _fcmRequiresAuth
             )
         };
     }

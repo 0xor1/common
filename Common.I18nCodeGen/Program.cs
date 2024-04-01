@@ -23,9 +23,9 @@ const string LangFile =
     """
     // Generated Code File, Do Not Edit.
     // This file is generated with Common.I18nCodeGen.
-    
+
     using Common.Shared;
-    
+
     namespace {{Namespace}};
 
     public static partial class S
@@ -34,6 +34,26 @@ const string LangFile =
         { {% for str in Strings %}
             {{str}}{% endfor %}
         };
+    }
+    """;
+
+const string ZLibraryFile = 
+    """
+    // Generated Code File, Do Not Edit.
+    // This file is generated with Common.I18nCodeGen.
+    
+    using Common.Shared;
+    
+    namespace {{Namespace}};
+    
+    public static partial class S
+    {
+        private static readonly Dictionary<string, Dictionary<string, TemplatableString>> Library =
+            new()
+            {
+                {% for lang in Langs %}
+                { Common.Shared.I18n.S.{{lang}}, {{lang}}_Strings },{% endfor %}
+            };
     }
     """;
 
@@ -48,37 +68,40 @@ if (args.Length == 4)
 var fParser = new FluidParser();
 var keyFileTpl = fParser.Parse(KeysFile).NotNull();
 var langFileTpl = fParser.Parse(LangFile).NotNull();
-using (var reader = new StreamReader(Path.Join(csvDirPath, "strings.csv")))
-using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-{
-    csv.Read();
-    csv.ReadHeader();
-    var langs = csv.HeaderRecord.NotNull().TakeLast(csv.HeaderRecord.NotNull().Length - 1).ToList();
-    var kfm = new KeyFileModel(@namespace);
-    var lfms = new Dictionary<string, LangFileModel>();
-    foreach (var lang in langs)
-    {
-        lfms.Add(lang, new LangFileModel(@namespace, @readonly, lang.ToUpper()));
-    }
+var zlibFileTpl = fParser.Parse(ZLibraryFile).NotNull();
 
-    while (csv.Read())
-    {
-        var key = csv.GetField<string>("key").NotNull();
-        kfm.Keys.Add(new ContentKey(key, prefix));
-        foreach (var lang in langs)
-        {
-            var content = csv.GetField<string>(lang).NotNull();
-            lfms[lang].Strings.Add(new (key, content));
-        }
-    }
-    File.WriteAllText(Path.Join(csvDirPath, "Keys.cs"), keyFileTpl.Render(new TemplateContext(kfm)));
+using var reader = new StreamReader(Path.Join(csvDirPath, "strings.csv"));
+using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+
+csv.Read();
+csv.ReadHeader();
+var langs = csv.HeaderRecord.NotNull().TakeLast(csv.HeaderRecord.NotNull().Length - 1).ToList();
+var kfm = new KeyFileModel(@namespace);
+var zlfm = new ZLibraryFileModel(@namespace, langs.Select(x => x.ToUpper()).ToList());
+var lfms = new Dictionary<string, LangFileModel>();
+
+foreach (var lang in langs)
+{
+    lfms.Add(lang, new LangFileModel(@namespace, @readonly, lang.ToUpper()));
+}
+
+while (csv.Read())
+{
+    var key = csv.GetField<string>("key").NotNull();
+    kfm.Keys.Add(new ContentKey(key, prefix));
     foreach (var lang in langs)
     {
-        File.WriteAllText(Path.Join(csvDirPath, $"S{lang.ToUpper()}.cs"), langFileTpl.Render(new TemplateContext(lfms[lang])));
+        var content = csv.GetField<string>(lang).NotNull();
+        lfms[lang].Strings.Add(new (key, content));
     }
 }
-    
-    
+File.WriteAllText(Path.Join(csvDirPath, "Keys.cs"), keyFileTpl.Render(new TemplateContext(kfm)));
+File.WriteAllText(Path.Join(csvDirPath, "SZLibrary.cs"), zlibFileTpl.Render(new TemplateContext(zlfm)));
+foreach (var lang in langs)
+{
+    File.WriteAllText(Path.Join(csvDirPath, $"S{lang.ToUpper()}.cs"), langFileTpl.Render(new TemplateContext(lfms[lang])));
+}
+
 
 public record KeyFileModel(string Namespace)
 {
@@ -96,6 +119,8 @@ public record LangFileModel(string Namespace, bool ReadOnly, string Lang)
     public List<StringContent> Strings { get; } = new();
 
 }
+
+public record ZLibraryFileModel(string Namespace, List<string> Langs);
 public record StringContent(string Key, string Content)
 {
     public string Pascal => new Key(Key).ToPascal();

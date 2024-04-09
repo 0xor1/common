@@ -1,5 +1,7 @@
 // Generated Code File, Do Not Edit.
-// This file is generated with Common.I18nCodeGen.
+// This file is generated with Common.Cmds.
+
+using Common.Shared;
 
 namespace Common.Shared.I18n;
 

@@ -13,7 +13,7 @@ public class I18n
         // Generated Code File, Do Not Edit.
         // This file is generated with Common.Cmds.
         // see https://github.com/0xor1/common/blob/main/Common.Cmds/I18n.cs
-        // executed with arguments: i18n {{CsvDirPath}} {{NameSpace}} {{ReadOnly}} {{Prefix}}
+        // executed with arguments: i18n {{CsvDirPath}} {{Namespace}} {{ReadOnly}} {{Prefix}}
 
         namespace {{Namespace}};
 
@@ -28,7 +28,7 @@ public class I18n
         // Generated Code File, Do Not Edit.
         // This file is generated with Common.Cmds.
         // see https://github.com/0xor1/common/blob/main/Common.Cmds/I18n.cs
-        // executed with arguments: i18n {{CsvDirPath}} {{NameSpace}} {{ReadOnly}} {{Prefix}}
+        // executed with arguments: i18n {{CsvDirPath}} {{Namespace}} {{ReadOnly}} {{Prefix}}
 
         using Common.Shared;
 
@@ -48,7 +48,7 @@ public class I18n
         // Generated Code File, Do Not Edit.
         // This file is generated with Common.Cmds.
         // see https://github.com/0xor1/common/blob/main/Common.Cmds/I18n.cs
-        // executed with arguments: i18n {{CsvDirPath}} {{NameSpace}} {{ReadOnly}} {{Prefix}}
+        // executed with arguments: i18n {{CsvDirPath}} {{Namespace}} {{ReadOnly}} {{Prefix}}
 
         using Common.Shared;
 

@@ -47,7 +47,7 @@ public record Ep<TArg, TRes>(Rpc<TArg, TRes> Rpc, Func<IRpcCtx, TArg, Task<TRes>
     /// The Rpc path.
     /// </summary>
     public string Path => Rpc.Path;
-    
+
     /// <summary>
     /// The Rpc max body size.
     /// </summary>

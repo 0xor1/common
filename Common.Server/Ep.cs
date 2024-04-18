@@ -9,18 +9,33 @@ using S = Common.Shared.I18n.S;
 
 namespace Common.Server;
 
+/// <summary>
+/// Ep is an Endpoint, it binds an rpc definition to a handler function.
+/// </summary>
+/// <param name="Rpc">The remote procedure call definition.</param>
+/// <param name="Fn">The handler function</param>
+/// <typeparam name="TArg">Argument type</typeparam>
+/// <typeparam name="TRes">Result type</typeparam>
 public record Ep<TArg, TRes>(Rpc<TArg, TRes> Rpc, Func<IRpcCtx, TArg, Task<TRes>> Fn) : IEp
     where TArg : class
     where TRes : class
 {
+    /// <summary>
+    /// Creates a new endpoint that is automatically wrapped in a database transaction.
+    /// </summary>
+    /// <param name="rpc">The remote procedure call definition.</param>
+    /// <param name="fn">The handler function</param>
+    /// <param name="mustBeAuthedSes">whether the session must be authenticated or if it can be anonymous</param>
+    /// <typeparam name="TDb">The database context type</typeparam>
+    /// <returns></returns>
     public static Ep<TArg, TRes> DbTx<TDb>(
-        Rpc<TArg, TRes> def,
+        Rpc<TArg, TRes> rpc,
         Func<IRpcCtx, TDb, ISession, TArg, Task<TRes>> fn,
         bool mustBeAuthedSes = true
     )
         where TDb : DbContext =>
         new(
-            def,
+            rpc,
             async (ctx, arg) =>
                 await ctx.DbTx<TDb, TRes>(
                     async (db, ses) => await fn(ctx, db, ses, arg),
@@ -28,9 +43,20 @@ public record Ep<TArg, TRes>(Rpc<TArg, TRes> Rpc, Func<IRpcCtx, TArg, Task<TRes>
                 )
         );
 
+    /// <summary>
+    /// The Rpc path.
+    /// </summary>
     public string Path => Rpc.Path;
+    
+    /// <summary>
+    /// The Rpc max body size.
+    /// </summary>
     public ulong? MaxSize => Rpc.MaxSize;
 
+    /// <summary>
+    /// Executes this endpoints handler function using the rpc context.
+    /// </summary>
+    /// <param name="ctx">The internal rpc context.</param>
     public async Task Execute(IRpcCtxInternal ctx)
     {
         try

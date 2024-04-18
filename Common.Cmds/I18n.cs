@@ -12,6 +12,8 @@ public class I18n
         """
         // Generated Code File, Do Not Edit.
         // This file is generated with Common.Cmds.
+        // see https://github.com/0xor1/common/blob/main/Common.Cmds/I18n.cs
+        // executed with arguments: {{CsvDirPath}} {{NameSpace}} {{ReadOnly}} {{Prefix}}
 
         namespace {{Namespace}};
 
@@ -25,6 +27,8 @@ public class I18n
         """
         // Generated Code File, Do Not Edit.
         // This file is generated with Common.Cmds.
+        // see https://github.com/0xor1/common/blob/main/Common.Cmds/I18n.cs
+        // executed with arguments: {{CsvDirPath}} {{NameSpace}} {{ReadOnly}} {{Prefix}}
 
         using Common.Shared;
 
@@ -43,6 +47,8 @@ public class I18n
         """
         // Generated Code File, Do Not Edit.
         // This file is generated with Common.Cmds.
+        // see https://github.com/0xor1/common/blob/main/Common.Cmds/I18n.cs
+        // executed with arguments: {{CsvDirPath}} {{NameSpace}} {{ReadOnly}} {{Prefix}}
 
         using Common.Shared;
 
@@ -67,6 +73,7 @@ public class I18n
     [Command("i18n")]
     public async Task Run([Argument] string csvDirPath, [Argument] string @namespace, [Argument] bool @readonly, [Argument] string prefix = "")
     {
+        var printCsvDirPath = $"<abs_file_path_to>/{csvDirPath.Split(['/', '\\']).Last()}";
         var fParser = new FluidParser();
         var keyFileTpl = fParser.Parse(KeysFile).NotNull();
         var langFileTpl = fParser.Parse(LangFile).NotNull();
@@ -78,19 +85,19 @@ public class I18n
         await csv.ReadAsync();
         csv.ReadHeader();
         var langs = csv.HeaderRecord.NotNull().TakeLast(csv.HeaderRecord.NotNull().Length - 1).ToList();
-        var kfm = new KeyFileModel(@namespace);
-        var zlfm = new ZLibraryFileModel(@namespace, @readonly, langs.Select(x => x.ToUpper()).ToList());
+        var kfm = new KeyFileModel(printCsvDirPath, @namespace, @readonly, prefix);
+        var zlfm = new ZLibraryFileModel(printCsvDirPath, @namespace, @readonly, prefix, langs.Select(x => x.ToUpper()).ToList());
         var lfms = new Dictionary<string, LangFileModel>();
 
         foreach (var lang in langs)
         {
-            lfms.Add(lang, new LangFileModel(@namespace, @readonly, lang.ToUpper()));
+            lfms.Add(lang, new LangFileModel(printCsvDirPath, @namespace, @readonly, prefix, lang.ToUpper()));
         }
 
         while (await csv.ReadAsync())
         {
             var key = csv.GetField<string>(Key).NotNull();
-            kfm.Keys.Add(new ContentKey(key, prefix));
+            kfm.Keys.Add(new ContentKey(prefix, key));
             foreach (var lang in langs)
             {
                 var content = csv.GetField<string>(lang).NotNull();
@@ -105,26 +112,26 @@ public class I18n
         }
     }
 
-    private record KeyFileModel(string Namespace)
+    private record KeyFileModel(string CsvDirPath, string Namespace, bool ReadOnly, string Prefix)
     {
         public List<ContentKey> Keys { get; } = new();
 
     }
 
-    private record ContentKey(string Key, string Prefix)
+    private record ContentKey(string Prefix, string Key)
     {
         private string Pascal => new Key(Key).ToPascal();
     
         public override string ToString() => $"public const string {Pascal} = \"{Prefix}{Key}\";";
     }
 
-    private record LangFileModel(string Namespace, bool ReadOnly, string Lang)
+    private record LangFileModel(string CsvDirPath, string Namespace, bool ReadOnly, string Prefix, string Lang)
     {
         public List<StringContent> Strings { get; } = new();
 
     }
 
-    private record ZLibraryFileModel(string Namespace, bool ReadOnly, List<string> Langs);
+    private record ZLibraryFileModel(string CsvDirPath, string Namespace, bool ReadOnly, string Prefix, List<string> Langs);
 
     private record StringContent(string Key, string Content)
     {

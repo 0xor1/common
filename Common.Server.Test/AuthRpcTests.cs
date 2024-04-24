@@ -40,6 +40,10 @@ public class AuthRpcTests : IDisposable
         var (ali, email, _) = await _rpcTestRig.NewApi("ali");
         var ses = await ali.Auth.GetSession();
         await ali.Auth.SignOut();
+        // call again to hit code where its already signed out
+        await ali.Auth.SignOut();
+        await ali.Auth.SendMagicLinkEmail(new(email, true));
+        // call again to hit code where existing code hasnt expired
         await ali.Auth.SendMagicLinkEmail(new(email, true));
         var code = _rpcTestRig.RunDb((db) => db.Auths.Single(x => x.Email == email).MagicLinkCode);
         ses = await ali.Auth.MagicLinkSignIn(new(email, code, true));
@@ -87,6 +91,8 @@ public class AuthRpcTests : IDisposable
         var (ali, email, _) = await _rpcTestRig.NewApi("ali");
         await ali.Auth.SignOut();
         await ali.Auth.SendResetPwdEmail(new(email));
+        // call again to hit code where existing code hasnt expired
+        await ali.Auth.SendResetPwdEmail(new(email));
         var pwdCode = _rpcTestRig.RunDb(
             (db) => db.Auths.Single(x => x.Email == email).ResetPwdCode
         );
@@ -101,6 +107,14 @@ public class AuthRpcTests : IDisposable
     {
         var (ali, _, _) = await _rpcTestRig.NewApi("ali");
         var ses = await ali.Auth.SetL10n(new("es", DateFmt.MDY, "h:mmtt", "/", ".", ","));
+        Assert.Equal("es", ses.Lang);
+        Assert.Equal(DateFmt.MDY, ses.DateFmt);
+        Assert.Equal("h:mmtt", ses.TimeFmt);
+        Assert.Equal("/", ses.DateSeparator);
+        Assert.Equal(".", ses.ThousandsSeparator);
+        Assert.Equal(",", ses.DecimalSeparator);
+        // call again to hit code where nothing is changing
+        ses = await ali.Auth.SetL10n(new("es", DateFmt.MDY, "h:mmtt", "/", ".", ","));
         Assert.Equal("es", ses.Lang);
         Assert.Equal(DateFmt.MDY, ses.DateFmt);
         Assert.Equal("h:mmtt", ses.TimeFmt);

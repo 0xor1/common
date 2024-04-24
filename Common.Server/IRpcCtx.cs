@@ -3,6 +3,9 @@ using Common.Shared.Auth;
 
 namespace Common.Server;
 
+/// <summary>
+/// Represents the context of a remote procedure call.
+/// </summary>
 public interface IRpcCtx
 {
     public T Get<T>()

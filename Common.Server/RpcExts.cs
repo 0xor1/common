@@ -9,6 +9,8 @@ namespace Common.Server;
 
 public static class RpcExts
 {
+    private const string Host = "Host";
+
     public static IApplicationBuilder UseRpcEndpoints(
         this IApplicationBuilder app,
         IReadOnlyList<IEp> eps
@@ -46,7 +48,8 @@ public static class RpcExts
 
     public static IApplicationBuilder UseRpcHost(this IApplicationBuilder app, string rpcHost)
     {
-        var baseHref = rpcHost + "/api";
+        var baseHref = rpcHost.Trim('/') + "/api";
+        var rpcHostHeader = rpcHost.Replace("http://", "").Replace("https://", "").Replace("/", "");
         // validate all endpoints start /api/ and there are no duplicates
         app.Map(
             "/api",
@@ -57,7 +60,7 @@ public static class RpcExts
                         var cl = ctx.RequestServices
                             .GetRequiredService<IHttpClientFactory>()
                             .CreateClient("dev_server");
-                        var req = CreateProxyHttpRequest(ctx, baseHref);
+                        var req = CreateProxyHttpRequest(ctx, rpcHostHeader, baseHref);
                         var res = await cl.SendAsync(req, ctx.RequestAborted);
                         await CopyProxyHttpResponse(ctx, res);
                     }
@@ -68,6 +71,7 @@ public static class RpcExts
 
     private static HttpRequestMessage CreateProxyHttpRequest(
         this HttpContext context,
+        string rpcHostHeader,
         string baseHref
     )
     {
@@ -77,9 +81,11 @@ public static class RpcExts
         var reqMethod = req.Method;
         reqMsg.Method = new HttpMethod(reqMethod);
         reqMsg.Content = new StreamContent(req.Body);
-
+        reqMsg.Headers.TryAddWithoutValidation(Host, rpcHostHeader);
         foreach (var header in req.Headers)
         {
+            if (header.Key == Host)
+                continue;
             if (
                 !reqMsg.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray())
                 && reqMsg.Content != null

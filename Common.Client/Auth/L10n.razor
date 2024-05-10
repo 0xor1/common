@@ -18,7 +18,7 @@
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Lang" Text="@L.S(S.Language)"/>
             <RadzenDropDown Name="Lang" AllowClear="false" TValue="string" 
-                            Data="S.SupportedLangs" 
+                            Data="IS.SupportedLangs" 
                             TextProperty="NativeName" ValueProperty="Code"
                             @bind-Value="_model.Lang" />
         </div>
@@ -26,7 +26,7 @@
             <RadzenLabel class="m-b-0q" Component="Date" Text="@L.S(S.DateFmt)"/>
             <div class="flx row jc-s g-0h">
                 <RadzenDropDown class="w-4" Name="DateSeparator" AllowClear="false" TValue="string" 
-                                Data="S.SupportedDateSeparators"
+                                Data="IS.SupportedDateSeparators"
                                 @bind-Value="_model.DateSeparator" />
                 <RadzenDropDown class="grow-1" Name="Date" AllowClear="false" TValue="DateFmt" 
                                 Data="DateFmtExt.GetFmts(_model.DateSeparator)" 
@@ -37,7 +37,7 @@
         <div class="flx col ai-stretch">
             <RadzenLabel class="m-b-0q" Component="Time" Text="@L.S(S.TimeFmt)"/>
             <RadzenDropDown Name="Time" AllowClear=false TValue=string 
-                            Data="S.SupportedTimeFmts" 
+                            Data="IS.SupportedTimeFmts" 
                             ValueProperty="Value"
                             @bind-Value="@_model.TimeFmt" />
         </div>
@@ -61,6 +61,7 @@
 
 @inject IAuthService Auth;
 @inject L L;
+@inject Common.Shared.S IS;
 @code{
 
     public record NumberSeparator(string TSep, string DSep)
@@ -76,7 +77,7 @@
     }
 
     
-    record Model
+    record Model(Common.Shared.S S)
     {
         public string Lang { get; set; } = S.DefaultLang;
         public DateFmt DateFmt { get; set; } = S.DefaultDateFmt;
@@ -125,25 +126,31 @@
     private bool CanDo => _model != _initialValues && !_doing;
 
     private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt, S.DefaultDateSeparator, S.DefaultThousandsSeparator, S.DefaultDecimalSeparator); 
-    private Model _model = new (); 
-    private Model _initialValues = new (); 
+    private Model? _model; 
+    private Model? _initialValues; 
     private bool _doing = false;
 
     protected override async Task OnInitializedAsync()
     {
         _session = await Auth.GetSession();
-        _model.Lang = _session.Lang;
-        _model.DateFmt = _session.DateFmt;
-        _model.TimeFmt = _session.TimeFmt;
-        _model.DateSeparator = _session.DateSeparator;
-        _model.ThousandsSeparator = _session.ThousandsSeparator;
-        _model.DecimalSeparator = _session.DecimalSeparator;
-        _initialValues.Lang = _session.Lang;
-        _initialValues.DateFmt = _session.DateFmt;
-        _initialValues.TimeFmt = _session.TimeFmt;
-        _initialValues.DateSeparator = _session.DateSeparator;
-        _initialValues.ThousandsSeparator = _session.ThousandsSeparator;
-        _initialValues.DecimalSeparator = _session.DecimalSeparator;
+        _model = new(IS)
+        {
+            Lang = _session.Lang,
+            DateFmt = _session.DateFmt,
+            TimeFmt = _session.TimeFmt,
+            DateSeparator = _session.DateSeparator,
+            ThousandsSeparator = _session.ThousandsSeparator,
+            DecimalSeparator = _session.DecimalSeparator
+        };
+        _initialValues = new(IS)
+        {
+            Lang = _session.Lang,
+            DateFmt = _session.DateFmt,
+            TimeFmt = _session.TimeFmt,
+            DateSeparator = _session.DateSeparator,
+            ThousandsSeparator = _session.ThousandsSeparator,
+            DecimalSeparator = _session.DecimalSeparator
+        };
     }
 
     private async Task Do()

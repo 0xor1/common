@@ -638,7 +638,8 @@ public class AuthEps<TDbCtx>
             ctx.Ctkn
         );
         var newCreated = false;
-        if (auth != null) return (auth, newCreated);
+        if (auth != null)
+            return (auth, newCreated);
         newCreated = true;
         var verifyEmailCode = Crypto.String(32);
         var pwd = Crypto.HashPwd(req.Pwd);

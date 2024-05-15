@@ -138,7 +138,8 @@ public record RpcHttpSessionManager : IRpcHttpSessionManager
             return _Clear(ctx);
         }
 
-        throw new SecurityException("Session signature verification failed");
+        // if we failed to validate the signature, just wipe to a new anon session
+        return _Clear(ctx);
     }
 
     private void SetCookie(HttpContext ctx, Session ses)

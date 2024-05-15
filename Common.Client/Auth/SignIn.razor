@@ -47,12 +47,15 @@
     
     [CascadingParameter]
     public ISession Session { get; set; } = Common.Shared.Auth.Session.CommonDefault();
-    
+
+    [Parameter]
+    public string OnSignInGoTo { get; set; } = "/";
+
     protected override void OnInitialized()
     {
         if (Session.IsAuthed)
         {
-            Nav.NavigateTo("/");
+            Nav.NavigateTo(OnSignInGoTo);
         }
     }
     
@@ -73,7 +76,7 @@
         try
         {
             await Auth.SignIn(_model.Email, _model.Pwd, _model.RememberMe);
-            Nav.NavigateTo("/");
+            Nav.NavigateTo(OnSignInGoTo);
         }
         catch
         {

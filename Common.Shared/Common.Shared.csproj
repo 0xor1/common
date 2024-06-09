@@ -27,6 +27,11 @@
         <PackageReference Include="Ulid" Version="1.3.3" />
     </ItemGroup>
 
+    <Target Name="ShowReservedProperties" BeforeTargets="BeforeBuild">
+        <Exec Command="dotnet tool restore"/>
+        <Exec Command="dotnet tool run dotnet-common-cmds i18n &quot;$(MSBuildProjectDirectory)\I18n&quot; Common.Shared.I18n true cmn_"/>
+    </Target>
+
     <ItemGroup>
         <None Include="..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>

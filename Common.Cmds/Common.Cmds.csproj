@@ -1,20 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <PackageId>0xor1.Common.Cmds</PackageId>
+        <Version>3.0.27</Version>
+        <Authors>Daniel Robinson</Authors>
+        <Company>Personal</Company>
+        <Product>Personal</Product>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Description>Common Cmds I use to automate certain build steps in all of my projects</Description>
+        <RepositoryUrl>https://github.com/0xor1/Common</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <OutputType>Exe</OutputType>
+        <AssemblyName>dotnet-common-cmds</AssemblyName>
+        <PackAsTool>true</PackAsTool>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Common.Shared\Common.Shared.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
+        <PackageReference Include="0xor1.Common.Shared" Version="3.0.27" />
         <PackageReference Include="Cocona" Version="2.2.0" />
         <PackageReference Include="CsvHelper" Version="30.0.1" />
         <PackageReference Include="Fluid.Core" Version="2.5.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

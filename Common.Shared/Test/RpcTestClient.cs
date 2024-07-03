@@ -39,19 +39,35 @@ public class RpcTestClient : IRpcClient
         where TArg : class
         where TRes : class
     {
-        // internally test that the argument and result types can be de/serialized correctly, by just serializing and deserializing them
-        if (typeof(TArg) != Nothing.Type)
-        {
-            var argBs = RpcHttp.Serialize(arg);
-            arg = RpcHttp.Deserialize<TArg>(argBs);
-        }
+        arg = CheckSerialization(arg);
         (_session, var res) = await _exe(rpc.Path, _session, _headers, arg, ctkn);
-        if (typeof(TRes) != Nothing.Type)
-        {
-            var resBs = RpcHttp.Serialize(res);
-            res = RpcHttp.Deserialize<TRes>(resBs);
-        }
+        res = CheckSerialization(res);
         return (TRes)res;
+    }
+
+    private T CheckSerialization<T>(T obj)
+        where T : class
+    {
+        // internally test that the argument and result types can be de/serialized correctly, by just serializing and deserializing them
+        if (typeof(T) != Nothing.Type)
+        {
+            if (RpcHttp.HasStream<T>())
+            {
+                var hasStream = (obj as HasStream).NotNull();
+                var stream = hasStream.Stream;
+                var objBs = RpcHttp.Serialize(obj);
+                obj = RpcHttp.Deserialize<T>(objBs);
+                hasStream = (obj as HasStream).NotNull();
+                hasStream.Stream = stream;
+            }
+            else
+            {
+                var objBs = RpcHttp.Serialize(obj);
+                obj = RpcHttp.Deserialize<T>(objBs);
+            }
+        }
+
+        return obj;
     }
 
     public string GetUrl<TArg, TRes>(Rpc<TArg, TRes> rpc, TArg arg)

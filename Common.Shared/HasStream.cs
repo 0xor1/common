@@ -1,3 +1,4 @@
+using MessagePack;
 using Newtonsoft.Json;
 
 namespace Common.Shared;
@@ -5,6 +6,7 @@ namespace Common.Shared;
 public record HasStream : IDisposable, IAsyncDisposable
 {
     [JsonIgnore]
+    [IgnoreMember]
     public RpcStream Stream { get; set; }
 
     public void Dispose() => Stream.Dispose();

@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "0xor1.common.cmds": {
-      "version": "4.0.0",
+      "version": "4.0.1",
       "commands": [
         "dotnet-common-cmds"
       ]

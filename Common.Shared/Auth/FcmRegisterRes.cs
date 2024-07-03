@@ -1,3 +1,6 @@
+using MessagePack;
+
 namespace Common.Shared.Auth;
 
-public record FcmRegisterRes(string Client);
+[MessagePackObject]
+public record FcmRegisterRes([property: Key(0)] string Client);

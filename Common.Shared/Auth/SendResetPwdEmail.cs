@@ -1,3 +1,6 @@
+using MessagePack;
+
 namespace Common.Shared.Auth;
 
-public record SendResetPwdEmail(string Email);
+[MessagePackObject]
+public record SendResetPwdEmail([property: Key(0)] string Email);

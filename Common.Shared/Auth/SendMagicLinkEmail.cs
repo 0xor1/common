@@ -1,3 +1,9 @@
+using MessagePack;
+
 namespace Common.Shared.Auth;
 
-public record SendMagicLinkEmail(string Email, bool RememberMe);
+[MessagePackObject]
+public record SendMagicLinkEmail(
+    [property: Key(0)] string Email,
+    [property: Key(1)] bool RememberMe
+);

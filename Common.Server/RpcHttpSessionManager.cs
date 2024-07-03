@@ -1,4 +1,3 @@
-using System.Security;
 using System.Security.Cryptography;
 using Common.Shared;
 using MessagePack;
@@ -113,7 +112,7 @@ public record RpcHttpSessionManager : IRpcHttpSessionManager
 
         try
         {
-            var signedSes = MessagePackSerializer.Deserialize<SignedSession>(c.FromB64());
+            var signedSes = MsgPck.To<SignedSession>(c.FromB64());
             var i = 0;
             foreach (var signatureKey in SignatureKeys)
                 using (var hmac = new HMACSHA256(signatureKey))
@@ -121,7 +120,7 @@ public record RpcHttpSessionManager : IRpcHttpSessionManager
                     var sesSig = hmac.ComputeHash(signedSes.Session);
                     if (sesSig.SequenceEqual(signedSes.Signature))
                     {
-                        var ses = MessagePackSerializer.Deserialize<Session>(signedSes.Session);
+                        var ses = MsgPck.To<Session>(signedSes.Session);
                         if (i > 0)
                             // if it wasnt signed using the latest key, resign the cookie using the latest key
                             SetCookie(ctx, ses);
@@ -145,7 +144,7 @@ public record RpcHttpSessionManager : IRpcHttpSessionManager
     private void SetCookie(HttpContext ctx, Session ses)
     {
         // turn session into bytes
-        var sesBytes = MessagePackSerializer.Serialize(ses);
+        var sesBytes = MsgPck.From(ses);
         // sign the session
         byte[] sesSig;
         using (var hmac = new HMACSHA256(SignatureKeys.First()))
@@ -156,7 +155,7 @@ public record RpcHttpSessionManager : IRpcHttpSessionManager
         // create the cookie value with the session and signature
         var signedSes = new SignedSession { Session = sesBytes, Signature = sesSig };
         // get final cookie bytes
-        var cookieBytes = MessagePackSerializer.Serialize(signedSes);
+        var cookieBytes = MsgPck.From(signedSes);
         // create cookie
         ctx.Response
             .Cookies

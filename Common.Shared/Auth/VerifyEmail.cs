@@ -1,3 +1,6 @@
+using MessagePack;
+
 namespace Common.Shared.Auth;
 
-public record VerifyEmail(string Email, string Code);
+[MessagePackObject]
+public record VerifyEmail([property: Key(0)] string Email, [property: Key(1)] string Code);

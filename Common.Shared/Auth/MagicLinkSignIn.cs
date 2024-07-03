@@ -1,3 +1,10 @@
+using MessagePack;
+
 namespace Common.Shared.Auth;
 
-public record MagicLinkSignIn(string Email, string Code, bool RememberMe);
+[MessagePackObject]
+public record MagicLinkSignIn(
+    [property: Key(0)] string Email,
+    [property: Key(1)] string Code,
+    [property: Key(2)] bool RememberMe
+);

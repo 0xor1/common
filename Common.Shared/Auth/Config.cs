@@ -1,3 +1,6 @@
+using MessagePack;
+
 namespace Common.Shared.Auth;
 
-public record Config(bool DemoMode, string? RepoUrl);
+[MessagePackObject]
+public record Config([property: Key(0)] bool DemoMode, [property: Key(1)] string? RepoUrl);

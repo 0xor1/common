@@ -1,3 +1,6 @@
+using MessagePack;
+
 namespace Common.Shared.Auth;
 
-public record FcmUnregister(string Client);
+[MessagePackObject]
+public record FcmUnregister([property: Key(0)] string Client);

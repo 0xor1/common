@@ -1,3 +1,6 @@
+using MessagePack;
+
 namespace Common.Shared.Auth;
 
-public record FcmEnabled(bool Val);
+[MessagePackObject]
+public record FcmEnabled([property: Key(0)] bool Val);

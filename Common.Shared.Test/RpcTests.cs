@@ -1,3 +1,5 @@
+using MessagePack;
+
 namespace Common.Shared.Test;
 
 public class RpcTests
@@ -9,5 +11,6 @@ public class RpcTests
         Assert.Equal("yolo", res.Value);
     }
 
-    private record Test(string? Value);
+    [MessagePackObject(true)]
+    public record Test([property: Key(0)] string? Value);
 }

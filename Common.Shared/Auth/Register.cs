@@ -1,3 +1,6 @@
+using MessagePack;
+
 namespace Common.Shared.Auth;
 
-public record Register(string Email, string Pwd);
+[MessagePackObject]
+public record Register([property: Key(0)] string Email, [property: Key(1)] string Pwd);

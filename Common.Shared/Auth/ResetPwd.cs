@@ -1,3 +1,10 @@
+using MessagePack;
+
 namespace Common.Shared.Auth;
 
-public record ResetPwd(string Email, string Code, string NewPwd);
+[MessagePackObject]
+public record ResetPwd(
+    [property: Key(0)] string Email,
+    [property: Key(1)] string Code,
+    [property: Key(2)] string NewPwd
+);

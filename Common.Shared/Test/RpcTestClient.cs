@@ -41,8 +41,7 @@ public class RpcTestClient : IRpcClient
     {
         arg = CheckSerialization(arg);
         (_session, var res) = await _exe(rpc.Path, _session, _headers, arg, ctkn);
-        res = CheckSerialization(res);
-        return (TRes)res;
+        return CheckSerialization((TRes)res);
     }
 
     private T CheckSerialization<T>(T obj)

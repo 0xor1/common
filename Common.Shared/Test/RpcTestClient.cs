@@ -49,7 +49,7 @@ public class RpcTestClient : IRpcClient
         if (typeof(TRes) != Nothing.Type)
         {
             var resBs = RpcHttp.Serialize(res);
-            res = RpcHttp.Deserialize<TArg>(resBs);
+            res = RpcHttp.Deserialize<TRes>(resBs);
         }
         return (TRes)res;
     }

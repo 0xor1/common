@@ -5,6 +5,7 @@ using MessagePack;
 namespace Common.Shared;
 
 [TypeConverter(typeof(KeyConverter))]
+[MessagePackObject]
 public partial record Key
 {
     public const int Min = 1;

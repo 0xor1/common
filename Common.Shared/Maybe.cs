@@ -2,12 +2,13 @@ using MessagePack;
 
 namespace Common.Shared;
 
+[MessagePackObject]
 public record Maybe<T>
 {
     [SerializationConstructor]
     public Maybe(T? item)
     {
-        Item = Item;
+        Item = item;
     }
 
     [Key(0)]

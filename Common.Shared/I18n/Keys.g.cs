@@ -6,7 +6,7 @@
 namespace Common.Shared.I18n;
 
 public static partial class S
-{
+{ 
     public const string ApiError = "cmn_api_error";
     public const string AuthAccountNotVerified = "cmn_auth_account_not_verified";
     public const string AuthAlreadyAuthenticated = "cmn_auth_already_authenticated";
@@ -34,8 +34,7 @@ public static partial class S
     public const string AuthResetPwdHtml = "cmn_auth_reset_pwd_html";
     public const string AuthResetPwdSubject = "cmn_auth_reset_pwd_subject";
     public const string AuthResetPwdText = "cmn_auth_reset_pwd_text";
-    public const string AuthThousandsAndDecimalSeparatorsMatch =
-        "cmn_auth_thousands_and_decimal_separators_match";
+    public const string AuthThousandsAndDecimalSeparatorsMatch = "cmn_auth_thousands_and_decimal_separators_match";
     public const string BadRequest = "cmn_bad_request";
     public const string ConfirmPwd = "cmn_confirm_pwd";
     public const string DateFmt = "cmn_date_fmt";

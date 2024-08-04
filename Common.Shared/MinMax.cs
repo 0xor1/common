@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 
 namespace Common.Shared;
 
+[MessagePackObject]
 public record MinMax<T>
     where T : struct, IComparable<T>
 {

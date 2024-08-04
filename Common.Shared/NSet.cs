@@ -7,6 +7,7 @@ namespace Common.Shared;
 // public record Update(string Id, NSet<string>? Name, NSet<int>? Age);
 // this means you can tell if something is being set or not
 // and whether it is being set to null or a value
+[MessagePackObject]
 public record NSet<T>
 {
     [Key(0)]

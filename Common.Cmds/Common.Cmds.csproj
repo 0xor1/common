@@ -22,7 +22,7 @@
     <ItemGroup>
         <PackageReference Include="0xor1.Common.Shared" Version="5.0.0" />
         <PackageReference Include="Cocona" Version="2.2.0" />
-        <PackageReference Include="CsvHelper" Version="30.0.1" />
+        <PackageReference Include="CsvHelper" Version="33.0.1" />
         <PackageReference Include="Fluid.Core" Version="2.5.0" />
         <PackageReference Include="YamlDotNet" Version="16.0.0" />
     </ItemGroup>

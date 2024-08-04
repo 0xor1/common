@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <PackageId>0xor1.Common.Cli</PackageId>
-        <Version>5.0.1</Version>
+        <Version>5.0.2</Version>
         <Authors>Daniel Robinson</Authors>
         <Company>Personal</Company>
         <Product>Personal</Product>
@@ -20,7 +20,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="0xor1.Common.Shared" Version="5.0.0" />
+        <PackageReference Include="0xor1.Common.Shared" Version="5.0.2" />
         <PackageReference Include="Cocona" Version="2.2.0" />
         <PackageReference Include="CsvHelper" Version="30.0.1" />
         <PackageReference Include="Fluid.Core" Version="2.5.0" />

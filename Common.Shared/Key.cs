@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Text.RegularExpressions;
+using MessagePack;
 
 namespace Common.Shared;
 
@@ -9,12 +10,14 @@ public partial record Key
     public const int Min = 1;
     public const int Max = 50;
 
+    [SerializationConstructor]
     public Key(string value)
     {
         Validate(value);
         Value = value;
     }
 
+    [Key(0)]
     public string Value { get; }
 
     [GeneratedRegex(@"__")]

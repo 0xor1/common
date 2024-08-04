@@ -1,3 +1,4 @@
+using MessagePack;
 using Newtonsoft.Json;
 
 namespace Common.Shared;
@@ -5,10 +6,44 @@ namespace Common.Shared;
 public record MinMax<T>
     where T : struct, IComparable<T>
 {
-    public T? Min { get; }
-    public T? Max { get; }
+    private T? _min;
+    private T? _max;
 
-    [JsonConstructor]
+    [Key(0)]
+    public T? Min
+    {
+        get => _min;
+        set
+        {
+            if (value.HasValue && Max.HasValue && value.Value.CompareTo(Max.Value) > 0)
+            {
+                throw new ReversedMinMaxValuesException(
+                    value.ToString().NotNull(),
+                    Max.ToString().NotNull()
+                );
+            }
+            _min = value;
+        }
+    }
+
+    [Key(1)]
+    public T? Max
+    {
+        get => _max;
+        set
+        {
+            if (value.HasValue && Min.HasValue && Min.Value.CompareTo(value.Value) > 0)
+            {
+                throw new ReversedMinMaxValuesException(
+                    Min.ToString().NotNull(),
+                    value.ToString().NotNull()
+                );
+            }
+            _max = value;
+        }
+    }
+
+    [SerializationConstructor]
     public MinMax(T? min, T? max)
     {
         if (!min.HasValue && !max.HasValue)

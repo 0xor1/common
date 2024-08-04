@@ -67,8 +67,8 @@ public class I18n
 
     private const string CsvFileName = "strings.csv";
     private const string Key = "key";
-    private const string KeysFileName = "Keys.cs";
-    private const string LibraryFileName = "SZLibrary.cs";
+    private const string KeysFileName = "Keys.g.cs";
+    private const string LibraryFileName = "SZLibrary.g.cs";
 
     [Command("i18n")]
     public async Task Run([Argument] string csvDirPath, [Argument] string @namespace, [Argument] bool @readonly, [Argument] string prefix = "")
@@ -108,7 +108,7 @@ public class I18n
         await File.WriteAllTextAsync(Path.Join(csvDirPath, LibraryFileName), zlibFileTpl.Render(new TemplateContext(zlfm)));
         foreach (var lang in langs)
         {
-            await File.WriteAllTextAsync(Path.Join(csvDirPath, $"S{lang.ToUpper()}.cs"), langFileTpl.Render(new TemplateContext(lfms[lang])));
+            await File.WriteAllTextAsync(Path.Join(csvDirPath, $"S{lang.ToUpper()}.g.cs"), langFileTpl.Render(new TemplateContext(lfms[lang])));
         }
     }
 

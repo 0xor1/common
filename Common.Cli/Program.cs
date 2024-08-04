@@ -1,5 +1,5 @@
 ﻿using Cocona;
-using Common.Cmds;
+using Common.Cli;
 using Microsoft.Extensions.DependencyInjection;
 
 var builder = CoconaApp.CreateBuilder();

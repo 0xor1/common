@@ -2,7 +2,7 @@ using Cocona;
 using Common.Shared;
 using Microsoft.Extensions.Logging;
 
-namespace Common.Cmds;
+namespace Common.Cli;
 
 public class Dnsk
 {

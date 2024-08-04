@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Shared.Test", "Commo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Server.Test", "Common.Server.Test\Common.Server.Test.csproj", "{D82A6ABE-4D27-4BF5-AC6B-02EAEACC0E49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Cmds", "Common.Cmds\Common.Cmds.csproj", "{24726078-E657-4349-B3FE-0A5A51CB4ACE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Cli", "Common.Cli\Common.Cli.csproj", "{24726078-E657-4349-B3FE-0A5A51CB4ACE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,15 +4,15 @@ using Common.Shared;
 using CsvHelper;
 using Fluid;
 
-namespace Common.Cmds;
+namespace Common.Cli;
 
 public class I18n
 {
     private const string KeysFile = 
         """
         // Generated Code File, Do Not Edit.
-        // This file is generated with Common.Cmds.
-        // see https://github.com/0xor1/common/blob/main/Common.Cmds/I18n.cs
+        // This file is generated with Common.Cli.
+        // see https://github.com/0xor1/common/blob/main/Common.Cli/I18n.cs
         // executed with arguments: i18n {{CsvDirPath}} {{Namespace}} {{ReadOnly}} {{Prefix}}
 
         namespace {{Namespace}};
@@ -26,8 +26,8 @@ public class I18n
     private const string LangFile = 
         """
         // Generated Code File, Do Not Edit.
-        // This file is generated with Common.Cmds.
-        // see https://github.com/0xor1/common/blob/main/Common.Cmds/I18n.cs
+        // This file is generated with Common.Cli.
+        // see https://github.com/0xor1/common/blob/main/Common.Cli/I18n.cs
         // executed with arguments: i18n {{CsvDirPath}} {{Namespace}} {{ReadOnly}} {{Prefix}}
 
         using Common.Shared;
@@ -46,8 +46,8 @@ public class I18n
     private const string ZLibraryFile = 
         """
         // Generated Code File, Do Not Edit.
-        // This file is generated with Common.Cmds.
-        // see https://github.com/0xor1/common/blob/main/Common.Cmds/I18n.cs
+        // This file is generated with Common.Cli.
+        // see https://github.com/0xor1/common/blob/main/Common.Cli/I18n.cs
         // executed with arguments: i18n {{CsvDirPath}} {{Namespace}} {{ReadOnly}} {{Prefix}}
 
         using Common.Shared;

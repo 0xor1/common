@@ -5,15 +5,15 @@ using Fluid.Values;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace Common.Cmds;
+namespace Common.Cli;
 
 public class Api
 {
     private const string ApiFile = 
         """
         // Generated Code File, Do Not Edit.
-        // This file is generated with Common.Cmds.
-        // see https://github.com/0xor1/common/blob/main/Common.Cmds/Api.cs
+        // This file is generated with Common.Cli.
+        // see https://github.com/0xor1/common/blob/main/Common.Cli/Api.cs
         // executed with arguments: api {{YmlDirPath}}
 
         using Common.Shared;
@@ -49,8 +49,8 @@ public class Api
     private const string SectionFile = 
         """
         // Generated Code File, Do Not Edit.
-        // This file is generated with Common.Cmds.
-        // see https://github.com/0xor1/common/blob/main/Common.Cmds/Api.cs
+        // This file is generated with Common.Cli.
+        // see https://github.com/0xor1/common/blob/main/Common.Cli/Api.cs
         // executed with arguments: api {{YmlDirPath}}
 
         #nullable enable

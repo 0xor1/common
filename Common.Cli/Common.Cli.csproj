@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <PackageId>0xor1.Common.Cli</PackageId>
-        <Version>5.0.0</Version>
+        <Version>5.0.1</Version>
         <Authors>Daniel Robinson</Authors>
         <Company>Personal</Company>
         <Product>Personal</Product>
@@ -15,7 +15,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <InvariantGlobalization>true</InvariantGlobalization>
         <OutputType>Exe</OutputType>
-        <AssemblyName>dotnet-common-cmds</AssemblyName>
+        <AssemblyName>dotnet-common-cli</AssemblyName>
         <PackAsTool>true</PackAsTool>
     </PropertyGroup>
 

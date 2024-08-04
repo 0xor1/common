@@ -3,9 +3,9 @@
   "isRoot": true,
   "tools": {
     "0xor1.common.cli": {
-      "version": "5.0.0",
+      "version": "5.0.1",
       "commands": [
-        "dotnet-common-cmds"
+        "dotnet-common-cli"
       ]
     }
   }

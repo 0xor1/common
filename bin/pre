@@ -3,10 +3,10 @@
 docker ps --format '{{.Names}}' | grep "^common-" | awk '{print $1}' | xargs -I {} docker stop {}
 
 if [ "$1" == "nuke" ]; then
-    docker-compose -f docker/docker-compose.yml down --rmi all
+    docker compose -f docker/docker-compose.yml down --rmi all
 fi
 
-docker-compose -f docker/docker-compose.yml up -d
+docker compose -f docker/docker-compose.yml up -d
 
 ./bin/wait-for-it -t 5 127.0.0.1:6379 -- echo "redis ready"
 ./bin/wait-for-it -t 5 127.0.0.1:9000 -- echo "minio ready"
@@ -26,4 +26,4 @@ else
   rm -r */TestResults
 fi
 
-docker-compose -f docker/docker-compose.yml stop
+docker compose -f docker/docker-compose.yml stop

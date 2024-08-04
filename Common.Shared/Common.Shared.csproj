@@ -34,7 +34,7 @@
 
     <Target Name="GenerateI18n" BeforeTargets="BeforeBuild">
         <Exec Command="dotnet tool restore"/>
-        <Exec Command="dotnet tool run dotnet-common-cli i18n &quot;$(MSBuildProjectDirectory)\I18n&quot; Common.Shared.I18n true cmn_"/>
+        <Exec Command="dotnet tool run dotnet-common-cli i18n &quot;$(MSBuildProjectDirectory)/I18n&quot; Common.Shared.I18n true cmn_"/>
     </Target>
 
     <ItemGroup>

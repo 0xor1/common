@@ -18,8 +18,8 @@ public class Dnsk
     [Command("dnsk")]
     public async Task Run([Argument] string reposPath, [Argument] string pascal, [Argument] string camel)
     {
-        var dnskPath = Path.Join(reposPath, DnskPascal);
-        var newPath = Path.Join(reposPath, pascal);
+        var dnskPath = Path.Join(reposPath, DnskCamel);
+        var newPath = Path.Join(reposPath, camel);
         Throw.OpIf(!Directory.Exists(dnskPath), $"{dnskPath} directory doesn't exists.");
         Throw.OpIf(Directory.Exists(newPath), $"{newPath} directory already exists.");
         Directory.CreateDirectory(newPath);

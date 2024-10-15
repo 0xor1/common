@@ -437,15 +437,6 @@ div.rz-header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-i
     display: none;
 }
 
-// allow making table row cursor a pointer
-.row-clickable{
-    tbody {
-        tr:not(.task-row) {
-            cursor: pointer;
-        }
-    }
-}
-
 // I dont include 500 weight font so override to 600
 .rz-grid-table thead th .rz-column-title{
     font-weight: 600;
@@ -462,10 +453,4 @@ div.rz-header > ul.rz-profile-menu > li.rz-navigation-item > div.rz-navigation-i
     padding-bottom: 0.75em;
     padding-top: 0.75em;
     border-bottom: 1px solid gray;
-}
-
-// remove x padding from tab view
-.rz-tabview.no-x-pad .rz-tabview-panels .rz-tabview-panel{
-    padding-left: 0;
-    padding-right: 0;
 }

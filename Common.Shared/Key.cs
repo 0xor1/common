@@ -42,6 +42,9 @@ public partial record Key
     [GeneratedRegex(@"(^|_)[a-z]")]
     private static partial Regex ToPascalRx();
 
+    [GeneratedRegex(@"(_)[a-z]")]
+    private static partial Regex ToCamelRx();
+
     private static void Validate(string str)
     {
         if (str.Length is < Min or > Max)
@@ -97,6 +100,9 @@ public partial record Key
 
     public string ToPascal() =>
         ToPascalRx().Replace(Value, m => m.ToString().ToUpper()).Replace("_", "");
+
+    public string ToCamel() =>
+        ToCamelRx().Replace(Value, m => m.ToString().ToUpper()).Replace("_", "");
 
     public override string ToString()
     {

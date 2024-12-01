@@ -6,8 +6,7 @@ namespace Common.Cli;
 
 public class Dnsk
 {
-    private const string DnskPascal = "Dnsk";
-    private const string DnskCamel = "dnsk";
+    private static readonly Key DnskKey = new("dnsk");
     private readonly ILogger<Dnsk> _log;
 
     public Dnsk(ILogger<Dnsk> log)
@@ -16,24 +15,24 @@ public class Dnsk
     }
 
     [Command("dnsk")]
-    public async Task Run([Argument] string reposPath, [Argument] string pascal, [Argument] string camel)
+    public async Task Run([Argument(Description = "The path to the parent directory where code repos are stored")] string reposPath, [Argument(Name="key",Description="The Key of the new repo")] Key key)
     {
-        var dnskPath = Path.Join(reposPath, DnskCamel);
-        var newPath = Path.Join(reposPath, camel);
+        var dnskPath = Path.Join(reposPath, DnskKey.ToString());
+        var newPath = Path.Join(reposPath, key.ToString());
         Throw.OpIf(!Directory.Exists(dnskPath), $"{dnskPath} directory doesn't exists.");
         Throw.OpIf(Directory.Exists(newPath), $"{newPath} directory already exists.");
         Directory.CreateDirectory(newPath);
-        await CopyDir(dnskPath, newPath, pascal, camel, false);
+        await CopyDir(dnskPath, newPath, key, false);
     }
 
-    private async Task CopyDir(string src, string dst, string pascal, string camel, bool isProj = true)
+    private async Task CopyDir(string src, string dst, Key key, bool isProj = true)
     {
         _log.LogInformation("Copying {Src} to {Dst}", src, dst);
         _log.LogInformation("Creating Directory {Dst}", dst);
         Directory.CreateDirectory(dst);
         Directory.GetFiles(src).ForEach(async file =>
         {
-            var fileName = ReplaceDnsk(Path.GetFileName(file), pascal, camel);
+            var fileName = ReplaceDnsk(Path.GetFileName(file), key);
             var dstFile = Path.Join(dst, fileName);
             _log.LogInformation("Copying {File} to {DstFile}", file, dstFile);
             if (file.Contains($"{Path.DirectorySeparatorChar}.git{Path.DirectorySeparatorChar}"))
@@ -43,17 +42,17 @@ public class Dnsk
                 return;
             }
             var content = await File.ReadAllTextAsync(file);
-            content = ReplaceDnsk(content, pascal, camel);
+            content = ReplaceDnsk(content, key);
             await File.WriteAllTextAsync(dstFile, content);
         });
         Directory.GetDirectories(src).Where(x => !isProj || x.Split(Path.DirectorySeparatorChar).Last() is not ("bin" or "obj")).ForEach(
             async dir =>
             {
                 var dirName = dir.Split(Path.DirectorySeparatorChar).Last();
-                await CopyDir(dir, Path.Join(dst, ReplaceDnsk(dirName, pascal, camel)), pascal, camel, dirName.StartsWith($"{DnskPascal}."));
+                await CopyDir(dir, Path.Join(dst, ReplaceDnsk(dirName, key)), key, dirName.StartsWith($"{DnskKey.ToPascal()}."));
             });
     }
 
-    private static string ReplaceDnsk(string src, string pascal, string camel)
-        => src.Replace(DnskPascal, pascal).Replace(DnskCamel, camel);
+    private static string ReplaceDnsk(string src, Key key)
+        => src.Replace(DnskKey.ToPascal(), key.ToPascal()).Replace(DnskKey.ToCamel(), key.ToCamel());
 }

@@ -19,6 +19,10 @@ public record RpcHttpClient : IRpcClient
         bool enableStreaming = false
     )
     {
+        if (!baseHref.EndsWith("/"))
+        {
+            baseHref += "/";
+        }
         _baseHref = baseHref + "api";
         _client = client;
         _rpcExceptionHandler = reh;

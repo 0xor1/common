@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using MessagePack;
 
@@ -6,7 +7,7 @@ namespace Common.Shared;
 
 [TypeConverter(typeof(KeyConverter))]
 [MessagePackObject]
-public partial record Key
+public partial record Key: ISpanParsable<Key>
 {
     public const int Min = 1;
     public const int Max = 50;
@@ -107,5 +108,34 @@ public partial record Key
     public override string ToString()
     {
         return Value;
+    }
+    public static Key Parse(string s, IFormatProvider? provider)
+    {
+        return new Key(s);
+    }
+
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Key result)
+    {
+        try
+        {
+            s.NotNull();
+            result = new Key(s);
+            return true;
+        }
+        catch
+        {
+            result = null;
+            return false;
+        }
+    }
+
+    public static Key Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+    {
+        return Parse(s.ToString(), provider);
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out Key result)
+    {
+        return TryParse(s.ToString(), provider, out result);
     }
 }

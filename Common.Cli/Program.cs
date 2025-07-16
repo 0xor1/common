@@ -15,7 +15,6 @@ app.ConfigureServices(services =>
     });
 });
 app.Add<Api>();
-app.Add<Cli>();
 app.Add<I18n>();
 app.Add<Dnsk>();
 await app.RunAsync(args);

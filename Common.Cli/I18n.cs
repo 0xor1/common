@@ -1,5 +1,5 @@
 using System.Globalization;
-using Cocona;
+using ConsoleAppFramework;
 using Common.Shared;
 using CsvHelper;
 using Fluid;
@@ -70,6 +70,13 @@ public class I18n
     private const string KeysFileName = "Keys.g.cs";
     private const string LibraryFileName = "SZLibrary.g.cs";
 
+    /// <summary>
+    /// Generates the i18n code based on the csv languages file
+    /// </summary>
+    /// <param name="csvDirPath">The path to the csv parent directory</param>
+    /// <param name="namespace">The namespace to use in the generated code</param>
+    /// <param name="readonly">Specifies if the generated Dictionaries should be IReadOnly interfaces</param>
+    /// <param name="prefix">A common prefix to use on all the generated keys</param>
     [Command("i18n")]
     public async Task Run([Argument] string csvDirPath, [Argument] string @namespace, [Argument] bool @readonly, [Argument] string prefix = "")
     {

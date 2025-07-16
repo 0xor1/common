@@ -1,8 +1,9 @@
-using Cocona;
+using ConsoleAppFramework;
 using Common.Shared;
 using Microsoft.Extensions.Logging;
 
 namespace Common.Cli;
+
 
 public class Dnsk
 {
@@ -12,10 +13,16 @@ public class Dnsk
     public Dnsk(ILogger<Dnsk> log)
     {
         _log = log;
+        Console.WriteLine(_log.IsEnabled(LogLevel.Critical));
     }
 
+    /// <summary>
+    /// Clones the dnsk repo in <paramref name="reposPath"/> directory to <paramref name="key"/>
+    /// </summary>
+    /// <param name="reposPath">The path to the parent directory where code repos are stored</param>
+    /// <param name="key">The Key of the new repo</param>
     [Command("dnsk")]
-    public async Task Run([Argument(Description = "The path to the parent directory where code repos are stored")] string reposPath, [Argument(Name="key",Description="The Key of the new repo")] Key key)
+    public async Task Run([Argument]string reposPath, [Argument]Key key)
     {
         var dnskPath = Path.Join(reposPath, DnskKey.ToString());
         var newPath = Path.Join(reposPath, key.ToString());

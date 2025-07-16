@@ -1,4 +1,4 @@
-using Cocona;
+using ConsoleAppFramework;
 using Common.Shared;
 using Fluid;
 using Fluid.Values;
@@ -133,6 +133,10 @@ public class Api
     private const string ymlFileName = "api.yml";
     private const string ApiFileName = "Api.g.cs";
 
+    /// <summary>
+    /// Generates the API interface project code based on the definition in <paramref name="ymlDirPath"/>
+    /// </summary>
+    /// <param name="ymlDirPath">The path to the directory containing the api.yml file</param>
     [Command("api")]
     public async Task Run([Argument] string ymlDirPath)
     {
@@ -142,7 +146,7 @@ public class Api
         var printCsvDirPath = $"<abs_file_path_to>/{@namespace}";
         using var reader = new StreamReader(Path.Join(ymlDirPath, ymlFileName));
         var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(UnderscoredNamingConvention.Instance)  // see height_in_inches in sample yml 
+            .WithNamingConvention(UnderscoredNamingConvention.Instance) 
             .Build();
         var apiDef = deserializer.Deserialize<ApiDef>(reader);
         apiDef.Validate();

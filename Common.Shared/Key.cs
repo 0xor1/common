@@ -7,7 +7,7 @@ namespace Common.Shared;
 
 [TypeConverter(typeof(KeyConverter))]
 [MessagePackObject]
-public partial record Key: ISpanParsable<Key>
+public partial record Key : ISpanParsable<Key>
 {
     public const int Min = 1;
     public const int Max = 50;
@@ -109,12 +109,17 @@ public partial record Key: ISpanParsable<Key>
     {
         return Value;
     }
+
     public static Key Parse(string s, IFormatProvider? provider)
     {
         return new Key(s);
     }
 
-    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Key result)
+    public static bool TryParse(
+        [NotNullWhen(true)] string? s,
+        IFormatProvider? provider,
+        [MaybeNullWhen(false)] out Key result
+    )
     {
         try
         {
@@ -134,7 +139,11 @@ public partial record Key: ISpanParsable<Key>
         return Parse(s.ToString(), provider);
     }
 
-    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out Key result)
+    public static bool TryParse(
+        ReadOnlySpan<char> s,
+        IFormatProvider? provider,
+        [MaybeNullWhen(false)] out Key result
+    )
     {
         return TryParse(s.ToString(), provider, out result);
     }

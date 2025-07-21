@@ -25,5 +25,5 @@ public enum EmailType
 
     [EnumMember(Value = "ses")]
     [Description("ses")]
-    Ses
+    Ses,
 }

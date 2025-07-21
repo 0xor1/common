@@ -48,7 +48,7 @@ public class S3StoreClient : IStoreClient
                 SourceBucket = srcBucket,
                 SourceKey = key,
                 DestinationBucket = dstBucket,
-                DestinationKey = key
+                DestinationKey = key,
             },
             ctkn
         );
@@ -111,7 +111,7 @@ public class S3StoreClient : IStoreClient
             var req = new DeleteObjectsRequest
             {
                 BucketName = bucket,
-                Objects = new List<KeyVersion>()
+                Objects = new List<KeyVersion>(),
             };
             foreach (var obj in res.S3Objects)
                 req.AddKey(obj.Key);

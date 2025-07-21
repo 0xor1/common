@@ -6,7 +6,7 @@ namespace Common.Server.Auth;
 public static class AppEps
 {
     public static IReadOnlyList<IEp> Eps { get; } =
-        new List<IEp>() { new Ep<Nothing, Shared.Auth.Config>(AppRpcs.GetConfig, GetConfig), };
+        new List<IEp>() { new Ep<Nothing, Shared.Auth.Config>(AppRpcs.GetConfig, GetConfig) };
 
     private static async Task<Shared.Auth.Config> GetConfig(IRpcCtx ctx, Nothing _)
     {

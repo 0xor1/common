@@ -16,32 +16,32 @@ public static class S
     public static readonly IReadOnlyList<Lang> SupportedLangs = new List<Lang>()
     {
         new(EN, "English"),
-        new(ES, "Español")
+        new(ES, "Español"),
     };
 
     public static readonly IReadOnlyList<DateTimeFmt> SupportedTimeFmts = new List<DateTimeFmt>()
     {
         new(DefaultTimeFmt),
-        new("h:mmtt")
+        new("h:mmtt"),
     };
 
     public static readonly IReadOnlyList<string> SupportedDateSeparators = new List<string>()
     {
         new(DefaultDateSeparator),
         new("/"),
-        new(".")
+        new("."),
     };
 
     public static readonly IReadOnlyList<string> SupportedThousandsSeparators = new List<string>()
     {
         DefaultThousandsSeparator,
-        DefaultDecimalSeparator
+        DefaultDecimalSeparator,
     };
 
     public static readonly IReadOnlyList<string> SupportedDecimalSeparators = new List<string>()
     {
         DefaultDecimalSeparator,
-        DefaultThousandsSeparator
+        DefaultThousandsSeparator,
     };
 
     public static readonly Common.Shared.S Inst;
@@ -63,7 +63,7 @@ public static class S
             new Dictionary<string, IReadOnlyDictionary<string, TemplatableString>>()
             {
                 { EN, new Dictionary<string, TemplatableString>() },
-                { ES, new Dictionary<string, TemplatableString>() }
+                { ES, new Dictionary<string, TemplatableString>() },
             }
         );
     }

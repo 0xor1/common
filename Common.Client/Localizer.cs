@@ -64,7 +64,7 @@ public class Localizer : L
             {
                 NumberDecimalDigits = 0,
                 NumberGroupSeparator = _thousandsSeparator,
-                NumberDecimalSeparator = _decimalSeparator
+                NumberDecimalSeparator = _decimalSeparator,
             }
         );
 
@@ -75,7 +75,7 @@ public class Localizer : L
             new NumberFormatInfo()
             {
                 NumberGroupSeparator = _thousandsSeparator,
-                NumberDecimalSeparator = _decimalSeparator
+                NumberDecimalSeparator = _decimalSeparator,
             }
         );
 }

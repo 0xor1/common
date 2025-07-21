@@ -25,5 +25,5 @@ public enum StoreType
 
     [EnumMember(Value = "s3")]
     [Description("s3")]
-    S3
+    S3,
 }

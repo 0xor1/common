@@ -19,5 +19,5 @@ public enum FcmType
 
     [EnumMember(Value = "disabled")]
     [Description("disabled")]
-    Disabled
+    Disabled,
 }

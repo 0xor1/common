@@ -1,5 +1,5 @@
-﻿using ConsoleAppFramework;
-using Common.Cli;
+﻿using Common.Cli;
+using ConsoleAppFramework;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ZLogger;

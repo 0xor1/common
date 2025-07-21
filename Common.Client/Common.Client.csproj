@@ -1,34 +1,41 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
-
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <PackageId>0xor1.Common.Client</PackageId>
-        <Version>5.0.4</Version>
-        <Authors>Daniel Robinson</Authors>
-        <Company>Personal</Company>
-        <Product>Personal</Product>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Description>Common classes I use in all of my projects for client side usage.</Description>
-        <RepositoryUrl>https://github.com/0xor1/Common</RepositoryUrl>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <InvariantGlobalization>true</InvariantGlobalization>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="DartSassBuilder" Version="1.0.0" />
-        <PackageReference Include="0xor1.Common.Shared" Version="5.0.4" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.0" />
-        <PackageReference Include="Radzen.Blazor" Version="5.2.12" />
-        <PackageReference Include="CSharpier.MsBuild" Version="0.26.2">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\README.md" Pack="true" PackagePath="\" />
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackageId>0xor1.Common.Client</PackageId>
+    <Version>5.0.4</Version>
+    <Authors>Daniel Robinson</Authors>
+    <Company>Personal</Company>
+    <Product>Personal</Product>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Common classes I use in all of my projects for client side usage.</Description>
+    <RepositoryUrl>https://github.com/0xor1/Common</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="DartSassBuilder" Version="1.1.0" />
+    <PackageReference Include="0xor1.Common.Shared" Version="5.0.5" />
+    <PackageReference
+      Include="Microsoft.AspNetCore.Components.WebAssembly"
+      Version="10.0.0-preview.6.25358.103"
+    />
+    <PackageReference
+      Include="Microsoft.AspNetCore.Components.Web"
+      Version="10.0.0-preview.6.25358.103"
+    />
+    <PackageReference
+      Include="Microsoft.AspNetCore.WebUtilities"
+      Version="10.0.0-preview.6.25358.103"
+    />
+    <PackageReference Include="Radzen.Blazor" Version="7.1.5" />
+    <PackageReference Include="CSharpier.MsBuild" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 </Project>

@@ -50,8 +50,8 @@ public class FcmClient : IFcmClient
         );
         var client = ctx.GetHeader(Fcm.ClientHeaderName) ?? "";
         var topicStr = Fcm.TopicString(topic);
-        var tokens = await db.FcmRegs
-            .Where(x => x.Topic == topicStr && x.FcmEnabled && x.Client != client)
+        var tokens = await db
+            .FcmRegs.Where(x => x.Topic == topicStr && x.FcmEnabled && x.Client != client)
             .Select(x => x.Token)
             .ToListAsync(ctx.Ctkn);
         await SendRaw(ctx, FcmType.Data, tokens, topicStr, data, fnf);
@@ -74,7 +74,7 @@ public class FcmClient : IFcmClient
         {
             { Fcm.TypeName, type.ToString() },
             { Fcm.Topic, topic },
-            { Fcm.ClientHeaderName, ctx.GetHeader(Fcm.ClientHeaderName) ?? "" }
+            { Fcm.ClientHeaderName, ctx.GetHeader(Fcm.ClientHeaderName) ?? "" },
         };
         if (data != null)
         {

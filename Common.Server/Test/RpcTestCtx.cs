@@ -71,7 +71,7 @@ public record RpcTestCtx : IRpcCtxInternal
             DateSeparator = dateSeparator,
             ThousandsSeparator = thousandsSeparator,
             DecimalSeparator = decimalSeparator,
-            FcmEnabled = fcmEnabled
+            FcmEnabled = fcmEnabled,
         };
         return Session;
     }
@@ -88,7 +88,7 @@ public record RpcTestCtx : IRpcCtxInternal
             TimeFmt = _s.DefaultTimeFmt,
             DateSeparator = _s.DefaultDateSeparator,
             ThousandsSeparator = _s.DefaultThousandsSeparator,
-            DecimalSeparator = _s.DefaultDecimalSeparator
+            DecimalSeparator = _s.DefaultDecimalSeparator,
         };
         return Session;
     }

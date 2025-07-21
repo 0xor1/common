@@ -18,8 +18,8 @@ public class Strings : S
             !lKeys.IsSubsetOf(cmnKeys),
             "library contains languages not supported by common"
         );
-        library.ForEach(
-            kvp => cmn.Library[kvp.Key].ForEach(cmnKvp => kvp.Value.Add(cmnKvp.Key, cmnKvp.Value))
+        library.ForEach(kvp =>
+            cmn.Library[kvp.Key].ForEach(cmnKvp => kvp.Value.Add(cmnKvp.Key, cmnKvp.Value))
         );
         return new Strings(
             cmn.DefaultLang,

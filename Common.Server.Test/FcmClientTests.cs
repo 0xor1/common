@@ -34,7 +34,7 @@ public class FcmClientTests : IDisposable
             new Message()
             {
                 Token = "a",
-                Data = new Dictionary<string, string>() { { "yolo", "solo" } }
+                Data = new Dictionary<string, string>() { { "yolo", "solo" } },
             }
         );
     }

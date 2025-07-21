@@ -37,7 +37,7 @@ public static class Crypto
             PwdVersion = 1,
             PwdSalt = salt,
             PwdHash = KeyDerivation.Pbkdf2(pwd, salt, KeyDerivationPrf.HMACSHA512, iters, hashLen),
-            PwdIters = iters
+            PwdIters = iters,
         };
     }
 }

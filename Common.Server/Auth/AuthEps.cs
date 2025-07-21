@@ -63,7 +63,7 @@ public class AuthEps<TDbCtx>
                 AuthRpcs.FcmUnregister,
                 FcmUnregister,
                 _fcmRequiresAuth
-            )
+            ),
         };
     }
 
@@ -112,7 +112,7 @@ public class AuthEps<TDbCtx>
                     {
                         BaseHref = config.Auth.BaseHref,
                         Email = auth.Email.UrlEncode(),
-                        Code = auth.VerifyEmailCode
+                        Code = auth.VerifyEmailCode,
                     };
                     await emailClient.SendEmailAsync(
                         ctx.String(CS.AuthConfirmEmailSubject),
@@ -136,7 +136,7 @@ public class AuthEps<TDbCtx>
         // !!! ToLower all emails in all Auth_ api endpoints
         req = req with
         {
-            Email = req.Email.ToLower()
+            Email = req.Email.ToLower(),
         };
         ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
         return await ctx.DbTx<TDbCtx, Nothing>(
@@ -200,7 +200,7 @@ public class AuthEps<TDbCtx>
                 {
                     BaseHref = config.Auth.BaseHref,
                     Email = existing.Email.UrlEncode(),
-                    Code = existing.ResetPwdCode
+                    Code = existing.ResetPwdCode,
                 };
                 var emailClient = ctx.Get<IEmailClient>();
                 await emailClient.SendEmailAsync(
@@ -224,7 +224,7 @@ public class AuthEps<TDbCtx>
         // !!! ToLower all emails in all Auth_ api endpoints
         req = req with
         {
-            Email = req.Email.ToLower()
+            Email = req.Email.ToLower(),
         };
         ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
         ctx.ErrorFromValidationResult(AuthValidator.Pwd(req.NewPwd));
@@ -262,7 +262,7 @@ public class AuthEps<TDbCtx>
         // !!! ToLower all emails in all Auth api endpoints
         req = req with
         {
-            Email = req.Email.ToLower()
+            Email = req.Email.ToLower(),
         };
         ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
         return await ctx.DbTx<TDbCtx, Nothing>(
@@ -287,7 +287,7 @@ public class AuthEps<TDbCtx>
                     BaseHref = config.Auth.BaseHref,
                     Email = auth.Email.UrlEncode(),
                     Code = auth.MagicLinkCode,
-                    req.RememberMe
+                    req.RememberMe,
                 };
                 var emailClient = ctx.Get<IEmailClient>();
                 await emailClient.SendEmailAsync(
@@ -313,7 +313,7 @@ public class AuthEps<TDbCtx>
         // !!! ToLower all emails in all Auth api endpoints
         req = req with
         {
-            Email = req.Email.ToLower()
+            Email = req.Email.ToLower(),
         };
         ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
         return await ctx.DbTx<TDbCtx, ApiSession>(
@@ -360,7 +360,7 @@ public class AuthEps<TDbCtx>
         // !!! ToLower all emails in all Auth_ api endpoints
         req = req with
         {
-            Email = req.Email.ToLower()
+            Email = req.Email.ToLower(),
         };
         ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
         return await ctx.DbTx<TDbCtx, ApiSession>(
@@ -401,8 +401,8 @@ public class AuthEps<TDbCtx>
             return ses.ToApi();
         var db = ctx.Get<TDbCtx>();
         var fcm = ctx.Get<IFcmClient>();
-        var tokens = await db.FcmRegs
-            .Where(x => x.User == ses.Id)
+        var tokens = await db
+            .FcmRegs.Where(x => x.User == ses.Id)
             .Select(x => x.Token)
             .Distinct()
             .ToListAsync(ctx.Ctkn);
@@ -506,12 +506,12 @@ public class AuthEps<TDbCtx>
         ctx.NotFoundIf(auth == null, model: new { Name = "Auth" });
         ctx.ErrorIf(auth.NotNull().ActivatedOn.IsZero(), CS.AuthAccountNotVerified);
         auth.FcmEnabled = req.Val;
-        await db.FcmRegs
-            .Where(x => x.User == ses.Id)
+        await db
+            .FcmRegs.Where(x => x.User == ses.Id)
             .ExecuteUpdateAsync(x => x.SetProperty(x => x.FcmEnabled, _ => req.Val), ctx.Ctkn);
         var fcm = ctx.Get<IFcmClient>();
-        var tokens = await db.FcmRegs
-            .Where(x => x.User == ses.Id)
+        var tokens = await db
+            .FcmRegs.Where(x => x.User == ses.Id)
             .Select(x => x.Token)
             .Distinct()
             .ToListAsync(ctx.Ctkn);
@@ -535,8 +535,8 @@ public class AuthEps<TDbCtx>
         ctx.BadRequestIf(!ses.FcmEnabled, CS.AuthFcmNotEnabled);
         await _validateFcmTopic(ctx, db, ses, req.Topic);
         var client = req.Client ?? Id.New();
-        var fcmRegs = await db.FcmRegs
-            .Where(x => x.User == ses.Id)
+        var fcmRegs = await db
+            .FcmRegs.Where(x => x.User == ses.Id)
             .OrderByDescending(x => x.CreatedOn)
             .ToListAsync(ctx.Ctkn);
 
@@ -556,7 +556,7 @@ public class AuthEps<TDbCtx>
                     Client = client,
                     CreatedOn = DateTimeExt.UtcNowMilli(),
                     FcmEnabled = true,
-                    User = ses.Id
+                    User = ses.Id,
                 },
                 ctx.Ctkn
             );
@@ -577,7 +577,7 @@ public class AuthEps<TDbCtx>
                     User = ses.Id,
                     Client = client,
                     CreatedOn = DateTimeExt.UtcNowMilli(),
-                    FcmEnabled = true
+                    FcmEnabled = true,
                 },
                 ctx.Ctkn
             );
@@ -593,8 +593,8 @@ public class AuthEps<TDbCtx>
         FcmUnregister req
     )
     {
-        await db.FcmRegs
-            .Where(x => x.User == ses.Id && x.Client == req.Client)
+        await db
+            .FcmRegs.Where(x => x.User == ses.Id && x.Client == req.Client)
             .ExecuteDeleteAsync(ctx.Ctkn);
         return Nothing.Inst;
     }
@@ -625,7 +625,7 @@ public class AuthEps<TDbCtx>
         req = req with
         {
             // !!! ToLower all emails in all Auth api endpoints
-            Email = req.Email.ToLower()
+            Email = req.Email.ToLower(),
         };
         ctx.ErrorFromValidationResult(AuthValidator.Email(req.Email));
         ctx.ErrorFromValidationResult(AuthValidator.Pwd(req.Pwd));
@@ -658,7 +658,7 @@ public class AuthEps<TDbCtx>
             PwdVersion = pwd.PwdVersion,
             PwdSalt = pwd.PwdSalt,
             PwdHash = pwd.PwdHash,
-            PwdIters = pwd.PwdIters
+            PwdIters = pwd.PwdIters,
         };
         await db.Auths.AddAsync(auth, ctx.Ctkn);
 

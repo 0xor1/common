@@ -1,5 +1,3 @@
-using MessagePack;
-
 namespace Common.Shared;
 
 public static class RpcHttp

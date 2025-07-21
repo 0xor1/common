@@ -28,7 +28,7 @@ public class STests
                 {
                     { "a", new TemplatableString("en A") },
                     { "b", new TemplatableString("en B") },
-                    { "c", new TemplatableString("en C") }
+                    { "c", new TemplatableString("en C") },
                 }
             },
             {
@@ -37,9 +37,9 @@ public class STests
                 {
                     { "a", new TemplatableString("es A") },
                     { "b", new TemplatableString("es B") },
-                    { "c", new TemplatableString("es C") }
+                    { "c", new TemplatableString("es C") },
                 }
-            }
+            },
         }
     );
 

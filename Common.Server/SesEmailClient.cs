@@ -30,18 +30,18 @@ public class SesEmailClient : IEmailClient
                 {
                     BccAddresses = bccAddresses,
                     CcAddresses = ccAddresses,
-                    ToAddresses = toAddresses
+                    ToAddresses = toAddresses,
                 },
                 Message = new Message
                 {
                     Body = new Body
                     {
                         Html = new Content { Charset = "UTF-8", Data = bodyHtml },
-                        Text = new Content { Charset = "UTF-8", Data = bodyText }
+                        Text = new Content { Charset = "UTF-8", Data = bodyText },
                     },
-                    Subject = new Content { Charset = "UTF-8", Data = subject }
+                    Subject = new Content { Charset = "UTF-8", Data = subject },
                 },
-                Source = senderAddress
+                Source = senderAddress,
             },
             ctkn
         );

@@ -27,7 +27,7 @@ public enum DateFmt
 {
     YMD,
     DMY,
-    MDY
+    MDY,
 }
 
 public static class DateFmtExt
@@ -38,7 +38,7 @@ public static class DateFmtExt
         {
             new(DateFmt.YMD, sep),
             new(DateFmt.DMY, sep),
-            new(DateFmt.MDY, sep)
+            new(DateFmt.MDY, sep),
         };
     }
 
@@ -48,6 +48,6 @@ public static class DateFmtExt
             DateFmt.YMD => $"yyyy{sep}MM{sep}dd",
             DateFmt.DMY => $"dd{sep}MM{sep}yyyy",
             DateFmt.MDY => $"MM{sep}dd{sep}yyyy",
-            _ => throw new ArgumentOutOfRangeException(nameof(fmt), fmt, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(fmt), fmt, null),
         };
 }

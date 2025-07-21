@@ -76,8 +76,10 @@ public record Ep<TArg, TRes>(Rpc<TArg, TRes> Rpc, Func<IRpcCtx, TArg, Task<TRes>
                 message = avex switch
                 {
                     NullMinMaxValuesException _ => ctx.String(S.MinMaxNullArgs),
-                    ReversedMinMaxValuesException rmmve
-                        => ctx.String(S.MinMaxReversedArgs, new { rmmve.Min, rmmve.Max }),
+                    ReversedMinMaxValuesException rmmve => ctx.String(
+                        S.MinMaxReversedArgs,
+                        new { rmmve.Min, rmmve.Max }
+                    ),
                 };
             }
             else if (ex is RpcException rex)

@@ -1,6 +1,6 @@
 using System.Globalization;
-using ConsoleAppFramework;
 using Common.Shared;
+using ConsoleAppFramework;
 using CsvHelper;
 using Fluid;
 
@@ -8,8 +8,7 @@ namespace Common.Cli;
 
 public class I18n
 {
-    private const string KeysFile = 
-        """
+    private const string KeysFile = """
         // Generated Code File, Do Not Edit.
         // This file is generated with Common.Cli.
         // see https://github.com/0xor1/common/blob/main/Common.Cli/I18n.cs
@@ -23,8 +22,7 @@ public class I18n
         }
         """;
 
-    private const string LangFile = 
-        """
+    private const string LangFile = """
         // Generated Code File, Do Not Edit.
         // This file is generated with Common.Cli.
         // see https://github.com/0xor1/common/blob/main/Common.Cli/I18n.cs
@@ -43,8 +41,7 @@ public class I18n
         }
         """;
 
-    private const string ZLibraryFile = 
-        """
+    private const string ZLibraryFile = """
         // Generated Code File, Do Not Edit.
         // This file is generated with Common.Cli.
         // see https://github.com/0xor1/common/blob/main/Common.Cli/I18n.cs
@@ -78,7 +75,12 @@ public class I18n
     /// <param name="readonly">Specifies if the generated Dictionaries should be IReadOnly interfaces</param>
     /// <param name="prefix">A common prefix to use on all the generated keys</param>
     [Command("i18n")]
-    public async Task Run([Argument] string csvDirPath, [Argument] string @namespace, [Argument] bool @readonly, [Argument] string prefix = "")
+    public async Task Run(
+        [Argument] string csvDirPath,
+        [Argument] string @namespace,
+        [Argument] bool @readonly,
+        [Argument] string prefix = ""
+    )
     {
         var printCsvDirPath = $"<abs_file_path_to>/{csvDirPath.Split(['/', '\\']).Last()}";
         var fParser = new FluidParser();
@@ -91,14 +93,26 @@ public class I18n
 
         await csv.ReadAsync();
         csv.ReadHeader();
-        var langs = csv.HeaderRecord.NotNull().TakeLast(csv.HeaderRecord.NotNull().Length - 1).ToList();
+        var langs = csv
+            .HeaderRecord.NotNull()
+            .TakeLast(csv.HeaderRecord.NotNull().Length - 1)
+            .ToList();
         var kfm = new KeyFileModel(printCsvDirPath, @namespace, @readonly, prefix);
-        var zlfm = new ZLibraryFileModel(printCsvDirPath, @namespace, @readonly, prefix, langs.Select(x => x.ToUpper()).ToList());
+        var zlfm = new ZLibraryFileModel(
+            printCsvDirPath,
+            @namespace,
+            @readonly,
+            prefix,
+            langs.Select(x => x.ToUpper()).ToList()
+        );
         var lfms = new Dictionary<string, LangFileModel>();
 
         foreach (var lang in langs)
         {
-            lfms.Add(lang, new LangFileModel(printCsvDirPath, @namespace, @readonly, prefix, lang.ToUpper()));
+            lfms.Add(
+                lang,
+                new LangFileModel(printCsvDirPath, @namespace, @readonly, prefix, lang.ToUpper())
+            );
         }
 
         while (await csv.ReadAsync())
@@ -108,41 +122,62 @@ public class I18n
             foreach (var lang in langs)
             {
                 var content = csv.GetField<string>(lang).NotNull();
-                lfms[lang].Strings.Add(new (key, content));
+                lfms[lang].Strings.Add(new(key, content));
             }
         }
-        await File.WriteAllTextAsync(Path.Join(csvDirPath, KeysFileName), keyFileTpl.Render(new TemplateContext(kfm)));
-        await File.WriteAllTextAsync(Path.Join(csvDirPath, LibraryFileName), zlibFileTpl.Render(new TemplateContext(zlfm)));
+        await File.WriteAllTextAsync(
+            Path.Join(csvDirPath, KeysFileName),
+            keyFileTpl.Render(new TemplateContext(kfm))
+        );
+        await File.WriteAllTextAsync(
+            Path.Join(csvDirPath, LibraryFileName),
+            zlibFileTpl.Render(new TemplateContext(zlfm))
+        );
         foreach (var lang in langs)
         {
-            await File.WriteAllTextAsync(Path.Join(csvDirPath, $"S{lang.ToUpper()}.g.cs"), langFileTpl.Render(new TemplateContext(lfms[lang])));
+            await File.WriteAllTextAsync(
+                Path.Join(csvDirPath, $"S{lang.ToUpper()}.g.cs"),
+                langFileTpl.Render(new TemplateContext(lfms[lang]))
+            );
         }
     }
 
     private record KeyFileModel(string CsvDirPath, string Namespace, bool ReadOnly, string Prefix)
     {
         public List<ContentKey> Keys { get; } = new();
-
     }
 
     private record ContentKey(string Prefix, string Key)
     {
         private string Pascal => new Key(Key).ToPascal();
-    
+
         public override string ToString() => $"public const string {Pascal} = \"{Prefix}{Key}\";";
     }
 
-    private record LangFileModel(string CsvDirPath, string Namespace, bool ReadOnly, string Prefix, string Lang)
+    private record LangFileModel(
+        string CsvDirPath,
+        string Namespace,
+        bool ReadOnly,
+        string Prefix,
+        string Lang
+    )
     {
         public List<StringContent> Strings { get; } = new();
-
     }
 
-    private record ZLibraryFileModel(string CsvDirPath, string Namespace, bool ReadOnly, string Prefix, List<string> Langs);
+    private record ZLibraryFileModel(
+        string CsvDirPath,
+        string Namespace,
+        bool ReadOnly,
+        string Prefix,
+        List<string> Langs
+    );
 
     private record StringContent(string Key, string Content)
     {
         private string Pascal => new Key(Key).ToPascal();
-        public override string ToString() => $"{{ {Pascal}, new(\"{Content.Replace("\"", "\\\"").ReplaceLineEndings(@"\n")}\") }},";
+
+        public override string ToString() =>
+            $"{{ {Pascal}, new(\"{Content.Replace("\"", "\\\"").ReplaceLineEndings(@"\n")}\") }},";
     }
 }

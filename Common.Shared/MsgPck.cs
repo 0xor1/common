@@ -10,9 +10,8 @@ public static class MsgPck
         ContractlessStandardResolver.Instance
     );
 
-    private static readonly MessagePackSerializerOptions Options = ContractlessStandardResolver
-        .Options
-        .WithResolver(Resolver);
+    private static readonly MessagePackSerializerOptions Options =
+        ContractlessStandardResolver.Options.WithResolver(Resolver);
 
     public static byte[] From(object v) => MessagePackSerializer.Serialize(v, Options);
 

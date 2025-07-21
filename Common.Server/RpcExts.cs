@@ -57,8 +57,8 @@ public static class RpcExts
                 app.Run(
                     async (ctx) =>
                     {
-                        var cl = ctx.RequestServices
-                            .GetRequiredService<IHttpClientFactory>()
+                        var cl = ctx
+                            .RequestServices.GetRequiredService<IHttpClientFactory>()
                             .CreateClient("dev_server");
                         var req = CreateProxyHttpRequest(ctx, rpcHostHeader, baseHref);
                         var res = await cl.SendAsync(req, ctx.RequestAborted);
@@ -122,9 +122,9 @@ public static class RpcExts
             resp.Headers[header.Key] = header.Value.ToArray();
         }
 
-        await using var responseStream = await respMsg
-            .Content
-            .ReadAsStreamAsync(ctx.RequestAborted);
+        await using var responseStream = await respMsg.Content.ReadAsStreamAsync(
+            ctx.RequestAborted
+        );
         await responseStream.CopyToAsync(resp.Body, ctx.RequestAborted);
     }
 }

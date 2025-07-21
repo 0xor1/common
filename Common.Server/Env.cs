@@ -19,5 +19,5 @@ public enum Env
 
     [EnumMember(Value = "pro")]
     [Description("pro")]
-    Pro
+    Pro,
 }

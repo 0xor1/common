@@ -20,32 +20,32 @@ public static partial class S
         new(ES, "Español"),
         new(FR, "Français"),
         new(DE, "Deutsch"),
-        new(IT, "Italiano")
+        new(IT, "Italiano"),
     };
 
     public static readonly IReadOnlyList<DateTimeFmt> SupportedTimeFmts = new List<DateTimeFmt>()
     {
         new(DefaultTimeFmt),
-        new("h:mmtt")
+        new("h:mmtt"),
     };
 
     public static readonly IReadOnlyList<string> SupportedDateSeparators = new List<string>()
     {
         DefaultDateSeparator,
         "/",
-        "."
+        ".",
     };
 
     public static readonly IReadOnlyList<string> SupportedThousandsSeparators = new List<string>()
     {
         DefaultDecimalSeparator,
-        DefaultThousandsSeparator
+        DefaultThousandsSeparator,
     };
 
     public static readonly IReadOnlyList<string> SupportedDecimalSeparators = new List<string>()
     {
         DefaultThousandsSeparator,
-        DefaultDecimalSeparator
+        DefaultDecimalSeparator,
     };
 
     public static readonly Common.Shared.S Inst;

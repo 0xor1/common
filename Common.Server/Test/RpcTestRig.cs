@@ -119,8 +119,8 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
     {
         var ids = RunDb<List<string>>(db =>
         {
-            return db.Auths
-                .Where(x => _registeredEmails.Contains(x.Email))
+            return db
+                .Auths.Where(x => _registeredEmails.Contains(x.Email))
                 .Select(x => x.Id)
                 .ToList();
         });
@@ -138,12 +138,11 @@ public class RpcTestRig<TDbCtx, TApi> : IDisposable
                         TimeFmt = _s.DefaultTimeFmt,
                         DateSeparator = _s.DefaultDateSeparator,
                         ThousandsSeparator = _s.DefaultThousandsSeparator,
-                        DecimalSeparator = _s.DefaultDecimalSeparator
+                        DecimalSeparator = _s.DefaultDecimalSeparator,
                     }
                 )
             )
-                .Auth
-                .Delete();
+                .Auth.Delete();
             t.Wait();
             if (t.Exception != null)
             {

@@ -69,7 +69,7 @@ public record RpcHttpSessionManager : IRpcHttpSessionManager
             DateSeparator = dateSeparator,
             ThousandsSeparator = thousandsSeparator,
             DecimalSeparator = decimalSeparator,
-            FcmEnabled = fcmEnabled
+            FcmEnabled = fcmEnabled,
         };
         ctx.Items[SessionKey] = ses;
         SetCookie(ctx, ses);
@@ -157,19 +157,17 @@ public record RpcHttpSessionManager : IRpcHttpSessionManager
         // get final cookie bytes
         var cookieBytes = MsgPck.From(signedSes);
         // create cookie
-        ctx.Response
-            .Cookies
-            .Append(
-                SessionKey,
-                cookieBytes.ToB64(),
-                new CookieOptions
-                {
-                    Secure = true,
-                    HttpOnly = true,
-                    IsEssential = true,
-                    Expires = ses.RememberMe ? DateTime.UtcNow.AddDays(7) : null,
-                    SameSite = SameSiteMode.Strict
-                }
-            );
+        ctx.Response.Cookies.Append(
+            SessionKey,
+            cookieBytes.ToB64(),
+            new CookieOptions
+            {
+                Secure = true,
+                HttpOnly = true,
+                IsEssential = true,
+                Expires = ses.RememberMe ? DateTime.UtcNow.AddDays(7) : null,
+                SameSite = SameSiteMode.Strict,
+            }
+        );
     }
 }

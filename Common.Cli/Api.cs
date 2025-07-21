@@ -1,5 +1,5 @@
-using ConsoleAppFramework;
 using Common.Shared;
+using ConsoleAppFramework;
 using Fluid;
 using Fluid.Values;
 using YamlDotNet.Serialization;
@@ -9,8 +9,7 @@ namespace Common.Cli;
 
 public class Api
 {
-    private const string ApiFile = 
-        """
+    private const string ApiFile = """
         // Generated Code File, Do Not Edit.
         // This file is generated with Common.Cli.
         // see https://github.com/0xor1/common/blob/main/Common.Cli/Api.cs
@@ -20,15 +19,15 @@ public class Api
         using Common.Shared.Auth;
         {% for sec in Sections %}using {{ApiNameSpace}}.{{sec.Key}};
         {% endfor %}
-        
+
         namespace {{ApiNameSpace}};
-        
+
         public interface IApi : Common.Shared.Auth.IApi
         {
             {% for sec in Sections %}public I{{sec.Key}}Api {{sec.Key}} { get; }
             {% endfor %}
         }
-        
+
         public class Api : IApi
         {
             public Api(IRpcClient client)
@@ -38,7 +37,7 @@ public class Api
                 {% for sec in Sections %}{{sec.Key}} = new {{sec.Key}}Api(client);
                 {% endfor %}
             }
-        
+
             public IAppApi App { get; }
             public IAuthApi Auth { get; }
             {% for sec in Sections %}public I{{sec.Key}}Api {{sec.Key}} { get; }
@@ -46,38 +45,37 @@ public class Api
         }
         """;
 
-    private const string SectionFile = 
-        """
+    private const string SectionFile = """
         // Generated Code File, Do Not Edit.
         // This file is generated with Common.Cli.
         // see https://github.com/0xor1/common/blob/main/Common.Cli/Api.cs
         // executed with arguments: api {{YmlDirPath}}
 
         #nullable enable
-        
+
         using Common.Shared;
         using MessagePack;
         {% for import in Imports %}using {{import}};
         {% endfor %}
-        
+
         namespace {{ApiNameSpace}}.{{Key}};
-        
+
         public interface I{{Key}}Api
         {
             {% for ep in Eps %}public {% if ep.FullyQualifyTask %}System.Threading.Tasks.{% endif %}Task{% if ep.Res != "Nothing" %}<{{ep.Res}}>{% endif %} {{ep.Key}}({% if ep.Arg != "Nothing" %}{{ep.Arg}} arg, {% endif %}CancellationToken ctkn = default);{% if ep.GetUrl %}
             public string {{ep.Key}}Url({% if ep.Arg != "Nothing" %}{{ep.Arg}} arg{% endif %});{% endif %}
             {% endfor %}
         }
-        
+
         public class {{Key}}Api : I{{Key}}Api
         {
             private readonly IRpcClient _client;
-        
+
             public {{Key}}Api(IRpcClient client)
             {
                 _client = client;
             }
-        
+
             {% for ep in Eps %}public {% if ep.FullyQualifyTask %}System.Threading.Tasks.{% endif %}Task{% if ep.Res != "Nothing" %}<{{ep.Res}}>{% endif %} {{ep.Key}}({% if ep.Arg != "Nothing" %}{{ep.Arg}} arg, {% endif %}CancellationToken ctkn = default) =>
                 _client.Do({{Key}}Rpcs.{{ep.Key}}, {% if ep.Arg != "Nothing" %}arg{% else %}Nothing.Inst{% endif %}, ctkn);
             {% if ep.GetUrl %}
@@ -86,13 +84,13 @@ public class Api
             {% endif %}
             {% endfor %}
         }
-        
+
         public static class {{Key}}Rpcs
         {
             {% for ep in Eps %}public static readonly Rpc<{{ep.Arg}}, {{ep.Res}}> {{ep.Key}} = new("/{{Key | lowerfirst }}/{{ep.Key | lowerfirst}}");
             {% endfor %}
         }
-        
+
         {% for type in Types  %}
         {% if type.IsInterface %}
         public interface {{type.Key}}{% if type.Extends %} : {{type.Extends}}{% endif %}
@@ -120,7 +118,7 @@ public class Api
         }
         {% endif %}
         {% endfor %}
-        
+
         {% for enum in Enums  %}
         public enum {{enum.Key}}
         {
@@ -146,11 +144,11 @@ public class Api
         var printCsvDirPath = $"<abs_file_path_to>/{@namespace}";
         using var reader = new StreamReader(Path.Join(ymlDirPath, ymlFileName));
         var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(UnderscoredNamingConvention.Instance) 
+            .WithNamingConvention(UnderscoredNamingConvention.Instance)
             .Build();
         var apiDef = deserializer.Deserialize<ApiDef>(reader);
         apiDef.Validate();
-        
+
         apiDef.ApiNameSpace = @namespace;
         apiDef.YmlDirPath = printCsvDirPath;
         apiDef.Sections.ForEach(x =>
@@ -158,39 +156,48 @@ public class Api
             x.YmlDirPath = printCsvDirPath;
             x.ApiNameSpace = @namespace;
         });
-        
+
         var options = new TemplateOptions();
-        options.Filters.AddFilter("lowerfirst", (input, arguments, context) =>
-        {
-            var source = input.ToStringValue().ToCharArray();
-            if (source.Length > 0)
+        options.Filters.AddFilter(
+            "lowerfirst",
+            (input, arguments, context) =>
             {
-                source[0] = char.ToLower(source[0]);
+                var source = input.ToStringValue().ToCharArray();
+                if (source.Length > 0)
+                {
+                    source[0] = char.ToLower(source[0]);
+                }
+                return new StringValue(new string(source));
             }
-            return new StringValue(new string(source));
-        });
+        );
         options.MemberAccessStrategy.Register<ApiDef>();
         options.MemberAccessStrategy.Register<Section>();
         options.MemberAccessStrategy.Register<Type>();
         options.MemberAccessStrategy.Register<Enum>();
         options.MemberAccessStrategy.Register<Field>();
         options.MemberAccessStrategy.Register<Ep>();
-        
+
         var fParser = new FluidParser();
         var apiFileTpl = fParser.Parse(ApiFile).NotNull();
         var sectionFileTpl = fParser.Parse(SectionFile).NotNull();
 
-        await File.WriteAllTextAsync(Path.Join(ymlDirPath, ApiFileName), apiFileTpl.Render(new TemplateContext(apiDef, options)));
+        await File.WriteAllTextAsync(
+            Path.Join(ymlDirPath, ApiFileName),
+            apiFileTpl.Render(new TemplateContext(apiDef, options))
+        );
         foreach (var s in apiDef.Sections)
         {
-            await File.WriteAllTextAsync(Path.Join(ymlDirPath, Path.Join(s.Key, $"{s.Key}.g.cs")), sectionFileTpl.Render(new TemplateContext(s, options)));
+            await File.WriteAllTextAsync(
+                Path.Join(ymlDirPath, Path.Join(s.Key, $"{s.Key}.g.cs")),
+                sectionFileTpl.Render(new TemplateContext(s, options))
+            );
         }
     }
 }
 
 public class ApiDef
 {
-    private readonly List<string> _reservedSectionKeys = new (){ "app", "auth" };
+    private readonly List<string> _reservedSectionKeys = new() { "app", "auth" };
 
     public string YmlDirPath { get; set; }
     public string ApiNameSpace { get; set; }
@@ -209,7 +216,7 @@ public class ApiDef
         {
             errors.Add($"reserved section keys: {_reservedSectionKeys.Join()}");
         }
-        
+
         Sections.ForEach(x => x.Validate(errors));
 
         if (errors.Any())
@@ -218,9 +225,10 @@ public class ApiDef
         }
     }
 }
+
 public class Section
 {
-    private readonly List<string> _reservedTypeKeys = new (){"nothing"};
+    private readonly List<string> _reservedTypeKeys = new() { "nothing" };
 
     public string YmlDirPath { get; set; }
     public string ApiNameSpace { get; set; }
@@ -250,7 +258,9 @@ public class Section
         }
         if (Types.Any(x => _reservedTypeKeys.Contains(x.Key)))
         {
-            errors.Add($"section: {Key}, reserved type key used: {Key}, reserved keys: {_reservedTypeKeys.Join()}");
+            errors.Add(
+                $"section: {Key}, reserved type key used: {Key}, reserved keys: {_reservedTypeKeys.Join()}"
+            );
         }
     }
 }
@@ -262,7 +272,7 @@ public class Type
     public bool IsInterface { get; set; }
     public string Key { get; set; }
     public List<Field> Fields { get; set; } = new();
-    
+
     public void Validate(List<string> errors)
     {
         var dupes = Fields.Select(x => x.Key).GetDuplicates();
@@ -277,7 +287,7 @@ public class Enum
 {
     public string Key { get; set; }
     public List<string> Vals { get; set; } = new();
-    
+
     public void Validate(List<string> errors)
     {
         var dupes = Vals.GetDuplicates();

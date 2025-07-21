@@ -1,9 +1,8 @@
-using ConsoleAppFramework;
 using Common.Shared;
+using ConsoleAppFramework;
 using Microsoft.Extensions.Logging;
 
 namespace Common.Cli;
-
 
 public class Dnsk
 {
@@ -22,7 +21,7 @@ public class Dnsk
     /// <param name="reposPath">The path to the parent directory where code repos are stored</param>
     /// <param name="key">The Key of the new repo</param>
     [Command("dnsk")]
-    public async Task Run([Argument]string reposPath, [Argument]Key key)
+    public async Task Run([Argument] string reposPath, [Argument] Key key)
     {
         var dnskPath = Path.Join(reposPath, DnskKey.ToString());
         var newPath = Path.Join(reposPath, key.ToString());
@@ -37,29 +36,42 @@ public class Dnsk
         _log.LogInformation("Copying {Src} to {Dst}", src, dst);
         _log.LogInformation("Creating Directory {Dst}", dst);
         Directory.CreateDirectory(dst);
-        Directory.GetFiles(src).ForEach(async file =>
-        {
-            var fileName = ReplaceDnsk(Path.GetFileName(file), key);
-            var dstFile = Path.Join(dst, fileName);
-            _log.LogInformation("Copying {File} to {DstFile}", file, dstFile);
-            if (file.Contains($"{Path.DirectorySeparatorChar}.git{Path.DirectorySeparatorChar}"))
+        Directory
+            .GetFiles(src)
+            .ForEach(async file =>
             {
-                // for the git repo files just do direct copy
-                File.Copy(file, dstFile);
-                return;
-            }
-            var content = await File.ReadAllTextAsync(file);
-            content = ReplaceDnsk(content, key);
-            await File.WriteAllTextAsync(dstFile, content);
-        });
-        Directory.GetDirectories(src).Where(x => !isProj || x.Split(Path.DirectorySeparatorChar).Last() is not ("bin" or "obj")).ForEach(
-            async dir =>
+                var fileName = ReplaceDnsk(Path.GetFileName(file), key);
+                var dstFile = Path.Join(dst, fileName);
+                _log.LogInformation("Copying {File} to {DstFile}", file, dstFile);
+                if (
+                    file.Contains($"{Path.DirectorySeparatorChar}.git{Path.DirectorySeparatorChar}")
+                )
+                {
+                    // for the git repo files just do direct copy
+                    File.Copy(file, dstFile);
+                    return;
+                }
+                var content = await File.ReadAllTextAsync(file);
+                content = ReplaceDnsk(content, key);
+                await File.WriteAllTextAsync(dstFile, content);
+            });
+        Directory
+            .GetDirectories(src)
+            .Where(x =>
+                !isProj || x.Split(Path.DirectorySeparatorChar).Last() is not ("bin" or "obj")
+            )
+            .ForEach(async dir =>
             {
                 var dirName = dir.Split(Path.DirectorySeparatorChar).Last();
-                await CopyDir(dir, Path.Join(dst, ReplaceDnsk(dirName, key)), key, dirName.StartsWith($"{DnskKey.ToPascal()}."));
+                await CopyDir(
+                    dir,
+                    Path.Join(dst, ReplaceDnsk(dirName, key)),
+                    key,
+                    dirName.StartsWith($"{DnskKey.ToPascal()}.")
+                );
             });
     }
 
-    private static string ReplaceDnsk(string src, Key key)
-        => src.Replace(DnskKey.ToPascal(), key.ToPascal()).Replace(DnskKey.ToCamel(), key.ToCamel());
+    private static string ReplaceDnsk(string src, Key key) =>
+        src.Replace(DnskKey.ToPascal(), key.ToPascal()).Replace(DnskKey.ToCamel(), key.ToCamel());
 }

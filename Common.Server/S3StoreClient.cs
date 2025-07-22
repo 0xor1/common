@@ -106,7 +106,7 @@ public class S3StoreClient : IStoreClient
             new ListObjectsV2Request { BucketName = bucket, Prefix = prefix },
             ctkn
         );
-        while (res.S3Objects.Count > 0)
+        while (res is { S3Objects.Count: > 0 })
         {
             var req = new DeleteObjectsRequest
             {

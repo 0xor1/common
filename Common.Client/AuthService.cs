@@ -30,7 +30,7 @@ public class AuthService<TApi> : IAuthService, IDisposable
         get => _ses;
         set
         {
-            _ses = value;
+            _ses = value.NotNull();
             L.Config(
                 _ses.Lang,
                 _ses.DateFmt,
@@ -268,6 +268,7 @@ public class AuthService<TApi> : IAuthService, IDisposable
         if (!js.HasValue)
         {
             notify();
+            return;
         }
 
         var found = js.Value.TryGetProperty("data", out var payload);

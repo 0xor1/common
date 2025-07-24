@@ -6,7 +6,7 @@
 @using System.Globalization
 <div class="root col g-1 p-1">
     <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H2" class="m-t-0">
-        @L.S(S.L10n)
+        @L.S(Shared.I18n.S.L10n)
     </RadzenText>
     <RadzenTemplateForm
         TItem="Model"
@@ -14,17 +14,17 @@
         Submit="Do"
         class="flx col g-1 ai-stretch w-15">
         <div class="flx col ai-stretch">
-            <RadzenLabel class="m-b-0q" Component="Lang" Text="@L.S(S.Language)"/>
+            <RadzenLabel class="m-b-0q" Component="Lang" Text="@L.S(Shared.I18n.S.Language)"/>
             <RadzenDropDown Name="Lang" AllowClear="false" TValue="string" 
-                            Data="IS.SupportedLangs" 
+                            Data="S.SupportedLangs" 
                             TextProperty="NativeName" ValueProperty="Code"
                             @bind-Value="_model.Lang" />
         </div>
         <div class="flx col ai-stretch">
-            <RadzenLabel class="m-b-0q" Component="Date" Text="@L.S(S.DateFmt)"/>
+            <RadzenLabel class="m-b-0q" Component="Date" Text="@L.S(Shared.I18n.S.DateFmt)"/>
             <div class="flx row jc-s g-0h">
                 <RadzenDropDown class="w-4" Name="DateSeparator" AllowClear="false" TValue="string" 
-                                Data="IS.SupportedDateSeparators"
+                                Data="S.SupportedDateSeparators"
                                 @bind-Value="_model.DateSeparator" />
                 <RadzenDropDown class="grow-1" Name="Date" AllowClear="false" TValue="DateFmt" 
                                 Data="DateFmtExt.GetFmts(_model.DateSeparator)" 
@@ -33,38 +33,38 @@
             </div>
         </div>
         <div class="flx col ai-stretch">
-            <RadzenLabel class="m-b-0q" Component="Time" Text="@L.S(S.TimeFmt)"/>
+            <RadzenLabel class="m-b-0q" Component="Time" Text="@L.S(Shared.I18n.S.TimeFmt)"/>
             <RadzenDropDown Name="Time" AllowClear=false TValue=string 
-                            Data="IS.SupportedTimeFmts" 
+                            Data="S.SupportedTimeFmts" 
                             ValueProperty="Value"
                             @bind-Value="@_model.TimeFmt" />
         </div>
         <div class="flx col ai-stretch">
-            <RadzenLabel class="m-b-0q" Component="ThousandsSeparator" Text="@L.S(S.ThousandsSeparator)"/>
+            <RadzenLabel class="m-b-0q" Component="ThousandsSeparator" Text="@L.S(Shared.I18n.S.ThousandsSeparator)"/>
             <RadzenDropDown Name="ThousandsSeparator" AllowClear=false TValue=string 
                             Data="_model.ThousandSeparators"
                             ValueProperty="TSep"
                             @bind-Value="@_model.ThousandsSeparator" />
         </div>
         <div class="flx col ai-stretch">
-            <RadzenLabel class="m-b-0q" Component="DecimalSeparator" Text="@L.S(S.DecimalSeparator)"/>
+            <RadzenLabel class="m-b-0q" Component="DecimalSeparator" Text="@L.S(Shared.I18n.S.DecimalSeparator)"/>
             <RadzenDropDown Name="DecimalSeparator" AllowClear=false TValue=string 
                             Data="_model.DecimalSeparators"
                             ValueProperty="DSep"
                             @bind-Value="@_model.DecimalSeparator" />
         </div>
-        <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(S.Updating)" IsBusy="_doing" Text="@L.S(S.Update)" Disabled="!CanDo"/>
+        <RadzenButton ButtonType="ButtonType.Submit" BusyText="@L.S(Shared.I18n.S.Updating)" IsBusy="_doing" Text="@L.S(Shared.I18n.S.Update)" Disabled="!CanDo"/>
     </RadzenTemplateForm>
 </div>
 
 @inject IAuthService Auth;
 @inject L L;
-@inject Common.Shared.S IS;
+@inject Common.Shared.S S;
 @code{
 
     public record NumberSeparator(string TSep, string DSep)
     {
-        private static decimal V = 12345678.99m;
+        private const decimal V = 12345678.99m;
 
         public override string ToString()
         => V.ToString("N", new NumberFormatInfo()
@@ -123,15 +123,15 @@
 
     private bool CanDo => _model != _initialValues && !_doing;
 
-    private ISession _session = Session.Default(S.DefaultLang, S.DefaultDateFmt, S.DefaultTimeFmt, S.DefaultDateSeparator, S.DefaultThousandsSeparator, S.DefaultDecimalSeparator); 
-    private Model? _model; 
-    private Model? _initialValues; 
+    private ISession _session = Session.Default(Shared.I18n.S.DefaultLang, Shared.I18n.S.DefaultDateFmt, Shared.I18n.S.DefaultTimeFmt, Shared.I18n.S.DefaultDateSeparator, Shared.I18n.S.DefaultThousandsSeparator, Shared.I18n.S.DefaultDecimalSeparator); 
+    private Model _model = null!; 
+    private Model _initialValues = null!; 
     private bool _doing = false;
 
     protected override async Task OnInitializedAsync()
     {
         _session = await Auth.GetSession();
-        _model = new(IS)
+        _model = new(S)
         {
             Lang = _session.Lang,
             DateFmt = _session.DateFmt,
@@ -140,7 +140,7 @@
             ThousandsSeparator = _session.ThousandsSeparator,
             DecimalSeparator = _session.DecimalSeparator
         };
-        _initialValues = new(IS)
+        _initialValues = new(S)
         {
             Lang = _session.Lang,
             DateFmt = _session.DateFmt,

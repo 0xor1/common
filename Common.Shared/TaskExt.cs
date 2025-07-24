@@ -7,7 +7,6 @@ public static class TaskExt
         return Task.FromResult(obj);
     }
 
-    // Thanks to Nick Chapsas https://www.youtube.com/watch?v=gW19LaAYczI
     public static async Task<IEnumerable<T>> WhenAll<T>(params Task<T>[] tasks)
     {
         var allTasks = Task.WhenAll(tasks);
@@ -23,7 +22,7 @@ public static class TaskExt
     }
 
     // Fire and Forget
-    public static async void FnF(this Task task)
+    public static async void FnF(this Task task, Action<Exception>? handler)
     {
         try
         {
@@ -31,7 +30,7 @@ public static class TaskExt
         }
         catch (Exception e)
         {
-            // log errors
+            handler?.Invoke(e);
         }
     }
 }

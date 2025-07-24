@@ -3,11 +3,11 @@ using MessagePack.Formatters;
 
 namespace Common.Shared;
 
-public class MsgPackStringFormater : IMessagePackFormatter<string>
+public class MsgPackStringFormater : IMessagePackFormatter<string?>
 {
     public void Serialize(
         ref MessagePackWriter writer,
-        string value,
+        string? value,
         MessagePackSerializerOptions options
     )
     {
@@ -22,8 +22,10 @@ public class MsgPackStringFormater : IMessagePackFormatter<string>
         }
     }
 
-    public string Deserialize(ref MessagePackReader reader, MessagePackSerializerOptions options) =>
-        reader.ReadString()?.Trim();
+    public string? Deserialize(
+        ref MessagePackReader reader,
+        MessagePackSerializerOptions options
+    ) => reader.ReadString()?.Trim();
 }
 
 public class MsgPackStringResolver : IFormatterResolver

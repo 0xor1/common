@@ -22,7 +22,7 @@ public static class TaskExt
     }
 
     // Fire and Forget
-    public static async void FnF(this Task task, Action<Exception>? handler)
+    public static async void FnF(this Task task, Action<Exception>? handler = null)
     {
         try
         {

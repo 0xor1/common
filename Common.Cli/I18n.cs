@@ -78,7 +78,7 @@ public class I18n
     public async Task Run(
         [Argument] string csvDirPath,
         [Argument] string @namespace,
-        [Argument] bool @readonly,
+        [Argument] bool @readonly = false,
         [Argument] string prefix = ""
     )
     {

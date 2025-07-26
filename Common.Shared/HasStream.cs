@@ -3,11 +3,11 @@ using Newtonsoft.Json;
 
 namespace Common.Shared;
 
-public record HasStream(RpcStream Stream) : IDisposable, IAsyncDisposable
+public record HasStream : IDisposable, IAsyncDisposable
 {
     [JsonIgnore]
     [IgnoreMember]
-    public RpcStream Stream { get; set; } = Stream;
+    public RpcStream Stream { get; set; } = null!;
 
     public void Dispose() => Stream.Dispose();
 

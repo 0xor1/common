@@ -19,7 +19,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="0xor1.Common.Shared" Version="6.0.2" />
-    <PackageReference Include="ConsoleAppFramework" Version="5.5.0">
+    <PackageReference Include="ConsoleAppFramework" Version="5.6.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -27,12 +27,12 @@
     <PackageReference Include="Fluid.Core" Version="2.25.0" />
     <PackageReference
       Include="Microsoft.Extensions.DependencyInjection"
-      Version="10.0.0-preview.6.25358.103"
+      Version="10.0.0-rc.1.25451.107"
     />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0-preview.6.25358.103" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0-rc.1.25451.107" />
     <PackageReference Include="YamlDotNet" Version="16.3.0" />
     <PackageReference Include="ZLogger" Version="2.5.10" />
-    <PackageReference Include="CSharpier.MsBuild" Version="1.0.3">
+    <PackageReference Include="CSharpier.MsBuild" Version="1.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

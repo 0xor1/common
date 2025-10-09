@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using MessagePack;
 
 namespace Common.Shared;
@@ -60,5 +61,14 @@ public record MinMax<T>
 
         Min = min;
         Max = max;
+    }
+
+    public static MinMax<T>? Create(T? min, T? max)
+    {
+        if (min is null && max is null)
+        {
+            return null;
+        }
+        return new MinMax<T>(min, max);
     }
 }

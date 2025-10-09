@@ -21,6 +21,20 @@ public static class TaskExt
         }
     }
 
+    public static async Task WhenAll(params Task[] tasks)
+    {
+        var allTasks = Task.WhenAll(tasks);
+
+        try
+        {
+            await allTasks;
+        }
+        catch
+        {
+            throw allTasks.Exception.NotNull();
+        }
+    }
+
     // Fire and Forget
     public static async void FnF(this Task task, Action<Exception>? handler = null)
     {

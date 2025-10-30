@@ -111,7 +111,7 @@ public static class ServiceExts
             cnnStrBldr.Pooling = true;
             cnnStrBldr.MaximumPoolSize = 100;
             cnnStrBldr.MinimumPoolSize = 1;
-            var version = new MariaDbServerVersion(new Version(10, 8));
+            var version = new MariaDbServerVersion(new Version(11, 8));
             dbContextOptions.UseMySql(
                 cnnStrBldr.ToString(),
                 version,

@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageId>0xor1.Common.Client</PackageId>
-    <Version>6.0.5</Version>
+    <Version>6.0.6</Version>
     <Authors>Daniel Robinson</Authors>
     <Company>Personal</Company>
     <Product>Personal</Product>
@@ -16,17 +16,17 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DartSassBuilder" Version="1.1.0" />
-    <PackageReference Include="0xor1.Common.Shared" Version="6.0.5" />
+    <PackageReference Include="0xor1.Common.Shared" Version="6.0.6" />
     <PackageReference
       Include="Microsoft.AspNetCore.Components.WebAssembly"
-      Version="10.0.0-rc.1.25451.107"
+      Version="10.0.0-rc.2.25502.107"
     />
     <PackageReference
       Include="Microsoft.AspNetCore.Components.Web"
-      Version="10.0.0-rc.1.25451.107"
+      Version="10.0.0-rc.2.25502.107"
     />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.0-rc.1.25451.107" />
-    <PackageReference Include="Radzen.Blazor" Version="7.4.3" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.0-rc.2.25502.107" />
+    <PackageReference Include="Radzen.Blazor" Version="8.1.7" />
     <PackageReference Include="CSharpier.MsBuild" Version="1.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageId>0xor1.Common.Shared</PackageId>
-    <Version>6.0.5</Version>
+    <Version>6.0.6</Version>
     <Authors>Daniel Robinson</Authors>
     <Company>Personal</Company>
     <Product>Personal</Product>
@@ -19,8 +19,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Fluid.Core" Version="2.25.0" />
-    <PackageReference Include="Humanizer.Core" Version="3.0.0-beta.96" />
+    <PackageReference Include="Fluid.Core" Version="2.30.0" />
+    <PackageReference Include="Humanizer.Core" Version="3.0.0-rc.6" />
     <PackageReference Include="MessagePack" Version="3.1.4" />
     <PackageReference Include="MessagePackAnalyzer" Version="3.1.4">
       <PrivateAssets>all</PrivateAssets>

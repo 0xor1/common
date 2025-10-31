@@ -1,10 +1,11 @@
+using System.Text.RegularExpressions;
 using Common.Shared;
 using ConsoleAppFramework;
 using Microsoft.Extensions.Logging;
 
 namespace Common.Cli;
 
-public class Dnsk
+public partial class Dnsk
 {
     private static readonly Key DnskKey = new("dnsk");
     private readonly ILogger<Dnsk> _log;
@@ -43,11 +44,9 @@ public class Dnsk
                 var fileName = ReplaceDnsk(Path.GetFileName(file), key);
                 var dstFile = Path.Join(dst, fileName);
                 _log.LogInformation("Copying {File} to {DstFile}", file, dstFile);
-                if (
-                    file.Contains($"{Path.DirectorySeparatorChar}.git{Path.DirectorySeparatorChar}")
-                )
+                if (ShouldJustCopy(file))
                 {
-                    // for the git repo files just do direct copy
+                    // for the git repo files and non text files just do direct copy
                     File.Copy(file, dstFile);
                     return;
                 }
@@ -74,4 +73,11 @@ public class Dnsk
 
     private static string ReplaceDnsk(string src, Key key) =>
         src.Replace(DnskKey.ToPascal(), key.ToPascal()).Replace(DnskKey.ToCamel(), key.ToCamel());
+
+    private static bool ShouldJustCopy(string file) =>
+        file.Contains($"{Path.DirectorySeparatorChar}.git{Path.DirectorySeparatorChar}")
+        || SkipExtensionsRegex().IsMatch(file);
+
+    [GeneratedRegex(@"\.(png|ico)$")]
+    private static partial Regex SkipExtensionsRegex();
 }

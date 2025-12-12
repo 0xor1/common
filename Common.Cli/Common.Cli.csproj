@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageId>0xor1.Common.Cli</PackageId>
-    <Version>6.0.7</Version>
+    <Version>6.0.8</Version>
     <Authors>Daniel Robinson</Authors>
     <Company>Personal</Company>
     <Product>Personal</Product>
@@ -18,7 +18,7 @@
     <PackAsTool>true</PackAsTool>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Shared" Version="6.0.7" />
+    <PackageReference Include="0xor1.Common.Shared" Version="6.0.8" />
     <PackageReference Include="ConsoleAppFramework" Version="5.7.13">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageId>0xor1.Common.Server</PackageId>
-    <Version>6.0.7</Version>
+    <Version>6.0.8</Version>
     <Authors>Daniel Robinson</Authors>
     <Company>Personal</Company>
     <Product>Personal</Product>
@@ -15,7 +15,7 @@
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="0xor1.Common.Shared" Version="6.0.7" />
+    <PackageReference Include="0xor1.Common.Shared" Version="6.0.8" />
     <PackageReference Include="AWSSDK.S3" Version="4.0.14.2" />
     <PackageReference Include="AWSSDK.SimpleEmail" Version="4.0.2.7" />
     <PackageReference Include="CSharpier.MsBuild" Version="1.2.1">

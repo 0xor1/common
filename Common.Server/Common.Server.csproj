@@ -16,8 +16,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="0xor1.Common.Shared" Version="6.0.7" />
-    <PackageReference Include="AWSSDK.S3" Version="4.0.11.3" />
-    <PackageReference Include="AWSSDK.SimpleEmail" Version="4.0.2.3" />
+    <PackageReference Include="AWSSDK.S3" Version="4.0.14.2" />
+    <PackageReference Include="AWSSDK.SimpleEmail" Version="4.0.2.7" />
     <PackageReference Include="CSharpier.MsBuild" Version="1.2.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,11 +27,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference
-      Include="Microsoft.AspNetCore.Components.WebAssembly.Server"
-      Version="10.0.0"
-    />
-    <PackageReference Include="Humanizer.Core" Version="3.0.0-rc.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.1" />
+    <PackageReference Include="Humanizer.Core" Version="3.0.1" />
     <PackageReference Include="MessagePack" Version="3.1.4" />
     <PackageReference Include="Minio" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />

@@ -187,6 +187,7 @@ public class Api
         );
         foreach (var s in apiDef.Sections)
         {
+            Directory.CreateDirectory(Path.Join(ymlDirPath, s.Key));
             await File.WriteAllTextAsync(
                 Path.Join(ymlDirPath, Path.Join(s.Key, $"{s.Key}.g.cs")),
                 sectionFileTpl.Render(new TemplateContext(s, options))

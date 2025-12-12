@@ -92,7 +92,7 @@ public static class RpcCtxExts
     public static void ErrorFromValidationResult(
         this IRpcCtx ctx,
         ValidationResult res,
-        HttpStatusCode code = HttpStatusCode.InternalServerError
+        HttpStatusCode code = HttpStatusCode.BadRequest
     )
     {
         if (res.Valid)

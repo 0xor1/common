@@ -83,6 +83,7 @@ sign_in,Sign In,Iniciar sesión,S'identifier,Anmelden,Registrazione
 sign_out,Sign Out,Desconectar,Se déconnecter,Austragen,Disconnessione
 signing_in,Signing In,Iniciando sesión,Connectez-vous,Anmelden,Registrarsi
 signing_out,Signing Out,Cerrando sesión,Déconnecter,Abmelden,Disconnessione
+string_invalid,"Invalid string {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}","Cadena no válida {{Nombre}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}","Chaîne non valide {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}","Ungültiger String {{Name}}, Min. {{Min}}, Max. {{Max}}, Regexes {{Regexes}}","Stringa non valida {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}"
 success,Success,Éxito,Succès,Erfolg,Successo
 thousands_separator,Thousands Separator,Separador de miles,Séparateur de milliers,Tausendertrennzeichen,Separatore delle migliaia
 time_fmt,Time Format,Formato de tiempo,Format de l'heure,Zeitformat,Formato orario

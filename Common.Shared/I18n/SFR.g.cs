@@ -90,6 +90,7 @@ public static partial class S
         { SignOut, new("Se déconnecter") },
         { SigningIn, new("Connectez-vous") },
         { SigningOut, new("Déconnecter") },
+        { StringInvalid, new("Chaîne non valide {{Name}}, Min {{Min}}, Max {{Max}}, Regexes {{Regexes}}") },
         { Success, new("Succès") },
         { ThousandsSeparator, new("Séparateur de milliers") },
         { TimeFmt, new("Format de l'heure") },

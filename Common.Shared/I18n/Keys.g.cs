@@ -86,6 +86,7 @@ public static partial class S
     public const string SignOut = "cmn_sign_out";
     public const string SigningIn = "cmn_signing_in";
     public const string SigningOut = "cmn_signing_out";
+    public const string StringInvalid = "cmn_string_invalid";
     public const string Success = "cmn_success";
     public const string ThousandsSeparator = "cmn_thousands_separator";
     public const string TimeFmt = "cmn_time_fmt";
